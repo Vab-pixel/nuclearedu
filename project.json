@@ -1,0 +1,23 @@
+{
+  "overview": "An interactive educational website about nuclear science and engineering. Covers atoms, radioactivity, nuclear reactions, reactor types, radiation, and applications — with 3D visualizations, animated simulations, and audience-tailored content for everyone from curious beginners to nuclear engineers.",
+  "features": [
+    "Nucleus Visualizer — interactive 3D model with proton/neutron sliders",
+    "Decay Chain Explorer — animated D3 graph tracing U-238 decay to Pb-206",
+    "Chart of Nuclides — color-coded heatmap of 50+ key nuclides",
+    "Reactor Cross-Section — animated SVG with control rod slider",
+    "Multi-level content — beginner through professional audience paths",
+    "KaTeX equations with plain-language explanations",
+    "Glossary, References, and About pages",
+    "Dark mode default with WCAG 2.1 AA accessibility"
+  ],
+  "category": "education",
+  "tags": [
+    "nuclear",
+    "education",
+    "science",
+    "interactive",
+    "visualization",
+    "physics"
+  ],
+  "last_updated": "2026-04-16T03:15:09.684Z"
+}
