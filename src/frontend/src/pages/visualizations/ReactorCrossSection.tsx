@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { animate, useMotionValue } from "motion/react";
 import { useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useState } from "react";
 
 // Power indicator derived from rod insertion 0-100
 function getPowerState(insertion: number): {
@@ -39,7 +40,7 @@ function getPowerState(insertion: number): {
   };
 }
 
-// Animated dashed coolant path using motion value for stroke-dashoffset
+// Animated dashed coolant path
 function CoolantPath({
   d,
   color,
@@ -85,7 +86,7 @@ function CoolantPath({
       strokeWidth="3"
       strokeDasharray="10 6"
       strokeDashoffset="0"
-      opacity="0.7"
+      opacity="0.75"
     />
   );
 }
@@ -121,9 +122,9 @@ function FuelRods({
           y={y + 5 + r * (rodH + 3)}
           width={rodW}
           height={rodH}
-          rx={1}
+          rx={1.5}
           fill="#fbbf24"
-          opacity={0.85}
+          opacity={0.88}
         />
       ))}
     </>
@@ -138,7 +139,7 @@ export default function ReactorCrossSection() {
 
   const power = getPowerState(insertion);
 
-  // Layout constants (SVG viewBox 0 0 600 420)
+  // SVG viewBox constants
   const V_W = 600;
   const V_H = 420;
 
@@ -154,7 +155,7 @@ export default function ReactorCrossSection() {
   const CORE_W = 140;
   const CORE_H = 200;
 
-  // Control rod insertion: rods hang from top, inserted from CORE_Y down
+  // Control rod insertion
   const MAX_ROD_H = CORE_H * 0.85;
   const rodH = (insertion / 100) * MAX_ROD_H;
   const rodW = 10;
@@ -173,9 +174,13 @@ export default function ReactorCrossSection() {
   const PRESS_W = 40;
   const PRESS_H = 40;
 
-  // Coolant loop paths (hot leg out from right side of vessel → steam gen → cold leg back)
+  // Coolant loop paths
   const hotLegIn = `M ${PV_X + PV_W} ${PV_Y + 80} C ${PV_X + PV_W + 20} ${PV_Y + 80} ${SG_X} ${SG_Y + 40} ${SG_X} ${SG_Y + 40}`;
   const coldLegReturn = `M ${SG_X} ${SG_Y + SG_H - 40} C ${SG_X} ${SG_Y + SG_H} ${PV_X + PV_W + 20} ${PV_Y + PV_H - 60} ${PV_X + PV_W} ${PV_Y + PV_H - 60}`;
+
+  // Power indicator color
+  const powerColor =
+    insertion < 30 ? "#f87171" : insertion < 70 ? "#4ade80" : "#60a5fa";
 
   return (
     <div
@@ -204,15 +209,15 @@ export default function ReactorCrossSection() {
       </div>
 
       <div className="container mx-auto max-w-4xl px-4 py-8 flex flex-col gap-6">
-        {/* Diagram */}
+        {/* Diagram — responsive aspect ratio, no hard maxHeight */}
         <div
-          className="rounded-2xl border border-border bg-card p-4 overflow-x-auto"
+          className="rounded-2xl border border-border bg-card p-3 sm:p-4"
           data-ocid="reactor-viz.svg_diagram"
         >
           <svg
             viewBox={`0 0 ${V_W} ${V_H}`}
             width="100%"
-            style={{ maxHeight: 480 }}
+            style={{ aspectRatio: `${V_W} / ${V_H}`, display: "block" }}
             role="img"
             aria-label="Simplified PWR cross-section diagram with animated coolant flow"
           >
@@ -221,6 +226,19 @@ export default function ReactorCrossSection() {
             {/* Background */}
             <rect width={V_W} height={V_H} fill="transparent" />
 
+            {/* Vessel shadow / glow */}
+            <rect
+              x={PV_X - 4}
+              y={PV_Y - 4}
+              width={PV_W + 8}
+              height={PV_H + 8}
+              rx={15}
+              fill="none"
+              stroke="#374151"
+              strokeWidth={1}
+              opacity={0.4}
+            />
+
             {/* Pressure Vessel */}
             <rect
               x={PV_X}
@@ -228,17 +246,18 @@ export default function ReactorCrossSection() {
               width={PV_W}
               height={PV_H}
               rx={12}
-              fill="none"
+              fill="#111827"
               stroke="#6b7280"
-              strokeWidth={3}
+              strokeWidth={2.5}
             />
             {showLabels && (
               <text
                 x={PV_X + 4}
-                y={PV_Y - 8}
+                y={PV_Y - 9}
                 fill="#9ca3af"
-                fontSize="10"
+                fontSize="11"
                 fontFamily="sans-serif"
+                fontWeight="600"
               >
                 Pressure Vessel
               </text>
@@ -250,19 +269,20 @@ export default function ReactorCrossSection() {
               y={CORE_Y}
               width={CORE_W}
               height={CORE_H}
-              rx={4}
-              fill="#fbbf2412"
-              stroke="#fbbf2440"
-              strokeWidth={1}
+              rx={5}
+              fill="#fbbf2410"
+              stroke="#fbbf2450"
+              strokeWidth={1.5}
             />
             {showLabels && (
               <text
                 x={CORE_X + CORE_W / 2}
-                y={CORE_Y + CORE_H + 16}
+                y={CORE_Y + CORE_H + 18}
                 textAnchor="middle"
                 fill="#fbbf24"
                 fontSize="10"
                 fontFamily="sans-serif"
+                fontWeight="600"
               >
                 Reactor Core
               </text>
@@ -281,24 +301,38 @@ export default function ReactorCrossSection() {
               const rx = CORE_X + rodSpacing * (i + 1) - rodW / 2;
               const rodKey = `ctrl-rod-x${rx.toFixed(0)}`;
               return (
-                <rect
-                  key={rodKey}
-                  x={rx}
-                  y={CORE_Y}
-                  width={rodW}
-                  height={rodH}
-                  rx={2}
-                  fill="#374151"
-                  stroke="#6b7280"
-                  strokeWidth={1}
-                  opacity={0.95}
-                />
+                <g key={rodKey}>
+                  {/* Rod guide tube */}
+                  <rect
+                    x={rx - 1}
+                    y={CORE_Y - 12}
+                    width={rodW + 2}
+                    height={14}
+                    rx={2}
+                    fill="#1f2937"
+                    stroke="#4b5563"
+                    strokeWidth={0.8}
+                    opacity={0.7}
+                  />
+                  {/* Rod body */}
+                  <rect
+                    x={rx}
+                    y={CORE_Y}
+                    width={rodW}
+                    height={rodH}
+                    rx={2}
+                    fill="#374151"
+                    stroke="#6b7280"
+                    strokeWidth={1}
+                    opacity={0.95}
+                  />
+                </g>
               );
             })}
             {showLabels && rodH > 10 && (
               <text
                 x={CORE_X + CORE_W / 2}
-                y={CORE_Y - 8}
+                y={CORE_Y - 16}
                 textAnchor="middle"
                 fill="#9ca3af"
                 fontSize="10"
@@ -314,7 +348,7 @@ export default function ReactorCrossSection() {
               y={PRESS_Y}
               width={PRESS_W}
               height={PRESS_H}
-              rx={6}
+              rx={7}
               fill="#1d4ed820"
               stroke="#3b82f6"
               strokeWidth={1.5}
@@ -331,11 +365,12 @@ export default function ReactorCrossSection() {
             {showLabels && (
               <text
                 x={PRESS_X + PRESS_W / 2}
-                y={PRESS_Y - 6}
+                y={PRESS_Y - 7}
                 textAnchor="middle"
                 fill="#60a5fa"
                 fontSize="10"
                 fontFamily="sans-serif"
+                fontWeight="600"
               >
                 Pressurizer
               </text>
@@ -352,22 +387,35 @@ export default function ReactorCrossSection() {
               stroke="#a855f7"
               strokeWidth={1.5}
             />
+            {/* Internal heat exchanger tubes hint */}
+            {([20, 52, 84, 116, 148] as const).map((yOffset) => (
+              <line
+                key={`sg-tube-${yOffset}`}
+                x1={SG_X + 12}
+                y1={SG_Y + yOffset}
+                x2={SG_X + SG_W - 12}
+                y2={SG_Y + yOffset}
+                stroke="#a855f730"
+                strokeWidth={4}
+                strokeLinecap="round"
+              />
+            ))}
             {showLabels && (
               <>
                 <text
                   x={SG_X + SG_W / 2}
-                  y={SG_Y - 8}
+                  y={SG_Y - 9}
                   textAnchor="middle"
                   fill="#c084fc"
                   fontSize="10"
                   fontFamily="sans-serif"
+                  fontWeight="600"
                 >
                   Steam Generator
                 </text>
-                {/* Steam out arrow */}
                 <text
                   x={SG_X + SG_W / 2}
-                  y={SG_Y + SG_H + 14}
+                  y={SG_Y + SG_H + 16}
                   textAnchor="middle"
                   fill="#9ca3af"
                   fontSize="9"
@@ -378,7 +426,7 @@ export default function ReactorCrossSection() {
               </>
             )}
 
-            {/* Coolant flow arrows */}
+            {/* Coolant flow */}
             {shouldAnimate ? (
               <>
                 <CoolantPath d={hotLegIn} color="#f87171" animate />
@@ -392,7 +440,7 @@ export default function ReactorCrossSection() {
                   stroke="#f87171"
                   strokeWidth={3}
                   strokeDasharray="10 6"
-                  opacity={0.7}
+                  opacity={0.75}
                 />
                 <path
                   d={coldLegReturn}
@@ -400,7 +448,7 @@ export default function ReactorCrossSection() {
                   stroke="#60a5fa"
                   strokeWidth={3}
                   strokeDasharray="10 6"
-                  opacity={0.7}
+                  opacity={0.75}
                 />
               </>
             )}
@@ -410,8 +458,9 @@ export default function ReactorCrossSection() {
                   x={PV_X + PV_W + 8}
                   y={PV_Y + 68}
                   fill="#f87171"
-                  fontSize="8"
+                  fontSize="8.5"
                   fontFamily="sans-serif"
+                  fontWeight="600"
                 >
                   hot leg →
                 </text>
@@ -419,8 +468,9 @@ export default function ReactorCrossSection() {
                   x={PV_X + PV_W + 8}
                   y={PV_Y + PV_H - 48}
                   fill="#60a5fa"
-                  fontSize="8"
+                  fontSize="8.5"
                   fontFamily="sans-serif"
+                  fontWeight="600"
                 >
                   ← cold leg
                 </text>
@@ -429,42 +479,31 @@ export default function ReactorCrossSection() {
 
             {/* Power indicator box */}
             <rect
-              x={V_W - 120}
-              y={20}
-              width={104}
-              height={54}
-              rx={8}
-              fill="#0000003a"
-              stroke={
-                insertion < 30
-                  ? "#f87171"
-                  : insertion < 70
-                    ? "#4ade80"
-                    : "#60a5fa"
-              }
+              x={V_W - 124}
+              y={18}
+              width={108}
+              height={58}
+              rx={9}
+              fill="#0d111888"
+              stroke={powerColor}
               strokeWidth={1.5}
             />
             <text
-              x={V_W - 68}
-              y={40}
+              x={V_W - 70}
+              y={36}
               textAnchor="middle"
               fill="#9ca3af"
-              fontSize="9"
+              fontSize="8.5"
               fontFamily="monospace"
+              letterSpacing="0.05em"
             >
               POWER OUTPUT
             </text>
             <text
-              x={V_W - 68}
-              y={60}
+              x={V_W - 70}
+              y={58}
               textAnchor="middle"
-              fill={
-                insertion < 30
-                  ? "#f87171"
-                  : insertion < 70
-                    ? "#4ade80"
-                    : "#60a5fa"
-              }
+              fill={powerColor}
               fontSize="13"
               fontWeight="bold"
               fontFamily="monospace"
@@ -472,11 +511,11 @@ export default function ReactorCrossSection() {
               {power.label}
             </text>
 
-            {/* Safety note */}
+            {/* Scale note */}
             <text
               x={PV_X}
               y={V_H - 10}
-              fill="#6b7280"
+              fill="#4b5563"
               fontSize="8"
               fontFamily="sans-serif"
             >
@@ -547,15 +586,18 @@ export default function ReactorCrossSection() {
 
         {/* Labels toggle */}
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowLabels((v) => !v)}
-            data-ocid="reactor-viz.toggle_labels_button"
-            aria-pressed={showLabels}
-          >
-            {showLabels ? "Hide Labels" : "Show Labels"}
-          </Button>
+          <div className="flex items-center gap-1 rounded-full border border-border bg-card/80 backdrop-blur-sm px-2 py-1 shadow-sm">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="rounded-full h-7 px-3 text-xs"
+              onClick={() => setShowLabels((v) => !v)}
+              data-ocid="reactor-viz.toggle_labels_button"
+              aria-pressed={showLabels}
+            >
+              {showLabels ? "Hide Labels" : "Show Labels"}
+            </Button>
+          </div>
           <span className="text-sm text-muted-foreground">
             {showLabels
               ? "Click to hide diagram labels"

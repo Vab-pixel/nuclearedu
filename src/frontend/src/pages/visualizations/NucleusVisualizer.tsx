@@ -1,14 +1,17 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { nuclides } from "@/data/nuclides";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Minus, Plus } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import {
   Component,
   type ErrorInfo,
   type ReactNode,
   Suspense,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -117,13 +120,41 @@ function NucleusScene({
   );
 }
 
-function CameraAdjuster({ total }: { total: number }) {
+// Imperative camera distance controller driven by targetDist prop
+function CameraController({
+  total,
+  targetDist,
+  onDistChange,
+}: {
+  total: number;
+  targetDist: number;
+  onDistChange: (d: number) => void;
+}) {
   const { camera } = useThree();
+  const initialised = useRef(false);
+
+  // Set camera on first mount / total change
   useEffect(() => {
     const dist = Math.max(6, 2.5 * Math.cbrt(total) + 3);
     camera.position.set(0, 0, dist);
     camera.updateProjectionMatrix();
-  }, [camera, total]);
+    onDistChange(dist);
+    initialised.current = false;
+  }, [camera, total, onDistChange]);
+
+  // Smoothly lerp camera toward targetDist
+  useFrame(() => {
+    if (!initialised.current) {
+      // Snap on first frame after reset
+      initialised.current = true;
+    }
+    const current = camera.position.length();
+    if (Math.abs(current - targetDist) > 0.01) {
+      const next = THREE.MathUtils.lerp(current, targetDist, 0.12);
+      camera.position.normalize().multiplyScalar(next);
+    }
+  });
+
   return null;
 }
 
@@ -188,7 +219,7 @@ function StaticNucleusDiagram({ Z, N }: { Z: number; N: number }) {
   const el = getElement(Z);
   const A = Z + N;
   return (
-    <div className="flex flex-col items-center justify-center gap-4 bg-card rounded-xl border border-border p-8">
+    <div className="flex flex-col items-center justify-center gap-4 bg-card rounded-xl border border-border p-8 h-full">
       <svg
         width="200"
         height="200"
@@ -259,10 +290,15 @@ function StaticNucleusDiagram({ Z, N }: { Z: number; N: number }) {
   );
 }
 
+const ZOOM_MIN = 3;
+const ZOOM_MAX = 30;
+const ZOOM_STEP = 2;
+
 export default function NucleusVisualizer() {
   const [Z, setZ] = useState(92);
   const [N, setN] = useState(146);
   const [interacting, setInteracting] = useState(false);
+  const [cameraTarget, setCameraTarget] = useState(10);
   const prefersReduced = useReducedMotion();
   const el = getElement(Z);
   const A = Z + N;
@@ -270,6 +306,15 @@ export default function NucleusVisualizer() {
   const found = nuclides.find((n) => n.Z === Z && n.N === N);
 
   const ariaLabel = `3D nucleus of ${el.name}-${A}: ${Z} protons (red), ${N} neutrons (blue). Stability: ${stability}.`;
+
+  const handleDistChange = useCallback((d: number) => {
+    setCameraTarget(d);
+  }, []);
+
+  const zoomIn = () =>
+    setCameraTarget((d) => Math.max(ZOOM_MIN, d - ZOOM_STEP));
+  const zoomOut = () =>
+    setCameraTarget((d) => Math.min(ZOOM_MAX, d + ZOOM_STEP));
 
   return (
     <div
@@ -309,7 +354,6 @@ export default function NucleusVisualizer() {
             <StaticNucleusDiagram Z={Z} N={N} />
           ) : (
             <WebGLErrorBoundary fallback={<StaticNucleusDiagram Z={Z} N={N} />}>
-              {/* Accessible wrapper — R3F doesn't guarantee aria attr forwarding to canvas */}
               <div role="img" aria-label={ariaLabel} className="w-full h-full">
                 <Canvas
                   shadows
@@ -319,7 +363,11 @@ export default function NucleusVisualizer() {
                   onPointerUp={() => setInteracting(false)}
                 >
                   <Suspense fallback={null}>
-                    <CameraAdjuster total={Z + N} />
+                    <CameraController
+                      total={Z + N}
+                      targetDist={cameraTarget}
+                      onDistChange={handleDistChange}
+                    />
                     <NucleusScene
                       Z={Z}
                       N={N}
@@ -328,8 +376,8 @@ export default function NucleusVisualizer() {
                     <OrbitControls
                       enablePan={false}
                       enableZoom
-                      minDistance={3}
-                      maxDistance={30}
+                      minDistance={ZOOM_MIN}
+                      maxDistance={ZOOM_MAX}
                       makeDefault
                     />
                   </Suspense>
@@ -337,12 +385,15 @@ export default function NucleusVisualizer() {
               </div>
             </WebGLErrorBoundary>
           )}
-          {/* Overlay label */}
+
+          {/* Nucleus label */}
           <div className="absolute top-3 left-3 pointer-events-none">
             <span className="rounded-lg bg-card/80 backdrop-blur-sm border border-border px-3 py-1.5 text-sm font-mono font-bold text-foreground">
               {el.symbol}-{A}
             </span>
           </div>
+
+          {/* Stability badge */}
           <div className="absolute top-3 right-3 pointer-events-none">
             <span
               className={`rounded-lg px-3 py-1.5 text-xs font-semibold border ${stability === "stable" ? "bg-emerald-400/20 text-emerald-300 border-emerald-400/30" : "bg-amber-400/20 text-amber-300 border-amber-400/30"}`}
@@ -350,6 +401,41 @@ export default function NucleusVisualizer() {
               {stability === "stable" ? "Stable" : "Unstable"}
             </span>
           </div>
+
+          {/* Zoom controls overlay */}
+          {!prefersReduced && (
+            <div
+              className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full border border-border bg-card/80 backdrop-blur-sm px-2 py-1 shadow-sm"
+              role="toolbar"
+              aria-label="Camera zoom controls"
+            >
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 rounded-full p-0"
+                onClick={zoomIn}
+                aria-label="Zoom in (move camera closer)"
+                data-ocid="nucleus-viz.zoom_in_button"
+                disabled={cameraTarget <= ZOOM_MIN}
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
+              <span className="font-mono text-xs text-muted-foreground px-0.5 select-none">
+                zoom
+              </span>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 rounded-full p-0"
+                onClick={zoomOut}
+                aria-label="Zoom out (move camera further)"
+                data-ocid="nucleus-viz.zoom_out_button"
+                disabled={cameraTarget >= ZOOM_MAX}
+              >
+                <Minus className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Controls */}
@@ -505,8 +591,8 @@ export default function NucleusVisualizer() {
             Neutron (no charge)
           </div>
           <p className="w-full text-xs">
-            Tip: Click and drag to rotate. Scroll to zoom. Use sliders to change
-            the nucleus.
+            Tip: Click and drag to rotate. Scroll or use ± buttons to zoom. Use
+            sliders to change the nucleus.
           </p>
         </div>
       </div>
