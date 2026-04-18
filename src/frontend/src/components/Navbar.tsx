@@ -2,7 +2,17 @@ import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
 import type { AudienceLevel } from "@/store/useAppStore";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Atom, ChevronDown, FlaskConical, Menu, X } from "lucide-react";
+import {
+  Atom,
+  ChevronDown,
+  FlaskConical,
+  GraduationCap,
+  Menu,
+  Newspaper,
+  ShieldCheck,
+  Wrench,
+  X,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 
@@ -22,6 +32,20 @@ const vizLinks = [
   { label: "Reactor Cross-Section", href: "/visualizations/reactor" },
 ];
 
+const toolLinks = [
+  { label: "Data Explorer", href: "/tools/data-explorer" },
+  { label: "Isotope Comparison", href: "/tools/isotope-comparison" },
+  { label: "Dosimetry Calculator", href: "/tools/dosimetry-calculator" },
+];
+
+const safetyLinks = [
+  { label: "Safety Principles", href: "/safety/principles" },
+  { label: "Regulation", href: "/safety/regulation" },
+  { label: "Accident Analysis", href: "/safety/accidents" },
+  { label: "Waste Management", href: "/safety/waste-management" },
+  { label: "Radiation Safety", href: "/safety/radiation" },
+];
+
 const audienceOptions: {
   value: AudienceLevel;
   label: string;
@@ -36,6 +60,8 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [audienceOpen, setAudienceOpen] = useState(false);
   const [vizOpen, setVizOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const [safetyOpen, setSafetyOpen] = useState(false);
   const { audienceLevel, setAudienceLevel } = useAppStore();
   const routerState = useRouterState();
   const pathname = routerState.location.pathname;
@@ -56,6 +82,8 @@ export function Navbar() {
   }
 
   const isVizActive = pathname.startsWith("/visualizations");
+  const isToolsActive = pathname.startsWith("/tools");
+  const isSafetyActive = pathname.startsWith("/safety");
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-sm">
@@ -183,6 +211,194 @@ export function Navbar() {
               />
             )}
           </div>
+
+          {/* Safety dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setSafetyOpen((v) => !v)}
+              className={cn(
+                "relative flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors glow-focus",
+                isSafetyActive
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+              aria-expanded={safetyOpen}
+              aria-haspopup="true"
+              data-ocid="nav.safety_dropdown"
+            >
+              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+              Safety
+              <ChevronDown
+                className={cn(
+                  "h-3.5 w-3.5 transition-transform",
+                  safetyOpen && "rotate-180",
+                )}
+                aria-hidden="true"
+              />
+              {isSafetyActive && (
+                <motion.div
+                  layoutId="nav-underline"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-primary"
+                />
+              )}
+            </button>
+            <AnimatePresence>
+              {safetyOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 top-full mt-2 w-52 rounded-lg border border-border bg-popover p-1 shadow-elevated"
+                  role="menu"
+                  aria-label="Safety pages"
+                >
+                  {safetyLinks.map((s) => (
+                    <Link
+                      key={s.href}
+                      to={s.href}
+                      role="menuitem"
+                      onClick={() => setSafetyOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted glow-focus",
+                        pathname === s.href
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground",
+                      )}
+                      data-ocid={`nav.safety_${s.label.toLowerCase().replace(/\s+/g, "_")}_link`}
+                    >
+                      {s.label}
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {safetyOpen && (
+              <div
+                className="fixed inset-0 z-[-1]"
+                onClick={() => setSafetyOpen(false)}
+                onKeyDown={(e) => e.key === "Escape" && setSafetyOpen(false)}
+                aria-hidden="true"
+              />
+            )}
+          </div>
+
+          {/* Tools dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setToolsOpen((v) => !v)}
+              className={cn(
+                "relative flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors glow-focus",
+                isToolsActive
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+              aria-expanded={toolsOpen}
+              aria-haspopup="true"
+              data-ocid="nav.tools_dropdown"
+            >
+              <Wrench className="h-3.5 w-3.5" aria-hidden="true" />
+              Tools
+              <ChevronDown
+                className={cn(
+                  "h-3.5 w-3.5 transition-transform",
+                  toolsOpen && "rotate-180",
+                )}
+                aria-hidden="true"
+              />
+              {isToolsActive && (
+                <motion.div
+                  layoutId="nav-underline"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-primary"
+                />
+              )}
+            </button>
+            <AnimatePresence>
+              {toolsOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 top-full mt-2 w-52 rounded-lg border border-border bg-popover p-1 shadow-elevated"
+                  role="menu"
+                  aria-label="Tools"
+                >
+                  {toolLinks.map((t) => (
+                    <Link
+                      key={t.href}
+                      to={t.href}
+                      role="menuitem"
+                      onClick={() => setToolsOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted glow-focus",
+                        pathname === t.href
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground",
+                      )}
+                      data-ocid={`nav.tool_${t.label.toLowerCase().replace(/\s+/g, "_")}_link`}
+                    >
+                      {t.label}
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {toolsOpen && (
+              <div
+                className="fixed inset-0 z-[-1]"
+                onClick={() => setToolsOpen(false)}
+                onKeyDown={(e) => e.key === "Escape" && setToolsOpen(false)}
+                aria-hidden="true"
+              />
+            )}
+          </div>
+
+          {/* Learning Lab */}
+          <Link
+            to="/learning-lab"
+            data-ocid="nav.learning_lab_link"
+            className={cn(
+              "relative px-3 py-2 text-sm font-medium rounded-md transition-colors glow-focus flex items-center gap-1",
+              isNavActive("/learning-lab/index")
+                ? "text-primary"
+                : pathname.startsWith("/learning-lab")
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
+            Learning Lab
+            {pathname.startsWith("/learning-lab") && (
+              <motion.div
+                layoutId="nav-underline"
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-primary"
+              />
+            )}
+          </Link>
+
+          {/* News & Research */}
+          <Link
+            to="/news"
+            data-ocid="nav.news_link"
+            className={cn(
+              "relative px-3 py-2 text-sm font-medium rounded-md transition-colors glow-focus flex items-center gap-1",
+              pathname === "/news"
+                ? "text-primary"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <Newspaper className="h-3.5 w-3.5" aria-hidden="true" />
+            News
+            {pathname === "/news" && (
+              <motion.div
+                layoutId="nav-underline"
+                className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-primary"
+              />
+            )}
+          </Link>
         </nav>
 
         {/* Audience Selector */}
@@ -327,6 +543,98 @@ export function Navbar() {
                     {v.label}
                   </Link>
                 ))}
+              </div>
+
+              {/* Mobile Tools */}
+              <div className="mt-1 border-t border-border pt-2">
+                <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                  Tools
+                </p>
+                {toolLinks.map((t) => (
+                  <Link
+                    key={t.href}
+                    to={t.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors hover:bg-muted glow-focus",
+                      pathname === t.href
+                        ? "bg-muted text-primary"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                    data-ocid={`nav.mobile_tool_${t.label.toLowerCase().replace(/\s+/g, "_")}_link`}
+                  >
+                    <Wrench
+                      className="h-3.5 w-3.5 shrink-0"
+                      aria-hidden="true"
+                    />
+                    {t.label}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Mobile Safety */}
+              <div className="mt-1 border-t border-border pt-2">
+                <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                  Safety
+                </p>
+                {safetyLinks.map((s) => (
+                  <Link
+                    key={s.href}
+                    to={s.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors hover:bg-muted glow-focus",
+                      pathname === s.href
+                        ? "bg-muted text-primary"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                    data-ocid={`nav.mobile_safety_${s.label.toLowerCase().replace(/\s+/g, "_")}_link`}
+                  >
+                    <ShieldCheck
+                      className="h-3.5 w-3.5 shrink-0"
+                      aria-hidden="true"
+                    />
+                    {s.label}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Mobile Learning Lab & News */}
+              <div className="mt-1 border-t border-border pt-2">
+                <Link
+                  to="/learning-lab"
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-md transition-colors glow-focus",
+                    pathname.startsWith("/learning-lab")
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                  )}
+                  data-ocid="nav.mobile_learning_lab_link"
+                >
+                  <GraduationCap
+                    className="h-3.5 w-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
+                  Learning Lab
+                </Link>
+                <Link
+                  to="/news"
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-md transition-colors glow-focus",
+                    pathname === "/news"
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                  )}
+                  data-ocid="nav.mobile_news_link"
+                >
+                  <Newspaper
+                    className="h-3.5 w-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
+                  News & Research
+                </Link>
               </div>
 
               <div className="mt-2 border-t border-border pt-3">

@@ -18,8 +18,10 @@ import {
   HelpCircle,
   Microscope,
   Network,
+  Newspaper,
   Shield,
   Users,
+  Wrench,
   Zap,
 } from "lucide-react";
 import { motion } from "motion/react";
@@ -103,6 +105,36 @@ const topicCards = [
     href: "/visualizations/nuclide-chart",
     color: "text-cyan-400",
     bgColor: "bg-cyan-400/10 border-cyan-400/20",
+    available: true,
+  },
+  {
+    icon: Wrench,
+    title: "Interactive Tools",
+    description:
+      "Sortable isotope data tables, side-by-side isotope comparison, and an interactive radiation dosimetry calculator.",
+    href: "/tools/data-explorer",
+    color: "text-teal-400",
+    bgColor: "bg-teal-400/10 border-teal-400/20",
+    available: true,
+  },
+  {
+    icon: GraduationCap,
+    title: "Learning Lab",
+    description:
+      "Test your knowledge with topic quizzes covering nuclear basics, reactions, reactor design, radiation, and more.",
+    href: "/learning-lab",
+    color: "text-indigo-400",
+    bgColor: "bg-indigo-400/10 border-indigo-400/20",
+    available: true,
+  },
+  {
+    icon: Newspaper,
+    title: "News & Research",
+    description:
+      "Latest developments in nuclear science — fusion milestones, reactor deployments, regulatory updates, and peer-reviewed research.",
+    href: "/news",
+    color: "text-pink-400",
+    bgColor: "bg-pink-400/10 border-pink-400/20",
     available: true,
   },
 ];
@@ -404,8 +436,8 @@ export default function Home() {
               Explore by Topic
             </h2>
             <p className="mt-2 text-muted-foreground">
-              Eight subject areas — from fundamental physics to safety, policy,
-              and history
+              Eleven subject areas — from fundamental physics to tools,
+              learning, and the latest research
             </p>
           </motion.div>
 

@@ -2010,6 +2010,841 @@ export default function AdvancedReactors() {
           </SubSection>
         </Collapsible>
 
+        {/* NEW Section: What Are SMRs? */}
+        <Collapsible
+          title="What Are Small Modular Reactors (SMRs)?"
+          badge="Public"
+          badgeVariant="outline"
+          icon={<Zap className="h-5 w-5" />}
+          id="smr-overview"
+        >
+          <p className="text-muted-foreground text-sm mb-5">
+            Small Modular Reactors represent a fundamentally different
+            deployment philosophy from the large gigawatt-scale nuclear plants
+            that defined the industry since the 1960s. Rather than seeking
+            economies of scale through size, SMRs seek economies of numbers
+            through standardised factory production and modular deployment.
+          </p>
+
+          <div className="grid sm:grid-cols-4 gap-4 mb-5">
+            <InfoCard
+              label="Max Size"
+              value="<300 MWe"
+              sub="IAEA SMR definition"
+            />
+            <InfoCard
+              label="Construction"
+              value="Factory"
+              sub="Not on-site build"
+            />
+            <InfoCard
+              label="Time to Grid"
+              value="3–5 yr"
+              sub="vs 10–15 yr large LWR"
+            />
+            <InfoCard
+              label="First Certified"
+              value="Sep 2022"
+              sub="NuScale VOYGR (NRC)"
+            />
+          </div>
+
+          <SubSection title="Definition and Key Characteristics" id="smr-def">
+            <p className="text-muted-foreground mb-3">
+              The IAEA defines SMRs as nuclear reactors generating less than 300
+              MWe of electrical power. The broader category includes{" "}
+              <strong className="text-foreground">
+                Advanced Small Modular Reactors
+              </strong>{" "}
+              (ASMRs) which incorporate Generation IV technologies, and
+              microreactors (&lt;10 MWe).
+              <Citation
+                id={17}
+                text="IAEA (2022). Advances in Small Modular Reactor Technology Developments. IAEA-TECDOC-2006."
+              />
+            </p>
+            <ul className="space-y-2 list-disc list-inside text-sm text-muted-foreground">
+              <li>
+                <span className="font-medium text-foreground">
+                  Factory-fabricated modules:
+                </span>{" "}
+                Major components manufactured in controlled factory environments
+                and shipped to site by rail, barge, or truck. Factory
+                manufacture reduces construction time by 2–3× and reduces site
+                labour costs.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">
+                  Modular scalability:
+                </span>{" "}
+                Sites can deploy 1–12 modules incrementally, adding capacity as
+                demand grows. Capital investment is spread over time rather than
+                front-loaded; revenue begins while subsequent modules are
+                constructed.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">
+                  Passive safety systems:
+                </span>{" "}
+                Most SMR designs rely on natural circulation, gravity-fed water,
+                and inherent negative reactivity feedbacks for decay heat
+                removal — eliminating reliance on AC power, pumps, and operator
+                action for safe shutdown. Emergency planning zones (EPZs) may be
+                much smaller than for large LWRs.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">
+                  Load-following capability:
+                </span>{" "}
+                SMRs can ramp output from 20% to 100% rated power over hours,
+                enabling flexible grid integration with variable renewables.
+                Large baseload nuclear plants are optimised for constant output,
+                making them economically poor matches with high-penetration
+                solar/wind grids.
+              </li>
+            </ul>
+          </SubSection>
+
+          <SubSection title="Applications Beyond Electricity" id="smr-apps">
+            <div className="grid sm:grid-cols-2 gap-4 mb-3">
+              {[
+                {
+                  name: "Remote communities",
+                  desc: "Off-grid communities in Canada, Alaska, and the Arctic currently pay $0.30–1.00/kWh for diesel generation; a small nuclear plant could deliver power at $0.10–0.15/kWh while providing energy security and eliminating diesel logistics.",
+                },
+                {
+                  name: "Industrial process heat",
+                  desc: "Desalination, hydrogen production, district heating, ammonia synthesis, and steel manufacturing require high-temperature heat (150–1,000 °C). HTGR-class SMRs provide 750–1000 °C outlet temperatures suitable for thermochemical hydrogen production.",
+                },
+                {
+                  name: "Decarbonising heavy industry",
+                  desc: "Cement, steel, and chemical production collectively represent ~30% of global CO₂ emissions. These industries require reliable, high-temperature heat that renewables cannot directly provide. High-temperature SMRs offer a pathway.",
+                },
+                {
+                  name: "Ship propulsion",
+                  desc: "Naval vessels (submarines, aircraft carriers) have used nuclear propulsion since 1955. Commercial shipping represents ~3% of global CO₂ emissions; compact SMRs designed for marine use could eliminate bunker fuel emissions for large cargo vessels.",
+                },
+              ].map((v) => (
+                <div
+                  key={v.name}
+                  className="rounded-lg bg-muted/20 border border-border p-4 text-sm"
+                >
+                  <div className="font-semibold text-foreground mb-1">
+                    {v.name}
+                  </div>
+                  <div className="text-muted-foreground">{v.desc}</div>
+                </div>
+              ))}
+            </div>
+          </SubSection>
+
+          <SubSection
+            title="Licensing Status and Regulatory Milestones"
+            id="smr-licensing"
+          >
+            <DataTable
+              headers={["Design", "Country", "Regulator", "Status", "Year"]}
+              rows={[
+                {
+                  key: "nuscale-cert",
+                  cells: [
+                    "NuScale VOYGR (77 MWe)",
+                    "USA",
+                    "NRC",
+                    "Standard Design Approval (SDA) granted — first SMR ever NRC-certified",
+                    "Sep 2022",
+                  ],
+                },
+                {
+                  key: "nuscale-uamps",
+                  cells: [
+                    "NuScale VOYGR (CFPP)",
+                    "USA",
+                    "NRC",
+                    "Utah Associated Municipal Power Systems (UAMPS) project cancelled — cost escalation to ~$89/MWh",
+                    "Nov 2023",
+                  ],
+                },
+                {
+                  key: "bwrx-canada",
+                  cells: [
+                    "GE-Hitachi BWRX-300",
+                    "Canada",
+                    "CNSC",
+                    "Vendor Design Review Phase 2 completed; Ontario Power Generation plans deployment at Darlington",
+                    "2023–2028",
+                  ],
+                },
+                {
+                  key: "rr-uk",
+                  cells: [
+                    "Rolls-Royce SMR (470 MWe)",
+                    "UK",
+                    "ONR/EA",
+                    "Generic Design Assessment (GDA) Step 1 entered; UK government £2.5B investment fund",
+                    "2022+",
+                  ],
+                },
+                {
+                  key: "aps-us",
+                  cells: [
+                    "Westinghouse AP300",
+                    "USA",
+                    "NRC",
+                    "Pre-application review ongoing; based on proven AP1000 technology",
+                    "2023+",
+                  ],
+                },
+              ]}
+            />
+          </SubSection>
+        </Collapsible>
+
+        {/* NEW Section: Light Water SMR Designs */}
+        <Collapsible
+          title="Light Water SMR Designs: Technology Deep-Dive"
+          badge="Intermediate"
+          badgeVariant="secondary"
+          icon={<FlaskConical className="h-5 w-5" />}
+          id="lwr-smr"
+        >
+          <p className="text-muted-foreground text-sm mb-4">
+            Light-water SMRs use proven PWR or BWR technology in a smaller,
+            simplified, factory-buildable form factor. They benefit from
+            extensive operational experience with LWR technology, established
+            fuel supply chains, and existing regulatory familiarity — reducing
+            licensing risk compared to non-LWR designs.
+          </p>
+
+          <SubSection
+            title="NuScale VOYGR: Integral PWR Design"
+            id="nuscale-detail"
+          >
+            <div className="grid sm:grid-cols-3 gap-3 mb-4">
+              <InfoCard
+                label="Power/Module"
+                value="77 MWe"
+                sub="250 MWth thermal"
+              />
+              <InfoCard
+                label="Max Modules"
+                value="12"
+                sub="924 MWe total site"
+              />
+              <InfoCard
+                label="Cooling"
+                value="Natural"
+                sub="No primary pumps"
+              />
+            </div>
+            <p className="text-muted-foreground mb-3">
+              The NuScale VOYGR integrates the entire primary system — reactor
+              core, helical-coil steam generators, and pressurizer — into a
+              single sealed 4.6 m × 23 m cylindrical module. The entire module
+              sits submerged in a water-filled below-grade pool, providing
+              passive decay heat removal indefinitely without operator action.
+              <Citation
+                id={18}
+                text="NuScale Power LLC (2022). NuScale Power Module Technology Overview. NRC Submission."
+              />
+            </p>
+            <Equation
+              formula="ΔT_driving ≈ T_core - T_pool  ⟹  ṁ_natural_circ = f(ΔT, geometry, friction)"
+              label="Natural circulation flow rate is driven by temperature differential; higher core power → higher ΔT → increased flow — self-regulating feedback"
+              note="Natural circulation eliminates all primary pumps, reducing maintenance, cost, and failure modes. At 77 MWe scale, natural circulation provides adequate heat removal without forced flow."
+            />
+            <div className="mt-3 text-muted-foreground text-sm">
+              <div className="font-semibold text-foreground mb-2">
+                Key Specifications
+              </div>
+              <div className="grid sm:grid-cols-2 gap-1">
+                {[
+                  [
+                    "Operating pressure",
+                    "12.8 MPa (lower than standard 15.5 MPa PWR)",
+                  ],
+                  ["Coolant outlet temperature", "~300 °C"],
+                  ["Fuel enrichment", "4.95% U-235 (below 5% limit)"],
+                  ["Refueling interval", "24-month cycle"],
+                  ["Design lifetime", "60 years"],
+                  [
+                    "Emergency planning zone",
+                    "Potentially within site boundary",
+                  ],
+                ].map(([k, v]) => (
+                  <div key={String(k)} className="rounded bg-muted/20 p-2">
+                    <span className="font-medium text-foreground text-xs">
+                      {k}:{" "}
+                    </span>
+                    <span className="text-xs">{v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </SubSection>
+
+          <SubSection title="GE-Hitachi BWRX-300" id="bwrx">
+            <div className="grid sm:grid-cols-3 gap-3 mb-4">
+              <InfoCard label="Power" value="300 MWe" sub="870 MWth thermal" />
+              <InfoCard
+                label="Type"
+                value="Boiling BWR"
+                sub="Simplified ESBWR"
+              />
+              <InfoCard
+                label="Simplification"
+                value="~90%"
+                sub="Fewer pumps/valves vs ESBWR"
+              />
+            </div>
+            <p className="text-muted-foreground mb-3">
+              The BWRX-300 is a 300 MWe boiling water SMR representing a 90%
+              simplification in the number of safety-system components compared
+              to the ESBWR (Economic Simplified BWR). GE-Hitachi claims a 50%
+              cost reduction per kWe relative to the ESBWR baseline. Critically,
+              the design uses{" "}
+              <strong className="text-foreground">
+                existing ESBWR fuel and materials qualification data
+              </strong>{" "}
+              — reducing licensing uncertainty.
+              <Citation
+                id={19}
+                text="GE-Hitachi Nuclear Energy (2023). BWRX-300 Small Modular Reactor Technology Overview. NRC Pre-application Review."
+              />
+            </p>
+            <ul className="space-y-1 list-disc list-inside text-sm text-muted-foreground">
+              <li>
+                Passive decay heat removal: gravity-fed water from elevated tank
+                provides 72+ hours without AC power or operator action
+              </li>
+              <li>
+                Simplified containment: 1/10 the volume of ESBWR containment —
+                enables underground construction ("pool-in-ground" concept)
+              </li>
+              <li>
+                Ontario Power Generation contracted GEH to site BWRX-300 at
+                Darlington, Ontario — likely first commercial BWRX-300
+                deployment (~2028–2032)
+              </li>
+            </ul>
+          </SubSection>
+
+          <SubSection title="Rolls-Royce SMR (470 MWe, UK)" id="rr-smr">
+            <p className="text-muted-foreground mb-3">
+              The Rolls-Royce SMR is a 470 MWe factory-built PWR designed
+              specifically for the UK market. Unlike most SMRs, it targets a
+              larger power output (470 MWe approaches the lower bound of "large"
+              reactor territory) while still claiming factory-build economics.
+              The UK government committed up to £2.5 billion in 2023 to an
+              advanced nuclear fund, with Rolls-Royce SMR as a primary
+              beneficiary.
+            </p>
+            <ul className="space-y-1 list-disc list-inside text-sm text-muted-foreground">
+              <li>
+                Modular factory-build: entire nuclear island manufactured in a
+                purpose-built factory (planned for Rotherham, UK) and shipped by
+                road/rail
+              </li>
+              <li>
+                Target: 16 units at £1.8B per unit by the 10th unit (learning
+                rate); equivalent to ~£3,900/kWe installed
+              </li>
+              <li>
+                Generic Design Assessment (GDA) with UK ONR/EA entered 2022;
+                expected completion ~2028 before construction licensing
+              </li>
+            </ul>
+          </SubSection>
+
+          <SubSection title="KAERI i-SMR (South Korea, 170 MWe)" id="ismr">
+            <p className="text-muted-foreground mb-3">
+              The i-SMR (innovative-Small Modular Reactor) from the Korea Atomic
+              Energy Research Institute (KAERI) is a 170 MWe integral PWR
+              incorporating passive safety systems informed by operational
+              experience with the Korean SMART reactor (System-integrated
+              Modular Advanced ReacTor, 100 MWth, licensed 2012 — the world's
+              first dedicated SMR regulatory approval, though not yet built
+              commercially). The i-SMR incorporates 4× passive safety trains,
+              72-hour grace period without operator action, and a 36-month
+              refueling cycle using 4.95% enriched UO₂.
+            </p>
+          </SubSection>
+        </Collapsible>
+
+        {/* NEW Section: Non-LWR Advanced SMRs */}
+        <Collapsible
+          title="Non-LWR Advanced SMRs: HTGRs, Sodium Fast, Molten Salt, Microreactors"
+          badge="Advanced"
+          badgeVariant="destructive"
+          icon={<Atom className="h-5 w-5" />}
+          id="non-lwr-smr"
+        >
+          <p className="text-muted-foreground text-sm mb-4">
+            Advanced non-LWR SMRs apply Generation IV coolants, fuels, and
+            operating temperatures to the SMR size class. They offer
+            significantly higher thermal efficiency, broader industrial heat
+            applications, and in some cases substantially different safety
+            characteristics — but face greater licensing uncertainty due to
+            novel technologies.
+          </p>
+
+          <SubSection
+            title="X-energy Xe-100 (80 MWe Pebble-Bed HTGR)"
+            id="xe100-detail"
+          >
+            <div className="grid sm:grid-cols-3 gap-3 mb-4">
+              <InfoCard label="Power" value="80 MWe" sub="200 MWth thermal" />
+              <InfoCard label="Coolant" value="Helium" sub="750 °C outlet" />
+              <InfoCard
+                label="Fuel"
+                value="TRISO Pebbles"
+                sub="Ceramic-coated spheres"
+              />
+            </div>
+            <p className="text-muted-foreground mb-3">
+              X-energy's Xe-100 is a pebble-bed HTGR using graphite-matrix
+              TRISO-fueled pebbles circulating through a 200 MWth core. Selected
+              by the US Department of Energy Advanced Reactor Demonstration
+              Program (ARDP) in 2020, with DOE cost-sharing of up to $80M.
+              Target applications include electricity generation, industrial
+              process heat, and high-temperature hydrogen production.
+              <Citation
+                id={20}
+                text="X-energy (2023). Xe-100 Reactor Design Overview. US NRC Pre-application Meeting."
+              />
+            </p>
+            <ul className="space-y-1 list-disc list-inside text-sm text-muted-foreground">
+              <li>
+                TRISO fuel: SiC-coated kernels retain fission products at up to
+                1,600 °C — temperatures unreachable in any credible accident
+                scenario
+              </li>
+              <li>
+                Passive decay heat removal: graphite heat capacity and thermal
+                conductivity allow the core to cool without active systems
+              </li>
+              <li>
+                Hydrogen potential: 750 °C He outlet drives thermochemical
+                hydrogen production via sulfur-iodine cycle or high-temperature
+                steam electrolysis (&gt;40% efficiency vs ~60% energy cost for
+                PEM electrolysis)
+              </li>
+              <li>
+                Target: demonstration plant at Dow Chemical Seadrift, Texas
+                (~2028)
+              </li>
+            </ul>
+          </SubSection>
+
+          <SubSection
+            title="TerraPower Natrium (345 MWe Sodium Fast + Storage)"
+            id="natrium"
+          >
+            <div className="grid sm:grid-cols-3 gap-3 mb-4">
+              <InfoCard
+                label="Power"
+                value="345–500 MWe"
+                sub="With storage peak"
+              />
+              <InfoCard
+                label="Type"
+                value="SFR + MSS"
+                sub="Sodium fast + molten salt storage"
+              />
+              <InfoCard
+                label="Storage"
+                value="~13 GWh"
+                sub="Molten salt thermal storage"
+              />
+            </div>
+            <p className="text-muted-foreground mb-3">
+              Natrium is a collaborative design from TerraPower and GE-Hitachi,
+              featuring a 345 MWe sodium-cooled fast reactor integrated with a
+              large molten salt energy storage system (MSES). The unique
+              feature: when electricity demand is low, excess reactor heat
+              charges the molten salt storage; during demand peaks, the MSES
+              boosts electrical output to ~500 MWe — enabling a baseload reactor
+              to behave as a dispatchable peaker.
+              <Citation
+                id={21}
+                text="TerraPower (2023). Natrium Advanced Reactor Technology. TerraPower Technical Presentation."
+              />
+            </p>
+            <div className="bg-muted/30 rounded-lg p-4 my-3 text-sm">
+              <div className="font-semibold text-foreground mb-2">
+                Natrium Grid Integration Advantage
+              </div>
+              <p className="text-muted-foreground">
+                A 345 MWe baseload reactor with 13 GWh of thermal storage can
+                deliver up to 500 MWe for ~26 hours — providing both reliable
+                baseload and flexible peaking capacity from a single plant. This
+                "nuclear battery" concept could replace both a baseload coal
+                plant and a natural gas peaker simultaneously.
+              </p>
+            </div>
+            <p className="text-muted-foreground text-sm">
+              First-of-a-kind demonstration project at the Natrium site in
+              Kemmerer, Wyoming (site of a retiring coal plant) — DOE ARDP
+              awardee. Target operation ~2028–2030. Bill Gates is the principal
+              investor via TerraPower.
+            </p>
+          </SubSection>
+
+          <SubSection title="Molten Salt Reactor SMRs" id="msr-smr">
+            <div className="grid sm:grid-cols-2 gap-3 mb-3">
+              {[
+                {
+                  name: "Kairos Power KP-FHR (140 MWe)",
+                  desc: "Fluoride-salt-cooled High-temperature Reactor (FHR): TRISO pebble fuel in molten FLiBe (LiF-BeF₂) coolant at atmospheric pressure, 650 °C. Demonstration construction permit approved by NRC in 2023 for Hermes reduced-scale test reactor at Oak Ridge — first NRC construction permit for a non-LWR in 50 years.",
+                },
+                {
+                  name: "Terrestrial Energy IMSR-400 (195 MWe)",
+                  desc: "Integral Molten Salt Reactor with uranium tetrafluoride dissolved in molten salt carrier. Operates at atmospheric pressure, 600–650 °C. Liquid fuel enables online fission product removal. 7-year fuel and core cassette replaced as a unit. Pre-licensing engagement with CNSC (Canada) ongoing.",
+                },
+              ].map((v) => (
+                <div
+                  key={v.name}
+                  className="rounded-lg bg-muted/30 border border-border p-4 text-sm"
+                >
+                  <div className="font-semibold text-foreground mb-1">
+                    {v.name}
+                  </div>
+                  <div className="text-muted-foreground">{v.desc}</div>
+                </div>
+              ))}
+            </div>
+          </SubSection>
+
+          <SubSection
+            title="Microreactors (<10 MWe): eVinci, Oklo, Space"
+            id="micro-smr"
+          >
+            <p className="text-muted-foreground mb-3">
+              The smallest category — microreactors below 10 MWe — pushes
+              nuclear toward applications previously served only by diesel
+              generators. All current designs use{" "}
+              <strong className="text-foreground">heat pipe cooling</strong> —
+              passive, pump-free heat transport via evaporation/condensation in
+              sealed metal tubes:
+            </p>
+            <DataTable
+              headers={[
+                "Design",
+                "Power",
+                "Fuel",
+                "Cooling",
+                "Target Application",
+              ]}
+              rows={[
+                {
+                  key: "evinci",
+                  cells: [
+                    "Westinghouse eVinci",
+                    "5 MWe",
+                    "TRISO (~40% enriched)",
+                    "Heat pipes (sodium/potassium)",
+                    "Remote communities; mining sites; military; ~3-year factory build",
+                  ],
+                },
+                {
+                  key: "oklo",
+                  cells: [
+                    "Oklo Aurora",
+                    "1.5 MWe",
+                    "Metallic HEU (~20%)",
+                    "Heat pipes",
+                    "Data centres; remote sites; DOE INL license application 2021 (denied 2022 — insufficient safety analysis data)",
+                  ],
+                },
+                {
+                  key: "usnc",
+                  cells: [
+                    "Ultra Safe Nuclear MMRP",
+                    "5 MWe",
+                    "TRISO prismatic (USNC)",
+                    "Heat pipes",
+                    "Remote Alaska communities; 10-year reload interval",
+                  ],
+                },
+                {
+                  key: "pele",
+                  cells: [
+                    "Project Pele (US DOD)",
+                    "1–5 MWe",
+                    "TRISO (~19.75% HALEU)",
+                    "Heat pipes",
+                    "Military forward bases; 3 ISO containers; NEPA complete 2023",
+                  ],
+                },
+                {
+                  key: "kilopower-space",
+                  cells: [
+                    "NASA Kilopower (KRUSTY)",
+                    "1–10 kWe",
+                    "U-Mo metal (~93% HEU)",
+                    "Sodium heat pipes + Stirling",
+                    "Lunar/Mars surface power; tested 2018 at full power",
+                  ],
+                },
+              ]}
+            />
+          </SubSection>
+        </Collapsible>
+
+        {/* NEW Section: SMR Economics and Deployment Challenges */}
+        <Collapsible
+          title="SMR Economics, Deployment Challenges, and Waste Considerations"
+          badge="Advanced"
+          badgeVariant="destructive"
+          icon={<Globe className="h-5 w-5" />}
+          id="smr-economics-detail"
+        >
+          <p className="text-muted-foreground text-sm mb-5">
+            SMR economics are the central unresolved question in the nuclear
+            industry. The promise of factory manufacturing, modularity, and
+            learning-curve cost reduction is theoretically compelling — but no
+            SMR has yet been built at commercial scale in a Western regulatory
+            environment. The NuScale Carbon Free Power Project cancellation in
+            2023 provided a sobering real-world data point.
+          </p>
+
+          <SubSection title="Learning Rates: NOAK vs. FOAK" id="learning-rates">
+            <p className="text-muted-foreground mb-3">
+              The learning curve theory predicts that the nth unit of a
+              manufactured product costs less than the first — typically 10–20%
+              cost reduction per doubling of cumulative output. The SMR economic
+              thesis depends on this:
+            </p>
+            <div className="space-y-2 mb-4 text-sm">
+              {[
+                {
+                  phase: "First-of-a-Kind (FOAK)",
+                  lcoe: "~$100–150/MWh",
+                  note: "Highest cost; unproven construction methods; regulatory learning; engineering non-recurring costs amortized over one unit",
+                },
+                {
+                  phase: "5th unit (early series)",
+                  lcoe: "~$70–100/MWh",
+                  note: "Factory process improvements; supply chain established; regulatory experience accumulated",
+                },
+                {
+                  phase: "Nth-of-a-Kind (NOAK, ~50+ units)",
+                  lcoe: "~$50–80/MWh",
+                  note: "Mature learning rate; construction time reliably ≤3 years; competitive with offshore wind on LCOE",
+                },
+              ].map((step) => (
+                <div
+                  key={step.phase}
+                  className="flex gap-4 rounded-lg bg-muted/20 border border-border p-3"
+                >
+                  <div className="font-semibold text-foreground w-48 shrink-0">
+                    {step.phase}
+                  </div>
+                  <div className="text-primary font-mono font-bold w-28 shrink-0">
+                    {step.lcoe}
+                  </div>
+                  <div className="text-muted-foreground">{step.note}</div>
+                </div>
+              ))}
+            </div>
+            <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg text-sm">
+              <div className="font-semibold text-foreground mb-1">
+                NuScale CFPP — A Cautionary Tale
+              </div>
+              <p className="text-muted-foreground">
+                NuScale's Carbon Free Power Project (12 × 77 MWe at Idaho) saw
+                overnight cost estimates rise from $58/MWh (2017) to $89/MWh
+                (May 2023), primarily due to construction cost inflation
+                (post-COVID), rising interest rates, and lower-than-expected
+                subscription from Utah utilities unwilling to commit at the
+                higher price. The project was cancelled in November 2023.
+                NuScale's stock fell ~50% on the news.
+                <Citation
+                  id={22}
+                  text="NuScale Power LLC & UAMPS. (2023). Joint statement on Carbon Free Power Project termination. November 8, 2023."
+                />
+              </p>
+            </div>
+          </SubSection>
+
+          <SubSection
+            title="Supply Chain: Forge Capacity and Components"
+            id="smr-supply"
+          >
+            <p className="text-muted-foreground mb-3">
+              A critical constraint on both SMR deployment and large LWR
+              construction is the limited global forge capacity for heavy
+              nuclear components (reactor pressure vessels, steam generator
+              shells). As of 2024, only Japan Steel Works (JSW) and a handful of
+              European and Chinese facilities can produce large-diameter
+              nuclear-grade forgings:
+            </p>
+            <ul className="space-y-2 list-disc list-inside text-sm text-muted-foreground">
+              <li>
+                SMRs' smaller pressure vessels (NuScale: 4.6 m diameter vs ~5 m
+                for AP1000) require less exotic forge capacity — a genuine
+                manufacturing advantage
+              </li>
+              <li>
+                TRISO fuel production for HTGR SMRs requires establishment of a
+                new commercial supply chain; X-energy and Ultra Safe Nuclear are
+                building TRISO manufacturing plants in the US (~$300M
+                investment)
+              </li>
+              <li>
+                Specialised components (high-temperature heat exchangers for
+                HTGR; sodium pumps for SFR; freeze plug systems for MSR) have
+                very limited qualified suppliers — each requiring expensive
+                qualification campaigns
+              </li>
+            </ul>
+          </SubSection>
+
+          <SubSection title="Regulatory Pathway: NRC 10 CFR 52" id="smr-reg">
+            <p className="text-muted-foreground mb-3">
+              In the United States, SMRs are licensed under 10 CFR Part 52, the
+              framework established after Three Mile Island for combined
+              Construction Permit + Operating License applications:
+            </p>
+            <div className="space-y-2 mb-3 text-sm">
+              {[
+                {
+                  step: "Pre-application review",
+                  desc: "Developer meets with NRC to identify design-specific regulatory issues; typically 2–5 years before formal application",
+                },
+                {
+                  step: "Standard Design Approval (SDA)",
+                  desc: "NRC certifies the generic design; approved SDA can be referenced in multiple site applications. NuScale obtained SDA in Sep 2022 — the first and currently only SMR SDA.",
+                },
+                {
+                  step: "Combined License Application (COLA)",
+                  desc: "Site-specific application combining construction permit and operating license. For large LWRs: 3–5 years of NRC review. New approaches (SDA + COLA referencing) may reduce to 2–3 years.",
+                },
+                {
+                  step: "Generic Design Assessment (GDA, UK)",
+                  desc: "UK regulators (ONR + Environment Agency) jointly review generic reactor design before site-specific applications. GDA for Rolls-Royce SMR entered 2022; expected completion ~2028.",
+                },
+              ].map((s) => (
+                <div
+                  key={s.step}
+                  className="flex gap-3 rounded-lg bg-muted/20 border border-border p-3"
+                >
+                  <span className="font-semibold text-foreground text-xs w-48 shrink-0 pt-0.5">
+                    {s.step}
+                  </span>
+                  <span className="text-muted-foreground">{s.desc}</span>
+                </div>
+              ))}
+            </div>
+          </SubSection>
+
+          <SubSection title="Waste Considerations" id="smr-waste">
+            <div className="p-4 bg-muted/30 border border-border rounded-lg text-sm mb-3">
+              <div className="font-semibold text-foreground mb-1">
+                SMR Waste Generation: An Important Nuance
+              </div>
+              <p className="text-muted-foreground">
+                An OECD/NEA 2021 study found that most current SMR designs would
+                generate{" "}
+                <strong className="text-foreground">
+                  2–30× more radioactive waste per MWh
+                </strong>{" "}
+                than large conventional LWRs due to lower thermal efficiency and
+                higher neutron leakage in smaller cores. This is a legitimate
+                concern that SMR proponents must address transparently.
+                <Citation
+                  id={23}
+                  text="OECD/NEA (2021). Small Modular Reactors: Challenges and Opportunities. NEA No. 7560."
+                />
+              </p>
+            </div>
+            <ul className="space-y-2 list-disc list-inside text-sm text-muted-foreground">
+              <li>
+                <span className="font-medium text-foreground">
+                  Low fuel efficiency:
+                </span>{" "}
+                Small cores have higher neutron leakage fractions, reducing fuel
+                burnup and creating more spent fuel per MWh than optimised large
+                reactors
+              </li>
+              <li>
+                <span className="font-medium text-foreground">
+                  Non-LWR exceptions:
+                </span>{" "}
+                Fast reactor SMRs (Natrium SFR) and MSRs can potentially use
+                waste from LWRs as fuel, transmuting long-lived actinides and
+                dramatically reducing waste volume and hazard lifetime —
+                potentially producing less waste than LWRs
+              </li>
+              <li>
+                <span className="font-medium text-foreground">
+                  Waste storage:
+                </span>{" "}
+                All SMR designs require interim dry cask storage at or near the
+                plant; no country has yet opened a final deep geological
+                repository for HLW — the same challenge facing all nuclear power
+              </li>
+              <li>
+                <span className="font-medium text-foreground">
+                  HALEU requirement:
+                </span>{" "}
+                Many advanced SMRs (Xe-100, eVinci, Natrium) require High-Assay
+                Low-Enriched Uranium (HALEU, 5–20% U-235). Commercial HALEU
+                supply in the US is currently &lt;1 MTU/yr; DOE HALEU Operations
+                Program is scaling production but remains a near-term deployment
+                bottleneck.
+              </li>
+            </ul>
+          </SubSection>
+
+          <SubSection
+            title="Grid Integration: Capacity Value and Flexibility"
+            id="smr-grid"
+          >
+            <p className="text-muted-foreground mb-3">
+              The economic case for SMRs in high-renewable grids depends on
+              their ability to provide value beyond simple energy production:
+            </p>
+            <DataTable
+              headers={["Value Type", "SMR Capability", "Renewable Comparison"]}
+              rows={[
+                {
+                  key: "capacity",
+                  cells: [
+                    "Capacity value (firm power)",
+                    "Very high: 90%+ capacity factor; scheduled outages; dispatchable",
+                    "Solar: ~10–25% capacity credit; Wind: ~15–35% capacity credit",
+                  ],
+                },
+                {
+                  key: "flexibility",
+                  cells: [
+                    "Flexibility / ramping",
+                    "Load-follow 20–100% in hours; Natrium stores excess heat",
+                    "Solar/wind provide no dispatchable flexibility (weather-dependent)",
+                  ],
+                },
+                {
+                  key: "inertia",
+                  cells: [
+                    "Grid inertia (Hz stability)",
+                    "Synchronous generation provides inertia (essential for grid frequency stability)",
+                    "Inverter-based renewables provide no synchronous inertia (requires synthetic inertia)",
+                  ],
+                },
+                {
+                  key: "heat",
+                  cells: [
+                    "Process heat revenue",
+                    "HTGRs / MSRs can sell high-T heat to industry; diversifies revenue",
+                    "Not applicable",
+                  ],
+                },
+              ]}
+            />
+          </SubSection>
+        </Collapsible>
+
         {/* References */}
         <div className="mt-8 border-t border-border pt-6">
           <h2 className="font-display text-lg font-semibold text-foreground mb-4">

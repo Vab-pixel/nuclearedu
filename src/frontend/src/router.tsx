@@ -35,12 +35,34 @@ const AccidentsPage = lazy(() => import("@/pages/safety/Accidents"));
 const WasteManagementPage = lazy(
   () => import("@/pages/safety/WasteManagement"),
 );
+const RadiationSafetyPage = lazy(() =>
+  import("@/pages/safety/RadiationSafety").then((m) => ({
+    default: m.RadiationSafety,
+  })),
+);
 const TimelinePage = lazy(() => import("@/pages/history/Timeline"));
 const KeyFiguresPage = lazy(() => import("@/pages/history/KeyFigures"));
 const MilestonesPage = lazy(() => import("@/pages/history/Milestones"));
 const GlossaryPage = lazy(() => import("@/pages/Glossary"));
 const ReferencesPage = lazy(() => import("@/pages/References"));
 const AboutPage = lazy(() => import("@/pages/About"));
+
+// Tools pages
+const CarbonDatingCalculator = lazy(() =>
+  import("@/pages/tools/CarbonDatingCalculator").then((m) => ({
+    default: m.CarbonDatingCalculator,
+  })),
+);
+const DataExplorer = lazy(() => import("@/pages/tools/DataExplorer"));
+const IsotopeComparison = lazy(() => import("@/pages/tools/IsotopeComparison"));
+const DosimetryCalculator = lazy(
+  () => import("@/pages/tools/DosimetryCalculator"),
+);
+const NuclearNewsFeed = lazy(() => import("@/pages/tools/NuclearNewsFeed"));
+
+// Learning pages
+const LearningLab = lazy(() => import("@/pages/learning/LearningLab"));
+const Quiz = lazy(() => import("@/pages/learning/Quiz"));
 
 // Visualization pages
 const NucleusVisualizer = lazy(
@@ -258,6 +280,11 @@ const wasteManagementRoute = createRoute({
   path: "/safety/waste-management",
   component: () => <LazyPage component={WasteManagementPage} />,
 });
+const radiationSafetyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/safety/radiation",
+  component: () => <LazyPage component={RadiationSafetyPage} />,
+});
 
 // History redirect
 const historyRoute = createRoute({
@@ -330,6 +357,43 @@ const aboutRoute = createRoute({
   component: () => <LazyPage component={AboutPage} />,
 });
 
+// Tools routes
+const toolsDataExplorerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/data-explorer",
+  component: () => <LazyPage component={DataExplorer} />,
+});
+const toolsIsotopeComparisonRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/isotope-comparison",
+  component: () => <LazyPage component={IsotopeComparison} />,
+});
+const toolsDosimetryCalculatorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/dosimetry-calculator",
+  component: () => <LazyPage component={DosimetryCalculator} />,
+});
+const toolsCarbonDatingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/carbon-dating",
+  component: () => <LazyPage component={CarbonDatingCalculator} />,
+});
+const newsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/news",
+  component: () => <LazyPage component={NuclearNewsFeed} />,
+});
+const learningLabRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/learning-lab",
+  component: () => <LazyPage component={LearningLab} />,
+});
+const quizRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/learning-lab/$topicId",
+  component: () => <LazyPage component={Quiz} />,
+});
+
 const routeTree = rootRoute.addChildren([
   homeRoute,
   basicsRoute,
@@ -360,6 +424,7 @@ const routeTree = rootRoute.addChildren([
   regulationRoute,
   accidentsRoute,
   wasteManagementRoute,
+  radiationSafetyRoute,
   historyRoute,
   timelineRoute,
   keyFiguresRoute,
@@ -372,6 +437,13 @@ const routeTree = rootRoute.addChildren([
   glossaryRoute,
   referencesRoute,
   aboutRoute,
+  toolsDataExplorerRoute,
+  toolsIsotopeComparisonRoute,
+  toolsDosimetryCalculatorRoute,
+  toolsCarbonDatingRoute,
+  newsRoute,
+  learningLabRoute,
+  quizRoute,
 ]);
 
 export const router = createRouter({ routeTree });
@@ -412,6 +484,7 @@ export const routeLabels: Record<string, string> = {
   "/safety/regulation": "Regulation",
   "/safety/accidents": "Accident Analysis",
   "/safety/waste-management": "Waste Management",
+  "/safety/radiation": "Radiation Safety",
   "/history": "History",
   "/history/timeline": "Timeline",
   "/history/key-figures": "Key Figures",
@@ -424,4 +497,11 @@ export const routeLabels: Record<string, string> = {
   "/glossary": "Glossary",
   "/references": "References",
   "/about": "About",
+  "/tools/data-explorer": "Data Explorer",
+  "/tools/isotope-comparison": "Isotope Comparison",
+  "/tools/dosimetry-calculator": "Dosimetry Calculator",
+  "/tools/carbon-dating": "Carbon Dating Calculator",
+  "/news": "News & Research",
+  "/learning-lab": "Learning Lab",
+  "/learning-lab/$topicId": "Quiz",
 };

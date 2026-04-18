@@ -1240,6 +1240,930 @@ export default function FusionPage() {
           </p>
         </CollapsibleSection>
 
+        {/* ── NEW SECTION: ITER ── */}
+        <CollapsibleSection
+          title="ITER — The International Thermonuclear Experimental Reactor"
+          badge="student"
+          ocid="fusion.iter_deepdive"
+        >
+          <p className="text-muted-foreground text-sm leading-relaxed mb-5">
+            ITER is the world's most complex scientific project, representing
+            humanity's most ambitious attempt to demonstrate the scientific and
+            technological feasibility of fusion energy. A 35-nation
+            collaboration (EU-27, UK, Switzerland, China, India, Japan, South
+            Korea, Russia, USA) is constructing the machine at Cadarache in the
+            south of France, backed by a budget exceeding{" "}
+            <strong className="text-foreground">$22 billion USD</strong> —
+            making it one of the most expensive scientific instruments in
+            history, alongside the Large Hadron Collider and the James Webb
+            Space Telescope.
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+            {[
+              { label: "Nations", value: "35", sub: "85% of world GDP" },
+              { label: "Fusion Power", value: "500 MW", sub: "Design target" },
+              {
+                label: "Q Factor",
+                value: "≥10",
+                sub: "500 MW / 50 MW heating",
+              },
+              { label: "Budget", value: ">$22B", sub: "2023 estimate" },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="rounded-lg bg-muted/30 border border-border p-4 text-center"
+              >
+                <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                  {s.label}
+                </div>
+                <div className="font-mono text-lg font-bold text-primary">
+                  {s.value}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {s.sub}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Scientific Goal: Prove Q ≥ 10 is Achievable
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+            ITER will not generate electricity — it is a scientific experiment
+            designed to demonstrate burning plasma physics at scale. Its mission
+            is to prove that more fusion energy can be extracted than heating
+            energy injected by a factor of at least 10. ITER is designed to
+            produce{" "}
+            <strong className="text-foreground">500 MW of fusion power</strong>{" "}
+            from only{" "}
+            <strong className="text-foreground">
+              50 MW of external heating
+            </strong>{" "}
+            (NBI + ICRF + ECRH), sustaining this for 400–600 second pulses —
+            long enough to study "burning plasma" physics where the plasma heats
+            itself predominantly via alpha-particle deposition rather than
+            external heating.
+          </p>
+
+          <EquationBlock
+            latex="P_{\text{fusion}} = \frac{1}{4}\,n^2 \langle\sigma v\rangle\, Q_{\text{DT}} \quad (Q_{\text{DT}} = 17.6\,\text{MeV})"
+            annotation="Fusion power density scales with the square of plasma density n, and the thermally-averaged reaction rate coefficient ⟨σv⟩ which peaks at ~65 keV for D-T. Q_DT = 17.6 MeV is the total energy released per D-T reaction. In ITER's plasma: n ≈ 10²⁰ m⁻³, T_ion ≈ 8–10 keV, target ⟨σv⟩ ≈ 3×10⁻²² m³/s — yielding ~500 MW in the 840 m³ plasma volume."
+            label="D-T Fusion Power Density (ITER design basis)"
+          />
+
+          <h3 className="font-semibold text-foreground text-base mb-3 mt-5">
+            D-T Fuel Cycle
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+            ITER will consume approximately{" "}
+            <strong className="text-foreground">
+              0.5 kg of D-T fuel per day
+            </strong>{" "}
+            during full D-T operation to produce 500 MW of fusion power (~10⁸
+            J/s = ~24 GWh/day). Deuterium (D) is readily separated from
+            seawater; tritium (T) is the challenging component:
+          </p>
+          <div className="rounded-lg bg-muted/20 border border-border p-4 mb-5 text-sm text-muted-foreground">
+            <strong className="text-foreground block mb-2">
+              Tritium Supply for ITER
+            </strong>
+            <p>
+              ITER requires ~0.35 kg T/day during D-T campaigns. Global tritium
+              supply is ~25 kg (from CANDU reactor production, stored primarily
+              at Chalk River Isotopes and SRB Technologies in Canada). ITER's
+              tritium needs are supplied from existing stockpiles — it will not
+              breed its own tritium (ITER blankets are "test blanket modules"
+              for R&D, not full breeding blankets). DEMO will need a tritium
+              breeding blanket, making breeding technology demonstration one of
+              ITER's secondary objectives.
+            </p>
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Key Subsystems
+          </h3>
+          <div className="grid sm:grid-cols-2 gap-3 mb-5">
+            {[
+              {
+                name: "Superconducting magnets (TF coils)",
+                detail:
+                  "18 Nb₃Sn toroidal field coils at 4 K (−269 °C), generating 5.3 T on-axis (11.8 T at coil face). Nb₃Sn enables ITER's field — impossible with conventional NbTi magnets in this geometry.",
+              },
+              {
+                name: "Poloidal field (PF) coils",
+                detail:
+                  "6 large PF coils + central solenoid (NbTi); plasma current is inductively driven to 15 MA by the central solenoid — the world's most powerful pulsed electromagnet at 13 T.",
+              },
+              {
+                name: "Blanket modules",
+                detail:
+                  "440 blanket modules cover the plasma-facing first wall. Primary shielding function; test blanket modules (TBMs) from multiple nations test lithium-ceramic and lithium-lead breeding concepts.",
+              },
+              {
+                name: "Divertor",
+                detail:
+                  "54 tungsten/carbon divertor cassettes at the bottom of the plasma vessel; absorbs particle and heat flux from the scrape-off layer plasma; handles 10–20 MW/m² peak heat flux.",
+              },
+              {
+                name: "Heating systems (50 MW)",
+                detail:
+                  "NBI (neutral beam injection): 33 MW at 1 MeV D°. ICRF (ion cyclotron resonance frequency): 20 MW at 40–55 MHz. ECRH (electron cyclotron resonance heating): 20 MW at 170 GHz.",
+              },
+              {
+                name: "Vacuum vessel",
+                detail:
+                  "Primary confinement barrier; double-walled stainless steel; 8,500 tonnes; 840 m³ plasma volume; built in 9 sectors shipped from USA, Korea, India, Europe.",
+              },
+            ].map((v) => (
+              <div
+                key={v.name}
+                className="rounded-lg bg-muted/30 border border-border p-4"
+              >
+                <div className="font-semibold text-foreground text-sm mb-1">
+                  {v.name}
+                </div>
+                <div className="text-xs text-muted-foreground">{v.detail}</div>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Construction Timeline
+          </h3>
+          <div className="space-y-2 mb-4 text-sm">
+            {[
+              {
+                year: "2010",
+                event: "Construction license granted; site preparation begins",
+              },
+              {
+                year: "2013",
+                event: "First safety documents approved; building construction",
+              },
+              {
+                year: "2020–2024",
+                event:
+                  "Assembly phase: vacuum vessel sectors, TF coils, cryostat",
+              },
+              {
+                year: "~2027",
+                event:
+                  "First plasma (hydrogen, non-nuclear — machine commissioning; no D-T at this stage)",
+              },
+              {
+                year: "~2029–2032",
+                event:
+                  "PFPO-1 phase: deuterium-deuterium plasmas; heating power integration",
+              },
+              {
+                year: "~2035",
+                event:
+                  "PFPO-2 / DT-1: First D-T plasmas; target Q ≥ 10 burning plasma demonstration",
+              },
+            ].map((step) => (
+              <div
+                key={step.year}
+                className="flex gap-4 rounded-lg bg-muted/20 border border-border p-3"
+              >
+                <span className="font-mono text-primary font-semibold w-20 shrink-0">
+                  {step.year}
+                </span>
+                <span className="text-muted-foreground">{step.event}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-3">
+            Sources: ITER Organization (2024);{" "}
+            <em>ITER — The Way to New Energy</em>, ITER IO Publication; Bigot,
+            B. (2022) <em>Nature</em> 599, 368.
+          </p>
+        </CollapsibleSection>
+
+        {/* ── NEW SECTION: NIF and Inertial Confinement Fusion ── */}
+        <CollapsibleSection
+          title="NIF and Inertial Confinement Fusion: The December 2022 Ignition"
+          badge="advanced"
+          ocid="fusion.nif_deepdive"
+        >
+          <p className="text-muted-foreground text-sm leading-relaxed mb-5">
+            On December 5, 2022, the National Ignition Facility (NIF) at
+            Lawrence Livermore National Laboratory (LLNL) achieved a landmark in
+            66 years of fusion research: a fusion implosion that produced{" "}
+            <strong className="text-foreground">
+              3.15 MJ of fusion energy from 2.05 MJ of laser energy
+            </strong>
+            , achieving a plasma Q &gt; 1 (Q ≈ 1.54) for the first time in
+            history. This milestone — termed "ignition" (Q_laser &gt; 1) by the
+            scientific community — demonstrated that a burning plasma on Earth
+            was physically achievable via laser-driven inertial confinement
+            fusion (ICF).
+          </p>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            NIF Specifications
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+            {[
+              { label: "Laser Beams", value: "192", sub: "UV, 351 nm (3ω)" },
+              {
+                label: "Max Energy",
+                value: "2.05 MJ",
+                sub: "UV energy on target",
+              },
+              {
+                label: "Peak Power",
+                value: "~500 TW",
+                sub: "≈ 1,000× global electric grid",
+              },
+              {
+                label: "Target Size",
+                value: "~2 mm",
+                sub: "Cryogenic D-T capsule",
+              },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="rounded-lg bg-muted/30 border border-border p-4 text-center"
+              >
+                <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                  {s.label}
+                </div>
+                <div className="font-mono text-lg font-bold text-primary">
+                  {s.value}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {s.sub}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            ICF Principle: Compression, Hot Spot, Burn Wave
+          </h3>
+          <p className="text-muted-foreforward text-sm leading-relaxed mb-3">
+            ICF achieves fusion not by confining a hot plasma for seconds
+            (magnetic confinement), but by{" "}
+            <strong className="text-foreground">
+              compressing a tiny D-T target so rapidly
+            </strong>{" "}
+            that fusion reactions complete before the plasma can expand —
+            confined by its own inertia during the ~10 ns implosion. The NIF
+            uses the indirect-drive approach:
+          </p>
+          <div className="space-y-2 mb-5 text-sm text-muted-foreground">
+            {[
+              {
+                step: "1. Hohlraum irradiation",
+                desc: "192 UV laser beams enter a gold hohlraum cylinder (2×10 mm), converting laser energy to a ~300 eV (3.5 million °C) bath of soft X-rays with ~1% uniformity",
+              },
+              {
+                step: "2. Ablation-driven implosion",
+                desc: "X-rays ablate the outer ablator shell (HDC: high-density carbon); rocket-effect drives inward implosion at 300–400 km/s",
+              },
+              {
+                step: "3. Stagnation and compression",
+                desc: "Fuel compresses to ~300–1,000 g/cm³ (density of lead is 11 g/cm³); 30–35× linear compression; fuel assembly aspect ratio must stay below Rayleigh-Taylor instability threshold",
+              },
+              {
+                step: "4. Hot spot ignition",
+                desc: "Central hot spot reaches ~5–10 keV (60–100 million °C); alpha particles from D-T reactions deposit energy locally, raising temperature — self-reinforcing alpha heating begins",
+              },
+              {
+                step: "5. Burn wave propagation",
+                desc: "Alpha heating wave propagates outward into the cold dense fuel ('thermonuclear burn'); ~10 ns total burn time; >10¹⁶ D-T reactions per shot",
+              },
+            ].map((item) => (
+              <div
+                key={item.step}
+                className="flex gap-3 rounded-lg bg-muted/20 border border-border p-3"
+              >
+                <span className="font-mono text-primary font-semibold shrink-0 w-40">
+                  {item.step}
+                </span>
+                <span>{item.desc}</span>
+              </div>
+            ))}
+          </div>
+
+          <EquationBlock
+            latex="\rho R \geq 0.3\,\text{g/cm}^2 \quad \text{(ICF ignition condition)}"
+            annotation="The Lawson criterion for ICF: the product of compressed fuel density ρ (g/cm³) and the hot-spot radius R (cm) must exceed approximately 0.3 g/cm² for alpha-particle self-heating to dominate and initiate burn wave propagation. At NIF's December 2022 shot: ρR ≈ 1.4 g/cm² was achieved — well above the ignition threshold. This is the ICF equivalent of the n·T·τ_E triple product for magnetic confinement."
+            label="ICF Lawson Criterion: ρR Product for Ignition"
+          />
+
+          <h3 className="font-semibold text-foreground text-base mb-3 mt-5">
+            NIF Experimental Milestones
+          </h3>
+          <div className="overflow-x-auto rounded-lg border border-border mb-5">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-muted/40 border-b border-border">
+                  {[
+                    "Date",
+                    "Laser In",
+                    "Fusion Yield",
+                    "Q_laser",
+                    "Milestone",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-2 text-left font-semibold text-foreground"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {[
+                  [
+                    "Aug 2021",
+                    "1.92 MJ",
+                    "1.37 MJ",
+                    "~0.72",
+                    "First 'burning plasma' — α-heating dominant",
+                  ],
+                  [
+                    "Dec 5, 2022",
+                    "2.05 MJ",
+                    "3.15 MJ",
+                    "~1.54",
+                    "IGNITION: Q>1 first time in history ★",
+                  ],
+                  [
+                    "Jul 30, 2023",
+                    "2.05 MJ",
+                    "3.88 MJ",
+                    "~1.9",
+                    "Repeated and exceeded prior record",
+                  ],
+                  [
+                    "Late 2023+",
+                    "~2.05 MJ",
+                    ">3 MJ (×4)",
+                    ">1",
+                    "Confirmed reproducibility of ignition-class shots",
+                  ],
+                ].map((row) => (
+                  <tr
+                    key={String(row[0])}
+                    className="hover:bg-muted/20 transition-colors"
+                  >
+                    <td className="px-4 py-2 font-semibold text-foreground">
+                      {row[0]}
+                    </td>
+                    <td className="px-4 py-2 text-muted-foreground">
+                      {row[1]}
+                    </td>
+                    <td className="px-4 py-2 text-muted-foreground">
+                      {row[2]}
+                    </td>
+                    <td className="px-4 py-2 font-mono text-primary">
+                      {row[3]}
+                    </td>
+                    <td className="px-4 py-2 text-muted-foreground">
+                      {row[4]}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Challenges on the Path to an IFE Power Plant
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+            NIF's Q ≈ 1.54 is a landmark physics result, but a commercial
+            inertial fusion energy (IFE) power plant faces engineering hurdles
+            of many orders of magnitude beyond the NIF:
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3 mb-4">
+            {[
+              {
+                label: "Repetition rate",
+                current: "~1 shot/day (NIF)",
+                required: "~10 Hz for 1 GW plant (10 shots/second)",
+                gap: "~86,400× improvement",
+              },
+              {
+                label: "Target cost",
+                current: "~$100,000 per target (NIF)",
+                required: "~$0.01–0.10 per target",
+                gap: "~6–7 orders of magnitude",
+              },
+              {
+                label: "Driver efficiency",
+                current: "~1% (flashlamp Nd:glass laser)",
+                required: "~20% (diode-pumped DPSSL)",
+                gap: "~20× improvement; technology exists at small scale",
+              },
+              {
+                label: "Required plasma Q",
+                current: "~1.5 (NIF Dec 2022)",
+                required: "~50–100 for wall-plug viability at 20% driver",
+                gap: "~50× physics improvement needed",
+              },
+            ].map((c) => (
+              <div
+                key={c.label}
+                className="rounded-lg bg-muted/30 border border-border p-4 text-sm"
+              >
+                <div className="font-semibold text-foreground mb-2">
+                  {c.label}
+                </div>
+                <div className="text-muted-foreground">
+                  <span className="text-xs uppercase tracking-wide block text-muted-foreground/60 mb-1">
+                    Current
+                  </span>
+                  {c.current}
+                </div>
+                <div className="mt-2 text-muted-foreground">
+                  <span className="text-xs uppercase tracking-wide block text-muted-foreground/60 mb-1">
+                    Required
+                  </span>
+                  {c.required}
+                </div>
+                <div className="mt-2 text-primary text-xs font-semibold">
+                  Gap: {c.gap}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Other ICF Approaches
+          </h3>
+          <div className="grid sm:grid-cols-3 gap-3 mb-4">
+            {[
+              {
+                name: "Z-Machine (Sandia, USA)",
+                desc: "Z-pinch pulsed power: 2.7 MA current pulse in ~100 ns; X-ray drive via plasma implosion. Highest X-ray power pulse of any facility. MagLIF (Magnetized Liner Inertial Fusion) approach showing promising results.",
+              },
+              {
+                name: "OMEGA Laser (LLE, Rochester)",
+                desc: "60-beam direct-drive laser, 30 kJ UV energy. The premier academic ICF research facility for direct-drive, shock-timing, and ICF physics studies. Platform for NIF capsule design experiments.",
+              },
+              {
+                name: "First Light Fusion (UK)",
+                desc: "Projectile-driven ICF: hypervelocity impactor (20+ km/s) accelerated by electromagnetic launcher drives a shaped shockwave through a D-T target. Simpler driver concept than lasers; achieved fusion in 2022.",
+              },
+            ].map((v) => (
+              <div
+                key={v.name}
+                className="rounded-lg bg-muted/30 border border-border p-4"
+              >
+                <div className="font-semibold text-foreground text-sm mb-1">
+                  {v.name}
+                </div>
+                <div className="text-xs text-muted-foreground">{v.desc}</div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-3">
+            Sources: Zylstra et al. (2022) <em>Nature</em> 601, 542;
+            Abu-Shawareb et al. (2022) <em>Phys. Rev. Lett.</em> 129, 075001;
+            Hurricane et al. (2023) <em>Rev. Mod. Phys.</em> 95, 025005.
+          </p>
+        </CollapsibleSection>
+
+        {/* ── NEW SECTION: Stellarators and Alternative Fusion ── */}
+        <CollapsibleSection
+          title="Stellarators and Alternative Fusion Concepts"
+          badge="researcher"
+          ocid="fusion.stellarators"
+        >
+          <p className="text-muted-foreground text-sm leading-relaxed mb-5">
+            While tokamaks dominate the magnetic confinement fusion landscape,
+            stellarators and a diverse ecosystem of alternative approaches are
+            attracting renewed interest — for different reasons. Stellarators
+            offer steady-state operation and intrinsic disruption-freedom;
+            compact private ventures leverage new materials science and
+            computational design to challenge the traditional large-tokamak
+            model.
+          </p>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Stellarator vs. Tokamak: Key Distinction
+          </h3>
+          <div className="grid sm:grid-cols-2 gap-4 mb-5">
+            <div className="rounded-lg bg-muted/30 border border-border p-4">
+              <div className="font-semibold text-foreground text-sm mb-2">
+                Tokamak
+              </div>
+              <ul className="space-y-1 text-xs text-muted-foreground list-disc list-inside">
+                <li>
+                  Requires a large plasma current (15 MA in ITER) to create the
+                  poloidal field for helical confinement
+                </li>
+                <li>
+                  Plasma current is unstable — must be actively controlled
+                  against disruptions (sudden loss of current and confinement)
+                </li>
+                <li>
+                  Inherently pulsed (inductive drive); steady-state requires
+                  auxiliary current drive (bootstrap + ECCD/NBCD) — challenging
+                </li>
+                <li>
+                  Simpler coil geometry but complex plasma control; decades of
+                  operational experience
+                </li>
+              </ul>
+            </div>
+            <div className="rounded-lg bg-primary/5 border border-primary/20 p-4">
+              <div className="font-semibold text-foreground text-sm mb-2">
+                Stellarator
+              </div>
+              <ul className="space-y-1 text-xs text-muted-foreground list-disc list-inside">
+                <li>
+                  No plasma current required — helical field entirely produced
+                  by complex 3D external coil geometry optimised by computation
+                </li>
+                <li>
+                  Intrinsically steady-state: no inductive drive, no plasma
+                  current to lose — no disruptions possible
+                </li>
+                <li>
+                  Lower stored magnetic energy in plasma — inherently safer
+                </li>
+                <li>
+                  Complex, precisely shaped non-planar coils: historically
+                  impossible to manufacture; now feasible with modern CNC
+                  fabrication and advanced computing
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Wendelstein 7-X (W7-X): World's Largest Optimised Stellarator
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+            Wendelstein 7-X at the Max Planck Institute for Plasma Physics in
+            Greifswald, Germany, is the culmination of decades of stellarator
+            optimization theory. W7-X is the largest and most precisely built
+            stellarator in the world, designed to demonstrate that a
+            quasi-isodynamically optimised stellarator can confine plasma as
+            well as — or better than — a comparably sized tokamak.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3 mb-5">
+            {[
+              ["Major radius", "5.5 m"],
+              ["Toroidal field", "Up to 3 T (on-axis)"],
+              ["Plasma volume", "~30 m³"],
+              ["Heating power", "10 MW ECRH + NBI (planned)"],
+              [
+                "Record (2023)",
+                "H-mode plasma: 8 minutes at 10⁷ K with neodymium-glass pellet fuelling",
+              ],
+              [
+                "Key result",
+                "Energy confinement consistent with optimisation predictions — validates quasisymmetry concept",
+              ],
+            ].map(([k, v]) => (
+              <div
+                key={String(k)}
+                className="rounded-lg bg-muted/20 border border-border p-3 text-sm"
+              >
+                <span className="font-semibold text-foreground">{k}: </span>
+                <span className="text-muted-foreground">{v}</span>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Compact Fusion: The Private Sector Approach
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+            The insight driving private fusion companies: ITER-scale devices
+            (~€20B, 35 nations, 30-year timeline) are not the only path. If
+            higher magnetic fields are achievable (via HTS magnets), plasma
+            confinement scales as B⁴, allowing fusion-relevant conditions in a
+            much smaller, cheaper device. Commonwealth Fusion Systems (CFS) is
+            the leading HTS tokamak company:
+          </p>
+          <div className="overflow-x-auto rounded-lg border border-border mb-5">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-muted/40 border-b border-border">
+                  {[
+                    "Company",
+                    "Concept",
+                    "Key Technology",
+                    "Status (2024)",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-2 text-left font-semibold text-foreground"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {[
+                  [
+                    "Commonwealth Fusion (SPARC)",
+                    "High-field tokamak",
+                    "REBCO HTS coils at 12–20 T (Sept 2021: 20 T demonstrated)",
+                    "SPARC device construction; target first plasma ~2025",
+                  ],
+                  [
+                    "Helion Energy",
+                    "Pulsed FRC (field-reversed configuration)",
+                    "D-He³ / D-D FRC collision; direct electric conversion",
+                    "Microsoft 2028 electricity PPA; 7th-gen device testing",
+                  ],
+                  [
+                    "TAE Technologies",
+                    "Advanced beam-driven FRC (Norman)",
+                    "Fast ion beam sustains hot FRC; long-term target: p-¹¹B aneutronic",
+                    "300 keV plasma achieved; round 3 fundraising",
+                  ],
+                  [
+                    "Type One Energy",
+                    "Optimised stellarator",
+                    "Computational coil optimisation + CNC manufacturing",
+                    "STAR device design phase; ARPA-E funding",
+                  ],
+                  [
+                    "Zap Energy",
+                    "Sheared-flow Z-pinch",
+                    "High current through flowing plasma; flow suppresses kink instabilities",
+                    "Achieved fusion; FuZE-Q pilot device fundraising",
+                  ],
+                ].map((row) => (
+                  <tr
+                    key={String(row[0])}
+                    className="hover:bg-muted/20 transition-colors"
+                  >
+                    <td className="px-4 py-2 font-semibold text-foreground">
+                      {row[0]}
+                    </td>
+                    <td className="px-4 py-2 text-muted-foreground">
+                      {row[1]}
+                    </td>
+                    <td className="px-4 py-2 text-muted-foreground">
+                      {row[2]}
+                    </td>
+                    <td className="px-4 py-2 text-muted-foreground">
+                      {row[3]}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Private Fusion Investment: 2022–2024
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+            Fusion Industry Association (FIA) Annual Reports show explosive
+            growth in private fusion investment:
+          </p>
+          <div className="grid grid-cols-3 gap-3 mb-5">
+            {[
+              {
+                year: "2020",
+                amount: "$0.4B",
+                note: "Mostly pre-existing ventures",
+              },
+              {
+                year: "2021–2022",
+                amount: "$4.7B",
+                note: "CFS Series B ($1.8B); Helion ($2.2B)",
+              },
+              {
+                year: "2023",
+                amount: ">$7B total",
+                note: "Cumulative private investment (FIA)",
+              },
+            ].map((s) => (
+              <div
+                key={s.year}
+                className="rounded-lg bg-muted/30 border border-border p-4 text-center"
+              >
+                <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                  {s.year}
+                </div>
+                <div className="font-mono text-xl font-bold text-primary">
+                  {s.amount}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {s.note}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-2">
+            Realistic Timeline to Commercial Fusion Power
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            The Fusion Industry Association's 2023 survey of fusion scientists
+            found median estimates of 2040–2045 for first commercial fusion
+            electricity. The most optimistic scenario (CFS/Helion): electricity
+            from fusion by 2035. The ITER/DEMO pathway: first electricity
+            demonstration ~2050. Sober assessment: fusion is closer than ever
+            but remains contingent on materials science breakthroughs (14 MeV
+            neutron damage), tritium breeding validation, and sustained capital
+            through inevitable experimental setbacks.
+          </p>
+          <p className="text-xs text-muted-foreground mt-3">
+            Sources: Fusion Industry Association,{" "}
+            <em>Global Fusion Industry Report 2023</em>
+            {"; "}
+            Pedersen, T.S. et al. (2022) W7-X <em>Phys. Rev. Lett.</em> 128,
+            085003{"; "}
+            Klinger, T. et al. (2023) W7-X progress <em>Nucl. Fusion</em> 63,
+            112023.
+          </p>
+        </CollapsibleSection>
+
+        {/* ── NEW SECTION: Fusion Fuel Resources and Economics ── */}
+        <CollapsibleSection
+          title="Fusion Fuel Resources and Net Energy Economics"
+          badge="student"
+          ocid="fusion.fuel_economics"
+        >
+          <p className="text-muted-foreground text-sm leading-relaxed mb-5">
+            One of fusion's most compelling attributes is the
+            near-inexhaustibility of its fuel. Deuterium is effectively
+            unlimited; tritium must be bred from lithium, which is abundant
+            globally. The true challenge is not fuel supply but net energy: can
+            a fusion power plant deliver more electricity to the grid than it
+            consumes?
+          </p>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Deuterium: Extracted from Seawater
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+            Deuterium occurs naturally in seawater at a ratio of approximately 1
+            in 6,420 hydrogen atoms — corresponding to 33 mg of D per litre of
+            seawater. Electrolytic or chemical isotope separation (Girdler
+            sulfide process) extracts D₂O (heavy water) from ordinary water at
+            industrial scale. Key facts:
+          </p>
+          <div className="rounded-lg bg-muted/20 border border-border p-4 mb-5 text-sm text-muted-foreground">
+            <div className="grid sm:grid-cols-3 gap-3">
+              {[
+                ["D in seawater", "~33 g/m³ (~33 mg/L)"],
+                ["World ocean D₂O", "~4.6 × 10¹⁶ kg of D"],
+                [
+                  "Fusion energy from D",
+                  "~5 × 10³⁰ J — ~10 billion years at current world consumption",
+                ],
+              ].map(([k, v]) => (
+                <div key={String(k)}>
+                  <span className="font-semibold text-foreground block">
+                    {k}
+                  </span>
+                  <span>{v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Tritium: Bred from Lithium-6
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+            Tritium (T½ = 12.32 years) does not exist in nature in useful
+            quantities. First-generation D-T fusion reactors must breed their
+            own tritium from lithium using the fusion neutrons:
+          </p>
+          <EquationBlock
+            latex="{}^6_3\text{Li} + n \rightarrow {}^4_2\text{He} + {}^3_1\text{T} + 4.78\,\text{MeV}"
+            annotation="Li-6 + thermal neutron → He-4 + tritium + 4.78 MeV. This exothermic reaction is the primary breeding path. Natural lithium is 7.59% Li-6; breeding blankets use enriched Li-6 (up to 90%) in ceramic form (Li₄SiO₄, Li₂TiO₃) or liquid lithium-lead eutectic (LiPb: 17% Li, 83% Pb). The tritium breeding ratio (TBR) must exceed ~1.05 to account for losses and provide startup inventory for new reactors — each reactor must breed approximately its own fuel supply plus surplus for the next reactor."
+            label="Tritium Breeding from Li-6 (Primary D-T Fuel Cycle Reaction)"
+          />
+          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+            Li-7, which constitutes 92.4% of natural lithium, also breeds
+            tritium at higher neutron energies:{" "}
+            <span className="font-mono text-xs bg-muted/40 px-1 rounded">
+              ⁷Li + n → ⁴He + T + n − 2.47 MeV
+            </span>{" "}
+            (endothermic; threshold ~2 MeV). This reaction also regenerates a
+            neutron, allowing a breeding ratio &gt; 1 from a natural lithium
+            blanket.
+          </p>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Lithium Resources
+          </h3>
+          <div className="grid sm:grid-cols-3 gap-3 mb-5">
+            {[
+              {
+                label: "Land reserves",
+                value: "~22 Mt",
+                sub: "USGS 2023; Australia, Chile, Argentina, China dominate",
+              },
+              {
+                label: "Ocean lithium",
+                value: "~230,000 Gt",
+                sub: "~0.18 ppm in seawater; economically unfeasible at present",
+              },
+              {
+                label: "Fusion requirement",
+                value: "~130 kg Li/yr",
+                sub: "Per 1 GWe fusion plant (for tritium breeding)",
+              },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="rounded-lg bg-muted/30 border border-border p-4 text-center"
+              >
+                <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                  {s.label}
+                </div>
+                <div className="font-mono text-lg font-bold text-primary">
+                  {s.value}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {s.sub}
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+            At 130 kg Li/yr per GWe plant, and 100 GWe of global fusion
+            capacity, annual consumption would be ~13,000 tonnes of Li
+            (predominantly Li-6). World land reserves of ~22 million tonnes
+            could support ~1,700 years of such consumption. Even without ocean
+            extraction, lithium for fusion is effectively unlimited on
+            civilisation timescales.
+          </p>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Net Energy Economics: Wall-Plug to Grid
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+            The distinction between plasma Q (fusion energy / heating energy)
+            and wall-plug Q (fusion energy / total electricity consumed) is
+            critical for evaluating commercial viability:
+          </p>
+          <div className="space-y-2 mb-5 text-sm">
+            {[
+              {
+                step: "Plasma Q ≥ 10",
+                desc: "ITER design goal. 500 MW fusion from 50 MW heating. This is a scientific milestone, not a commercial one.",
+              },
+              {
+                step: "Heating efficiency",
+                desc: "Converting wall-plug electricity to plasma heating (NBI ~50%; ICRF ~80%; ECRH ~50–70%). ITER: ~50 MW plasma heating requires ~100 MW wall-plug electricity.",
+              },
+              {
+                step: "Thermal conversion",
+                desc: "Converting fusion heat to electricity via steam Rankine cycle: ~35–40% efficiency. 500 MW thermal → ~175–200 MWe output.",
+              },
+              {
+                step: "Plant parasitic load",
+                desc: "Magnets (superconducting coils need refrigeration), vacuum pumps, controls, coolant pumps: ~100–200 MWe for ITER-scale plant.",
+              },
+              {
+                step: "Net electricity export",
+                desc: "For a 1 GWe fusion plant: ~3 GW thermal output needed (at 35% conversion), requiring Q_plasma ~15–20 with 50% heating efficiency. This is achievable with ITER-class devices at commercial scale.",
+              },
+            ].map((item) => (
+              <div
+                key={item.step}
+                className="flex gap-3 rounded-lg bg-muted/20 border border-border p-3"
+              >
+                <span className="font-semibold text-foreground text-xs uppercase tracking-wide w-40 shrink-0 pt-0.5">
+                  {item.step}
+                </span>
+                <span className="text-muted-foreground">{item.desc}</span>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-2">
+            Grid Parity Projections
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            Levelised Cost of Energy (LCOE) projections for first-of-a-kind
+            (FOAK) fusion power plants: European DEMO studies estimate
+            €60–80/MWh for the first commercial plant (2050s), declining to
+            ~€40/MWh for nth-of-a-kind (NOAK) as learning curve effects reduce
+            capital costs. This is competitive with nuclear fission and offshore
+            wind on a long-run marginal cost basis, but capital intensity
+            remains the key risk. Fuel costs (~$0.10/GJ for D; ~$40/GJ for bred
+            T) would be essentially negligible in the LCOE compared to capital
+            charges.
+          </p>
+          <p className="text-xs text-muted-foreground mt-4">
+            Sources: USGS Mineral Commodity Summaries 2023 (Lithium); Franza, F.
+            et al. (2022) Fusion Engineering and Design 134; Fusion Industry
+            Association, <em>Global Fusion Industry Report 2023</em>.
+          </p>
+        </CollapsibleSection>
+
         {/* ── Existing: Fusion Reactions and Q-Values ── */}
         <CollapsibleSection
           title="Fusion Reactions and Q-Values (Summary)"

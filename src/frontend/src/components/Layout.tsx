@@ -49,13 +49,31 @@ const routeBreadcrumbs: Record<string, BreadcrumbItem[]> = {
   "/glossary": [{ label: "Glossary" }],
   "/references": [{ label: "References" }],
   "/about": [{ label: "About" }],
+  "/tools/data-explorer": [
+    { label: "Tools", href: "/tools/data-explorer" },
+    { label: "Data Explorer" },
+  ],
+  "/tools/isotope-comparison": [
+    { label: "Tools", href: "/tools/data-explorer" },
+    { label: "Isotope Comparison" },
+  ],
+  "/tools/dosimetry-calculator": [
+    { label: "Tools", href: "/tools/data-explorer" },
+    { label: "Dosimetry Calculator" },
+  ],
+  "/news": [{ label: "News & Research" }],
+  "/learning-lab": [{ label: "Learning Lab" }],
 };
 
 export function Layout() {
   const routerState = useRouterState();
   const pathname = routerState.location.pathname;
   const isHome = pathname === "/";
-  const breadcrumbs = routeBreadcrumbs[pathname];
+  const breadcrumbs =
+    routeBreadcrumbs[pathname] ??
+    (pathname.startsWith("/learning-lab/")
+      ? [{ label: "Learning Lab", href: "/learning-lab" }, { label: "Quiz" }]
+      : undefined);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

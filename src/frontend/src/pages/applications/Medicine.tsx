@@ -1314,6 +1314,782 @@ export default function MedicinePage() {
           </p>
         </CollapsibleSection>
 
+        {/* ── NEW Section: Diagnostic Imaging SPECT/PET Principles ── */}
+        <CollapsibleSection
+          title="Diagnostic Imaging: SPECT and PET Principles"
+          badge="advanced"
+          ocid="medicine.imaging_principles"
+        >
+          <AudienceBadge level="advanced" />
+          <p className="text-muted-foreground leading-relaxed mb-4 mt-3">
+            SPECT and PET are the two fundamental modalities of nuclear medicine
+            imaging. Both detect gamma rays emitted or produced within the
+            patient's body and reconstruct 3D maps of radiotracer distribution,
+            but they differ fundamentally in their physics, sensitivity, and
+            clinical applications.
+          </p>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            SPECT: Single Photon Emission Computed Tomography
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            SPECT gamma cameras consist of large-area scintillation detector
+            heads — typically sodium iodide doped with thallium (NaI(Tl)), 9.5
+            mm thick — backed by photomultiplier tube (PMT) arrays. Most
+            clinical systems use 2–3 rotating detector heads. A lead collimator
+            physically selects for photons travelling approximately
+            perpendicular to the crystal face: only photons passing through the
+            collimator channels at angles within ±1–3° are accepted, providing
+            directional sensitivity at the cost of rejecting ~99.9% of all
+            emitted photons. Tomographic reconstruction (filtered
+            back-projection, FBP; or iterative OSEM — ordered subsets
+            expectation maximization) generates a 3D activity distribution at
+            ~10–15 mm spatial resolution.
+          </p>
+          <p className="text-muted-foreground leading-relaxed mb-4">
+            Modern SPECT systems increasingly use cadmium zinc telluride (CZT)
+            solid-state detectors instead of NaI(Tl)+PMT. CZT offers
+            dramatically superior energy resolution (~4% vs ~10% FWHM at 140
+            keV), enabling better scatter rejection, simultaneous multi-isotope
+            imaging, and spatial resolution of 6–8 mm. Dedicated cardiac CZT
+            SPECT systems (GE Discovery NM 530c, Spectrum Dynamics DSPECT)
+            achieve 10-minute cardiac scans vs 15–20 min for conventional SPECT
+            with equivalent or superior image quality.
+          </p>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            PET Annihilation Physics
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            PET exploits the unique physics of positron-electron annihilation.
+            When a positron (β⁺) is emitted by a radionuclide, it travels a
+            short distance in tissue (the positron range, which depends on its
+            kinetic energy — from 0.1 mm for F-18 to 5 mm for Rb-82), slows, and
+            annihilates with an ambient electron:
+          </p>
+          <EquationBlock
+            latex="e^+ + e^- \rightarrow \gamma_1 + \gamma_2 \quad (511\,\text{keV each},\; 180^\circ \pm 0.25^\circ)"
+            annotation="Annihilation produces two 511 keV photons emitted simultaneously at nearly exactly 180° apart. The slight angular deviation (0.25° FWHM) arises from the residual momentum of the positron–electron pair and is the fundamental limit on PET spatial resolution independent of detector size. PET scanners detect coincident hits on opposing detectors within a narrow time window (4–6 ns for conventional PET; 210–250 ps for time-of-flight TOF-PET), defining a Line of Response (LOR) through the patient. Electronic collimation replaces the physical lead collimator of SPECT — giving PET 10–100× higher sensitivity."
+            label="Positron-Electron Annihilation — PET Physical Principle"
+          />
+
+          <h3 className="font-semibold text-foreground mt-4 mb-2">
+            Coincidence Detection and Scanner Ring Design
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            A PET scanner consists of rings of small scintillator crystals
+            (currently LYSO: lutetium-yttrium orthosilicate, 4×4 mm) arranged in
+            a cylinder surrounding the patient. Crystals are read out by silicon
+            photomultipliers (SiPMs) in modern systems. The coincidence
+            detection principle:
+          </p>
+          <div className="rounded-lg bg-muted/30 border border-border p-4 text-sm mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                [
+                  "Coincidence window",
+                  "2–6 ns: two crystal hits must occur within this window to be counted as a true coincidence from the same annihilation. Shorter windows reduce random coincidences but require faster electronics.",
+                ],
+                [
+                  "Time-of-flight (TOF)",
+                  "Modern scanners (~210–250 ps): the 60–75 ps difference in photon arrival times localises the annihilation along the LOR to within ~4–5 cm, dramatically improving image SNR.",
+                ],
+                [
+                  "Axial field of view",
+                  "Standard: 15–26 cm (covers ~1/4 of body per bed position). Long AFOV: 106 cm (Siemens Quadra); total-body: 194 cm (uEXPLORER) for full simultaneous body coverage.",
+                ],
+                [
+                  "Attenuation correction",
+                  "511 keV photons are attenuated by tissue (~1 cm⁻¹ in water). CT-based or MR-based attenuation correction maps are essential for quantitative accuracy.",
+                ],
+              ].map(([k, v]) => (
+                <div key={String(k)}>
+                  <span className="font-semibold text-foreground">{k}: </span>
+                  <span className="text-muted-foreground">{v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            Radiopharmaceutical Biodistribution
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            The critical determinant of image quality and diagnostic utility is
+            not scanner technology alone but the biodistribution of the
+            radiopharmaceutical — where it goes in the body and with what
+            kinetics. Ideal diagnostic agents:
+          </p>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mb-4">
+            <li>
+              <strong className="text-foreground">
+                High target-to-background ratio:
+              </strong>{" "}
+              specific binding to the tissue of interest with rapid clearance
+              from non-target organs. Ga-68-PSMA achieves tumour:blood ratios of
+              &gt;50:1 for PSMA+ prostate cancer.
+            </li>
+            <li>
+              <strong className="text-foreground">Pharmacokinetics:</strong>{" "}
+              fast clearance from blood reduces background; but excretion route
+              matters — renal excretion creates bladder activity that can
+              obscure pelvic lesions; hepatic excretion creates liver background
+              interfering with abdominal imaging.
+            </li>
+            <li>
+              <strong className="text-foreground">In vivo stability:</strong>{" "}
+              the radiometal-chelate or radiohalogens must not be released in
+              vivo ("transchelation" or deiodination) before reaching the target
+              organ.
+            </li>
+          </ul>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            Key Clinical Applications by Modality
+          </h3>
+          <DataTable
+            headers={[
+              "Application",
+              "Preferred Modality",
+              "Tracer",
+              "Clinical Question",
+            ]}
+            rows={[
+              [
+                "Cardiac perfusion",
+                "SPECT or PET",
+                "Tc-99m sestamibi (SPECT); Rb-82 / N-13-NH₃ (PET)",
+                "Ischaemia vs infarct; viability; EF quantification",
+              ],
+              [
+                "Brain metabolism",
+                "PET",
+                "F-18-FDG",
+                "Alzheimer's vs frontotemporal dementia; epilepsy focus; encephalitis",
+              ],
+              [
+                "Tumor staging",
+                "PET/CT",
+                "F-18-FDG; Ga-68-PSMA; Ga-68-DOTATATE",
+                "Primary + nodal + distant metastases in single whole-body scan",
+              ],
+              [
+                "Infection / FUO",
+                "SPECT or PET",
+                "Tc-99m WBC (SPECT); F-18-FDG-WBC (PET)",
+                "Osteomyelitis, prosthetic joint infection, vasculitis, FUO",
+              ],
+              [
+                "Thyroid cancer follow-up",
+                "SPECT/CT",
+                "I-131 (post-Tx); Tc-99m pertechnetate",
+                "Remnant ablation verification; iodine-avid metastasis detection",
+              ],
+              [
+                "Neuroendocrine tumours",
+                "PET/CT",
+                "Ga-68-DOTATATE (superior to Tc-99m Octreoscan)",
+                "Initial staging; PRRT patient selection; recurrence detection",
+              ],
+            ]}
+          />
+          <p className="mt-2 text-xs text-muted-foreground">
+            Sources: SNMMI Practice Guidelines; EANM Procedure Guidelines; IAEA
+            Human Health Reports No. 9.
+          </p>
+        </CollapsibleSection>
+
+        {/* ── NEW Section: Therapeutic Radioisotopes (Deep Dive) ── */}
+        <CollapsibleSection
+          title="Therapeutic Radioisotopes: α vs β⁻ Emitters"
+          badge="advanced"
+          ocid="medicine.therapeutic_isotopes"
+        >
+          <AudienceBadge level="advanced" />
+          <p className="text-muted-foreground leading-relaxed mb-4 mt-3">
+            Targeted Radionuclide Therapy (TRT) attaches a therapeutic
+            radionuclide to a targeting vector — a molecule with specific
+            biological affinity for tumour cells. The choice of radionuclide
+            determines the range, linear energy transfer (LET), and radiobiology
+            of the therapy. Beta-minus (β⁻) emitters dominate approved
+            therapies; alpha (α) emitters represent the frontier of precision
+            oncology.
+          </p>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            Absorbed Dose: The MIRD Formalism
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            Patient-specific dosimetry in TRT uses the Medical Internal
+            Radiation Dose (MIRD) schema. The absorbed dose to target organ{" "}
+            <em>T</em> from source organ <em>S</em> is:
+          </p>
+          <EquationBlock
+            latex="D(T \leftarrow S) = \tilde{A}_S \cdot S(T \leftarrow S)"
+            annotation="Where D(T←S) is the absorbed dose in target organ T (Gy), Ã_S is the cumulated activity (MBq·h) — the integral of activity over time in source organ S — and S(T←S) is the S-value (Gy/MBq·h), a radionuclide-specific and geometry-specific factor tabulated by OLINDA/EXM software for standard organ geometries. The cumulated activity is determined from quantitative SPECT or PET imaging at multiple timepoints to measure biodistribution kinetics for each patient. Patient-specific S-values can be calculated from CT-derived organ volumes for individualized dosimetry — now required in many PSMA and DOTATATE therapy programs."
+            label="MIRD Absorbed Dose Formula (Snyder et al., 1975)"
+          />
+
+          <h3 className="font-semibold text-foreground mt-4 mb-2">
+            Lu-177 DOTATATE (Lutathera®) — Neuroendocrine Tumours
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            Lutathera was the first somatostatin receptor-targeted radionuclide
+            therapy approved by the FDA (January 2018) and EMA (2017). It
+            represented the breakthrough of the theranostic paradigm into
+            regulatory approval: patients must be confirmed SSTR2-positive by
+            ⁶⁸Ga-DOTATATE PET before treatment. Key clinical data:
+          </p>
+          <DataTable
+            headers={["Parameter", "Detail"]}
+            rows={[
+              [
+                "Indication",
+                "Unresectable, progressive, somatostatin receptor-positive (SRS2+) midgut NETs",
+              ],
+              [
+                "Dosing",
+                "4 cycles × 7.4 GBq (200 mCi) every 8 weeks IV; amino acid infusion co-administered to protect kidneys",
+              ],
+              [
+                "NETTER-1 PFS",
+                "Median PFS not reached at 20 months vs 8.4 months (octreotide LAR); HR 0.18",
+              ],
+              [
+                "Lu-177 properties",
+                "T½ = 6.65 d; Eβ_mean = 133 keV; range ~0.5 mm; plus 208 keV + 113 keV γ (enables post-therapy imaging)",
+              ],
+              [
+                "Organs at risk",
+                "Kidneys (dose limit ~23 Gy cumulative); bone marrow (haematological nadir ~4–6 weeks post-cycle)",
+              ],
+              [
+                "Theranostic pair",
+                "⁶⁸Ga-DOTATATE PET (imaging) + ¹⁷⁷Lu-DOTATATE (therapy) — same peptide, different metals",
+              ],
+            ]}
+          />
+
+          <h3 className="font-semibold text-foreground mt-5 mb-2">
+            Ra-223 Dichloride (Xofigo®) — Alpha Therapy for Bone Metastases
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            Radium-223 dichloride (Xofigo, Bayer) was the first alpha-emitting
+            radionuclide approved for systemic cancer therapy (FDA/EMA 2013).
+            Ra-223 behaves as a calcium mimic and preferentially incorporates
+            into hydroxyapatite at sites of osteoblastic bone metastases. Its
+            decay chain releases 4 alpha particles at very high LET, providing
+            localised double-strand DNA damage within ~100 μm.
+          </p>
+          <EquationBlock
+            latex="^{223}_{88}\text{Ra} \xrightarrow{\alpha, 11.4\,\text{d}} {}^{219}\text{Rn} \xrightarrow{\alpha, 3.96\,\text{s}} {}^{215}\text{Po} \xrightarrow{\alpha, 1.78\,\text{ms}} {}^{211}\text{Pb} \xrightarrow{\beta^-, 36.1\,\text{min}} {}^{211}\text{Bi} \xrightarrow{\alpha, 2.14\,\text{min}} {}^{207}\text{Pb (stable)}"
+            annotation="Ra-223 decay chain: 4 alpha particles (6–7 MeV each) plus 2 beta particles, yielding total energy ~28.3 MeV per decay chain. Alpha particle range in tissue: ~40–100 μm (2–10 cell diameters), confining dose to the tumour microenvironment at the bone surface. The short half-lives of the daughter nuclides mean all energy is deposited locally before significant redistribution occurs. ALSYMPCA Phase III (Parker et al., NEJM 2013): median OS 14.9 vs 11.3 months; HR 0.695 — first alpha therapy to demonstrate overall survival benefit."
+            label="Ra-223 Decay Chain — Localised Alpha Particle Therapy"
+          />
+
+          <h3 className="font-semibold text-foreground mt-5 mb-2">
+            I-131 for Differentiated Thyroid Cancer
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            Sodium iodide I-131 therapy exploits the thyroid gland's natural
+            iodine-concentrating mechanism via the sodium-iodide symporter
+            (NIS). Post-total thyroidectomy, I-131 ablates residual thyroid
+            tissue and iodine-avid metastases. Three-dose categories:
+          </p>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mb-4">
+            <li>
+              <strong className="text-foreground">
+                Remnant ablation (30–100 mCi / 1.1–3.7 GBq):
+              </strong>{" "}
+              eliminates residual thyroid tissue post-thyroidectomy; enables
+              accurate Tg surveillance; reduces recurrence risk in
+              intermediate/high-risk patients
+            </li>
+            <li>
+              <strong className="text-foreground">
+                Adjuvant therapy (100–150 mCi):
+              </strong>{" "}
+              targets likely microscopic lymph node spread; improves
+              disease-free survival in node-positive patients
+            </li>
+            <li>
+              <strong className="text-foreground">
+                Metastatic disease treatment (150–200+ mCi):
+              </strong>{" "}
+              repeated cycles for iodine-avid distant metastases (pulmonary,
+              osseous); cumulative lifetime dose limit ~600 mCi to minimise
+              radiation pneumonitis and leukaemia risk
+            </li>
+          </ul>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            Ac-225 / Bi-213 — Next-Generation Alpha Therapy
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            Actinium-225 (T½ = 9.92 days) decays through a cascade of
+            alpha-emitting daughters (Fr-221, Bi-213, Po-213) delivering up to 4
+            alpha particles per decay chain. Ac-225-PSMA-617 has demonstrated
+            extraordinary activity in patients who failed Lu-177-PSMA therapy:
+            PSA declines &gt;50% in ~50–60% of salvage patients in
+            compassionate-use series. Key challenges are supply (scaling from
+            ~1,500 Ci/yr in 2020 to ~100,000 Ci/yr by 2028 via DOE programme)
+            and daughter recoil redistribution — progeny nuclides may escape the
+            chelate and redistribute to non-target organs.
+          </p>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            <strong className="text-foreground">
+              Pb-212/Bi-212 generators:
+            </strong>{" "}
+            Pb-212 (T½ = 10.6 h) → Bi-212 (T½ = 60.5 min, 64% α) provides an
+            in-vivo generator system: the targeting vector carries Pb-212 to the
+            tumour, where Bi-212 grows in and delivers alpha particle dose.
+            Pb-212-DOTAMTATE is in Phase II for NETs.
+          </p>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            <strong className="text-foreground">
+              At-211 for targeted alpha therapy:
+            </strong>{" "}
+            Astatine-211 (T½ = 7.2 h; 100% alpha branch) is a halogen that can
+            be covalently incorporated into biomolecules analogously to iodine,
+            providing excellent in vivo stability. No-carrier-added At-211 is
+            produced at ~30 MeV cyclotrons via Bi-209(α,2n)At-211. Clinical
+            trials are underway for GBM (glioblastoma), leukaemia, and ovarian
+            cancer.
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Sources: IAEA Human Health Reports; Sgouros et al. (2020){" "}
+            <em>Nat Rev Drug Discov</em>; Kratochwil et al. (2019){" "}
+            <em>J Nucl Med</em> 60, 1030.
+          </p>
+        </CollapsibleSection>
+
+        {/* ── NEW Section: Radiation Safety in Nuclear Medicine (Patient-focused) ── */}
+        <CollapsibleSection
+          title="Radiation Safety in Nuclear Medicine"
+          badge="intermediate"
+          ocid="medicine.safety_overview"
+        >
+          <AudienceBadge level="intermediate" />
+          <SafetyCallout>
+            All diagnostic nuclear medicine procedures involve radiation
+            exposures carefully balanced against clinical benefit. Effective
+            doses from typical diagnostic scans are comparable to 0.5–3 years of
+            natural background radiation and are well within internationally
+            accepted safety limits.{" "}
+            <strong>
+              Diagnostic exposures are carefully optimised against clinical
+              benefit — the ALARA principle (As Low As Reasonably Achievable)
+              governs all dose decisions.
+            </strong>
+          </SafetyCallout>
+
+          <h3 className="font-semibold text-foreground mt-4 mb-2">
+            Patient Effective Doses: Common Diagnostic Scans
+          </h3>
+          <DataTable
+            headers={[
+              "Scan",
+              "Tracer / Activity",
+              "Effective Dose (mSv)",
+              "Background Equivalent",
+            ]}
+            rows={[
+              [
+                "Bone scan (whole body)",
+                "⁹⁹ᵐTc-MDP 740–925 MBq",
+                "~4.2 mSv",
+                "~1.4 yr (US average 3 mSv/yr)",
+              ],
+              [
+                "Myocardial perfusion (stress+rest)",
+                "⁹⁹ᵐTc-sestamibi ~1100 MBq",
+                "~7–9 mSv",
+                "~2–3 years",
+              ],
+              [
+                "¹⁸F-FDG PET whole body",
+                "¹⁸F-FDG 185–370 MBq",
+                "~5–8 mSv",
+                "~1.5–2.5 years",
+              ],
+              [
+                "¹⁸F-FDG PET/CT (diagnostic CT)",
+                "FDG + CT",
+                "~12–18 mSv (CT dominates)",
+                "~4–6 years",
+              ],
+              [
+                "⁶⁸Ga-PSMA PET",
+                "⁶⁸Ga-PSMA 150–200 MBq",
+                "~5–6 mSv",
+                "~2 years",
+              ],
+              [
+                "Thyroid scan",
+                "⁹⁹ᵐTc-pertechnetate 80–200 MBq",
+                "~1.0–1.5 mSv",
+                "~4–6 months",
+              ],
+              [
+                "Pulmonary V/Q",
+                "⁹⁹ᵐTc-MAA 74–370 MBq",
+                "~1.0–2.0 mSv",
+                "~4–8 months",
+              ],
+              [
+                "Annual natural background (USA)",
+                "Radon + cosmic + terrestrial",
+                "~3.1 mSv/yr",
+                "Baseline reference",
+              ],
+            ]}
+          />
+          <p className="mt-2 text-xs text-muted-foreground">
+            Source: ICRP Publication 128 (2015); UNSCEAR 2008. Effective dose is
+            a whole-body risk surrogate — not a precise individual predictor.
+          </p>
+
+          <h3 className="font-semibold text-foreground mt-5 mb-2">
+            Staff Dose Monitoring: TLD Badges and ALARA
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            All nuclear medicine personnel are classified as occupationally
+            exposed workers and must wear personal dosimeters. Types in use:
+          </p>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mb-4">
+            <li>
+              <strong className="text-foreground">
+                TLD (Thermoluminescent Dosimeter):
+              </strong>{" "}
+              LiF or CaSO₄ crystals store absorbed dose as trapped electrons;
+              read by heating to release light proportional to dose. Worn as
+              whole-body badge and ring dosimeter (for extremity dose).
+              Quarterly exchange and reporting to national regulatory body.
+            </li>
+            <li>
+              <strong className="text-foreground">
+                OSL (Optically Stimulated Luminescence):
+              </strong>{" "}
+              aluminium oxide (Al₂O₃:C) crystal; stimulated by laser for
+              readout; more sensitive than TLD; used by Landauer/InLight system.
+            </li>
+            <li>
+              <strong className="text-foreground">
+                Electronic Personal Dosimeter (EPD):
+              </strong>{" "}
+              real-time dose rate and cumulative dose display; immediate
+              feedback during high-dose procedures (I-131 preparation, Ac-225
+              work); alarm at preset dose rates.
+            </li>
+            <li>
+              <strong className="text-foreground">ALARA implementation:</strong>{" "}
+              time minimisation (rapid injection technique); distance (lead
+              syringe shields, remote dispensing); shielding (Pb glass
+              dispensing cabinets, lead aprons for I-131 rooms).
+            </li>
+          </ul>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            Radioactive Waste Management in Hospitals
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            Hospital nuclear medicine departments generate radioactive waste
+            from residual radiopharmaceuticals, contaminated syringes, wipes,
+            gloves, and patient excreta. Management strategy:
+          </p>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mb-4">
+            <li>
+              <strong className="text-foreground">
+                Decay-in-storage (DIS):
+              </strong>{" "}
+              short-lived isotopes (Tc-99m T½ 6h; F-18 T½ 110 min) are held in
+              shielded containers until &lt;2× background, then disposed as
+              ordinary waste. Ten half-lives suffices: 10 × 6h = 60h for Tc-99m.
+            </li>
+            <li>
+              <strong className="text-foreground">
+                Segregated collection:
+              </strong>{" "}
+              by isotope and expected decay time; separate containers for
+              short-lived (&lt;90 days) and longer-lived (I-131, Lu-177)
+              materials.
+            </li>
+            <li>
+              <strong className="text-foreground">
+                Sanitary sewage release:
+              </strong>{" "}
+              patient excreta from diagnostic procedures may be released
+              directly via the hospital sewerage system (NRC 10 CFR 35.92; EU
+              Directive limits). For therapeutic I-131 patients, special toilet
+              facilities with dedicated holding tanks may be required at
+              high-volume centres.
+            </li>
+          </ul>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            Patient Release Criteria (NRC 10 CFR 35.75)
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            Under US NRC regulations (10 CFR 35.75), a patient who has received
+            radiopharmaceuticals may be released from a controlled facility if
+            the total effective dose equivalent (TEDE) to any other individual
+            from exposure to the released patient is not likely to exceed 5 mSv
+            (0.5 rem). For I-131 therapy:
+          </p>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mb-4">
+            <li>
+              <strong className="text-foreground">
+                Hospitalization required:
+              </strong>{" "}
+              residual activity &gt;1,110 MBq (30 mCi) after high-dose I-131
+              therapy typically requires inpatient isolation in a lead-lined
+              room until residual &lt;400 MBq (to meet the 5 mSv public limit to
+              household members)
+            </li>
+            <li>
+              <strong className="text-foreground">
+                Post-discharge advice:
+              </strong>{" "}
+              written instructions are mandatory (NRC 10 CFR 35.75(c)); typical
+              I-131 therapy instructions include avoiding close contact (&lt;1 m
+              for extended periods) with children and pregnant women for 1–2
+              weeks; separate sleeping if young children in household
+            </li>
+            <li>
+              <strong className="text-foreground">Lu-177 therapies:</strong>{" "}
+              low-energy gamma (208 keV; ~11% abundance) means external dose
+              rate is low; outpatient protocols standard; post-treatment
+              isolation not required but toilet hygiene essential for 2 days
+            </li>
+          </ul>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Source: US NRC 10 CFR Part 35; ICRP Publications 94 and 128;
+            European EANM Radiation Protection Guidelines (2018).
+          </p>
+        </CollapsibleSection>
+
+        {/* ── NEW Section: Emerging and Future Directions ── */}
+        <CollapsibleSection
+          title="Emerging and Future Directions in Nuclear Medicine"
+          badge="advanced"
+          ocid="medicine.future"
+        >
+          <AudienceBadge level="advanced" />
+          <p className="text-muted-foreground leading-relaxed mb-4 mt-3">
+            Nuclear medicine is undergoing its most rapid transformation since
+            the introduction of PET in the 1990s. The convergence of
+            theranostics, artificial intelligence, hybrid imaging technology,
+            and novel isotope production is reshaping the field's clinical and
+            commercial landscape.
+          </p>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            Theranostics: Same Target, Diagnose and Treat
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            The theranostic paradigm uses the same molecular target — and often
+            the same targeting vector — with two different radionuclides: one
+            optimized for imaging (typically Ga-68 for PET or Tc-99m for SPECT)
+            and one for therapy (typically Lu-177 β⁻ or Ac-225 α). The canonical
+            approved examples:
+          </p>
+          <DataTable
+            headers={[
+              "Disease",
+              "Target",
+              "Diagnostic Isotope",
+              "Therapeutic Isotope",
+              "Status",
+            ]}
+            rows={[
+              [
+                "Neuroendocrine tumours (NETs)",
+                "Somatostatin receptor SSTR2",
+                "⁶⁸Ga-DOTATATE PET",
+                "¹⁷⁷Lu-DOTATATE (Lutathera)",
+                "FDA/EMA approved (2017–2018)",
+              ],
+              [
+                "Prostate cancer (mCRPC)",
+                "PSMA (FOLH1 receptor)",
+                "⁶⁸Ga-PSMA-11 or ¹⁸F-DCFPyL PET",
+                "¹⁷⁷Lu-PSMA-617 (Pluvicto)",
+                "FDA/EMA approved (2022)",
+              ],
+              [
+                "Prostate cancer (earlier)",
+                "PSMA",
+                "¹⁸F-PSMA PET",
+                "¹⁷⁷Lu-PSMA (PSMA4, PSMAdition trials)",
+                "Phase III ongoing",
+              ],
+              [
+                "Prostate cancer (alpha)",
+                "PSMA",
+                "⁶⁸Ga-PSMA PET",
+                "²²⁵Ac-PSMA-617",
+                "Phase II / compassionate use",
+              ],
+              [
+                "NETs (alpha)",
+                "SSTR2",
+                "⁶⁸Ga-DOTATATE PET",
+                "²¹²Pb-DOTAMTATE (AlphaRET)",
+                "Phase II",
+              ],
+            ]}
+          />
+
+          <h3 className="font-semibold text-foreground mt-5 mb-2">
+            PET/MRI Hybrid Scanners
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            PET/MRI systems combine simultaneously acquired PET functional data
+            with MRI's superior soft-tissue contrast, without the ionising
+            radiation component of CT. Available systems include the Siemens
+            Biograph mMR and the GE SIGNA PET/MR. Current clinical advantages
+            and limitations:
+          </p>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mb-4">
+            <li>
+              <strong className="text-foreground">Advantages:</strong> no
+              ionising radiation from anatomical imaging (critical for
+              paediatric oncology and young adults with cancer); superior
+              soft-tissue contrast for brain tumours, liver lesions, pelvic
+              disease; MR-based motion correction improves lesion quantification
+            </li>
+            <li>
+              <strong className="text-foreground">Challenges:</strong> MR-based
+              attenuation correction less accurate than CT (especially for bone
+              and metal implants); longer scan time; higher cost (~$5–7M vs
+              ~$1.5–3M for PET/CT); limited availability
+            </li>
+            <li>
+              <strong className="text-foreground">Best applications:</strong>{" "}
+              brain oncology (GBM, metastases); paediatric whole-body staging;
+              liver staging; pelvic cancer (prostate, rectum, cervix); cardiac
+              viability (combined MR function + FDG metabolism)
+            </li>
+          </ul>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            Cyclotron vs. Reactor-Produced Isotopes
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            The field's isotope supply is bifurcated between reactor-produced
+            (Mo-99/Tc-99m, Lu-177, I-131, Y-90) and cyclotron-produced (F-18,
+            Ga-68, Cu-64, Zr-89, At-211). Key trends:
+          </p>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mb-4">
+            <li>
+              <strong className="text-foreground">
+                Accelerator-based Mo-99:
+              </strong>{" "}
+              SHINE Medical Technologies (Janesville, Wisconsin) produces Mo-99
+              via photofission of uranium solutions using electron linear
+              accelerators — no reactor required; first non-reactor Mo-99 at
+              commercial scale (~25% of US market by 2024)
+            </li>
+            <li>
+              <strong className="text-foreground">Cyclotron Ga-68:</strong>{" "}
+              Ga-68 production on medical cyclotrons via ⁶⁸Zn(p,n)⁶⁸Ga is
+              becoming increasingly common, providing higher specific activity
+              than Ge-68/Ga-68 generators for demanding radiolabelling; enables
+              new Ga-68-labelled compounds that require high SA
+            </li>
+            <li>
+              <strong className="text-foreground">F-18 regionalisation:</strong>{" "}
+              F-18 regional radiopharmacies distribute via &lt;4 hour road/air
+              routes; US has ~100+ F-18 FDG production sites; hub-and-spoke
+              model expanding to PSMA-1007 and F-18-PSMA compounds
+            </li>
+          </ul>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            Mo-99/Tc-99m Supply Chain: Shortage Mitigation
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            The 2009–2010 global Mo-99 shortage — when NRU (Canada) and HFR
+            (Netherlands) were simultaneously shut down — affected hundreds of
+            thousands of patients. Mitigation strategies implemented since 2010:
+          </p>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mb-4">
+            <li>
+              OECD/NEA High-level Group on the Security of Supply of Medical
+              Radioisotopes (HLG-MR): coordinated production schedules among 5
+              major reactors to prevent simultaneous shutdowns
+            </li>
+            <li>
+              PALLAS reactor (Netherlands): planned next-generation replacement
+              for HFR by ~2030; 80 MW design; dedicated medical isotope
+              production
+            </li>
+            <li>
+              Non-reactor Mo-99 production: SHINE Technologies (USA), NorthStar
+              Medical Radioisotopes (neutron capture route), NRG/Niowave
+              (photofission)
+            </li>
+            <li>
+              Tc-99m alternatives: where Tc-99m supply is threatened, some
+              centres have protocols to substitute ⁸¹Rb/⁸¹ᵐKr (renal), ¹⁸F-NaF
+              (bone), or ¹³³Xe (lung ventilation) for specific indications
+            </li>
+          </ul>
+
+          <h3 className="font-semibold text-foreground mb-2">
+            Linear Accelerator-Based Radiotherapy vs. Isotope-Based TRT
+          </h3>
+          <p className="text-muted-foreground leading-relaxed mb-3">
+            External beam radiotherapy (EBRT) using linear accelerators (LINACs)
+            and isotope-based TRT serve distinct niches with different
+            advantages:
+          </p>
+          <DataTable
+            headers={[
+              "Parameter",
+              "EBRT (LINAC)",
+              "Targeted Radionuclide Therapy",
+            ]}
+            rows={[
+              [
+                "Mechanism",
+                "External photon/electron beam; geometric dose sculpting",
+                "Molecular targeting: tracer homes to tumour cells regardless of location",
+              ],
+              [
+                "Suitable for",
+                "Localised, defined tumour volumes; surgery-unsuitable primary tumours",
+                "Disseminated / metastatic disease; multifocal disease (bone mets, liver mets)",
+              ],
+              [
+                "Precision",
+                "Sub-mm stereotactic radiosurgery (SRS/SBRT) for individual lesions",
+                "Cellular-level molecular targeting but requires receptor expression",
+              ],
+              [
+                "Systemic capability",
+                "No (must treat each site individually)",
+                "Yes: single injection treats all sites simultaneously",
+              ],
+              [
+                "Normal tissue toxicity",
+                "Localised dose bath in beam path; depends on anatomy",
+                "Organ-specific off-target uptake (kidney, marrow, salivary glands)",
+              ],
+              [
+                "Current combination",
+                "EBRT + TRT increasingly combined for radiosensitisation (e.g., Xofigo + docetaxel caution; EBRT + PSMA LU)",
+                "—",
+              ],
+            ]}
+          />
+          <p className="mt-2 text-xs text-muted-foreground">
+            Sources: Strosberg et al. (2017) <em>NEJM</em>; Sartor et al. (2021){" "}
+            <em>NEJM</em>; IAEA Coordinated Research Projects on Theranostics
+            (2022).
+          </p>
+        </CollapsibleSection>
+
         {/* ── Section 5: Radiation Safety in Nuclear Medicine ── */}
         <CollapsibleSection
           title="Radiation Safety in Nuclear Medicine"
