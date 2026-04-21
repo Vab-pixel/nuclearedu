@@ -56,7 +56,7 @@ function formatTime(seconds: number): string {
 
 export default function Quiz() {
   const { topicId } = useParams({ strict: false }) as { topicId: string };
-  const { setProgress } = useLearningStore();
+  const { setProgress, setSyncStatus } = useLearningStore();
   const { audienceLevel } = useAppStore();
 
   const topic = quizTopics.find((t) => t.id === topicId);
@@ -117,18 +117,39 @@ export default function Quiz() {
       const score = Math.round(
         (answers.filter((a) => a.correct).length / totalQuestions) * 100,
       );
-      setProgress(topicId, {
+      const completedAt = new Date().toISOString();
+
+      // Set saving state
+      setSyncStatus("saving");
+
+      setProgress(topicId, topic?.title ?? topicId, {
         score,
         questionsAttempted: totalQuestions,
-        dateTaken: new Date().toISOString(),
+        dateTaken: completedAt,
+        durationSeconds: secs,
       });
+
+      // Transition to saved after a brief delay to show the saving indicator
+      setTimeout(() => {
+        setSyncStatus("saved", Date.now());
+      }, 600);
+
       setPhase("results");
     } else {
       setCurrentIndex((i) => i + 1);
       setSelectedIndex(null);
       setAnswered(false);
     }
-  }, [currentIndex, totalQuestions, answers, startTime, topicId, setProgress]);
+  }, [
+    currentIndex,
+    totalQuestions,
+    answers,
+    startTime,
+    topicId,
+    topic?.title,
+    setProgress,
+    setSyncStatus,
+  ]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -164,7 +185,11 @@ export default function Quiz() {
               : "No questions available for your current audience level."}
           </p>
           <Link to="/learning-lab">
-            <Button variant="outline" className="gap-2">
+            <Button
+              variant="outline"
+              className="gap-2"
+              aria-label="Back to Learning Lab"
+            >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               Back to Learning Lab
             </Button>
@@ -250,6 +275,7 @@ export default function Quiz() {
                 variant="outline"
                 className="gap-2"
                 data-ocid="quiz.results.retake_button"
+                aria-label="Retake this quiz"
               >
                 <RotateCcw className="h-4 w-4" aria-hidden="true" />
                 Retake Quiz
@@ -261,6 +287,11 @@ export default function Quiz() {
                 variant="outline"
                 className="gap-2"
                 data-ocid="quiz.results.review_button"
+                aria-label={
+                  phase === "review"
+                    ? "Hide answer review"
+                    : "Review your answers"
+                }
               >
                 <BookOpen className="h-4 w-4" aria-hidden="true" />
                 {phase === "review" ? "Hide Review" : "Review Answers"}
@@ -270,6 +301,7 @@ export default function Quiz() {
                   variant="default"
                   className="gap-2"
                   data-ocid="quiz.results.back_button"
+                  aria-label="Return to Learning Lab"
                 >
                   <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                   Learning Lab
@@ -311,6 +343,7 @@ export default function Quiz() {
                           }))
                         }
                         aria-expanded={isOpen}
+                        aria-label={`Question ${qi + 1}: ${wasCorrect ? "Correct" : "Incorrect"} — ${q.question}`}
                       >
                         <div className="flex items-start gap-2 min-w-0">
                           {wasCorrect ? (
@@ -389,7 +422,7 @@ export default function Quiz() {
   }
 
   // ── Quiz screen ─────────────────────────────────────────────────────────────
-  const progress = (currentIndex / totalQuestions) * 100;
+  const progressPct = (currentIndex / totalQuestions) * 100;
 
   return (
     <div
@@ -404,17 +437,23 @@ export default function Quiz() {
             size="sm"
             className="gap-1.5 text-muted-foreground hover:text-foreground"
             data-ocid="quiz.back_button"
+            aria-label="Back to Learning Lab"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Learning Lab
           </Button>
         </Link>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1">
+          <span
+            className="flex items-center gap-1"
+            aria-label={`Elapsed time: ${formatTime(elapsed)}`}
+          >
             <Clock className="h-3.5 w-3.5" aria-hidden="true" />
             {formatTime(elapsed)}
           </span>
-          <span>
+          <span
+            aria-label={`Question ${currentIndex + 1} of ${totalQuestions}`}
+          >
             {currentIndex + 1} / {totalQuestions}
           </span>
         </div>
@@ -423,11 +462,11 @@ export default function Quiz() {
       {/* Progress bar */}
       <div
         className="relative h-2 rounded-full bg-muted/40 overflow-hidden mb-6"
-        aria-label={`Question ${currentIndex + 1} of ${totalQuestions}`}
         data-ocid="quiz.progress_bar"
+        aria-label={`Question ${currentIndex + 1} of ${totalQuestions}`}
       >
         <motion.div
-          animate={{ width: `${progress}%` }}
+          animate={{ width: `${progressPct}%` }}
           transition={{ duration: 0.4 }}
           className="h-full bg-primary rounded-full"
         />
@@ -497,6 +536,7 @@ export default function Quiz() {
                   onClick={() => handleSelect(oi)}
                   disabled={answered}
                   data-ocid={`quiz.option.item.${oi + 1}`}
+                  aria-label={`Option ${oi + 1}: ${option}${answered && isCorrect ? " (correct)" : ""}${answered && isSelected && !isCorrect ? " (your incorrect answer)" : ""}`}
                   className={[
                     "w-full rounded-xl border px-4 py-3.5 text-left transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 focus-visible:ring-offset-background",
                     stateClass,
@@ -515,6 +555,7 @@ export default function Quiz() {
                               ? "border-primary text-primary bg-primary/10"
                               : "border-border text-muted-foreground",
                       ].join(" ")}
+                      aria-hidden="true"
                     >
                       {oi + 1}
                     </span>
@@ -524,13 +565,13 @@ export default function Quiz() {
                     {answered && isCorrect && (
                       <CheckCircle2
                         className="h-4 w-4 text-emerald-400 ml-auto mt-0.5 shrink-0"
-                        aria-label="Correct answer"
+                        aria-hidden="true"
                       />
                     )}
                     {answered && isSelected && !isCorrect && (
                       <XCircle
                         className="h-4 w-4 text-rose-400 ml-auto mt-0.5 shrink-0"
-                        aria-label="Wrong answer"
+                        aria-hidden="true"
                       />
                     )}
                   </div>
@@ -574,6 +615,11 @@ export default function Quiz() {
                   onClick={handleNext}
                   className="w-full gap-2"
                   data-ocid="quiz.next_button"
+                  aria-label={
+                    currentIndex + 1 >= totalQuestions
+                      ? "See quiz results"
+                      : "Next question"
+                  }
                 >
                   {currentIndex + 1 >= totalQuestions ? (
                     <>

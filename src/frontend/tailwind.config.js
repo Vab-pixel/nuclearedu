@@ -82,6 +82,8 @@ export default {
         elevated: "0 4px 12px rgba(0,0,0,0.1)",
         card: "0 2px 8px rgba(0,0,0,0.08)",
         "glow-accent": "0 0 16px rgba(56, 189, 248, 0.4)",
+        "glow-cherenkov": "inset 0 0 16px rgba(34, 197, 94, 0.1), 0 0 24px rgba(56, 189, 248, 0.2)",
+        "glow-live": "0 0 20px rgba(34, 197, 94, 0.3)",
       },
       keyframes: {
         "accordion-down": {
@@ -104,12 +106,44 @@ export default {
           "0%, 100%": { opacity: "1", boxShadow: "0 0 16px rgba(56, 189, 248, 0.4)" },
           "50%": { opacity: "0.8", boxShadow: "0 0 24px rgba(56, 189, 248, 0.6)" },
         },
+        "data-refresh": {
+          "0%": { opacity: "1" },
+          "50%": { opacity: "0.6" },
+          "100%": { opacity: "1" },
+        },
+        "pulse-live": {
+          "0%, 100%": { opacity: "1", boxShadow: "0 0 8px rgba(34, 197, 94, 0.4)" },
+          "50%": { opacity: "0.7", boxShadow: "0 0 16px rgba(34, 197, 94, 0.6)" },
+        },
+        "reactor-pulse": {
+          "0%, 100%": { boxShadow: "0 0 32px rgba(56, 189, 248, 0.4), inset 0 0 48px rgba(56, 189, 248, 0.08)" },
+          "50%": { boxShadow: "0 0 48px rgba(56, 189, 248, 0.6), inset 0 0 64px rgba(56, 189, 248, 0.15)" },
+        },
+        "holo-flicker": {
+          "0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%": { opacity: "1" },
+          "20%, 24%, 55%": { opacity: "0.9" },
+        },
+        "particle-float": {
+          "0%": { opacity: "1", transform: "translateY(0)" },
+          "100%": { opacity: "0", transform: "translateY(-20px)" },
+        },
+        "heatmap-shift": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.4s ease-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "data-refresh": "data-refresh 1.5s ease-in-out infinite",
+        "pulse-live": "pulse-live 2.5s ease-in-out infinite",
+        "reactor-pulse": "reactor-pulse 3s ease-in-out infinite",
+        "holo-flicker": "holo-flicker 0.15s ease-in-out infinite",
+        "particle-float": "particle-float 2s ease-out forwards",
+        "heatmap-shift": "heatmap-shift 4s ease-in-out infinite",
       },
     },
   },

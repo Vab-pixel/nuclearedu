@@ -8,10 +8,75 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const idlService = IDL.Service({});
+export const IsotopeRecord = IDL.Record({
+  'n' : IDL.Nat,
+  'z' : IDL.Nat,
+  'branchingRatios' : IDL.Vec(IDL.Float64),
+  'decayModes' : IDL.Vec(IDL.Text),
+  'name' : IDL.Text,
+  'lastUpdated' : IDL.Text,
+  'sourceUri' : IDL.Text,
+  'atomicMassAMU' : IDL.Float64,
+  'massExcessKeV' : IDL.Float64,
+  'bindingEnergyPerNucleon' : IDL.Float64,
+  'abundance' : IDL.Float64,
+  'halfLifeSeconds' : IDL.Float64,
+  'qValueMeV' : IDL.Float64,
+  'symbol' : IDL.Text,
+});
+export const IsotopePageResult = IDL.Record({
+  'records' : IDL.Vec(IsotopeRecord),
+  'page' : IDL.Nat,
+  'totalCount' : IDL.Nat,
+  'pageSize' : IDL.Nat,
+});
+export const Result_1 = IDL.Variant({
+  'ok' : IsotopePageResult,
+  'err' : IDL.Text,
+});
+export const Result = IDL.Variant({ 'ok' : IsotopeRecord, 'err' : IDL.Text });
+
+export const idlService = IDL.Service({
+  'fetchAllIsotopesPage' : IDL.Func([IDL.Nat, IDL.Nat], [Result_1], []),
+  'fetchIsotopeData' : IDL.Func([IDL.Nat, IDL.Nat], [Result], []),
+  'getCachedIsotopeCount' : IDL.Func([], [IDL.Nat], ['query']),
+  'getLastFetchTimestamp' : IDL.Func([], [IDL.Int], ['query']),
+});
 
 export const idlInitArgs = [];
 
-export const idlFactory = ({ IDL }) => { return IDL.Service({}); };
+export const idlFactory = ({ IDL }) => {
+  const IsotopeRecord = IDL.Record({
+    'n' : IDL.Nat,
+    'z' : IDL.Nat,
+    'branchingRatios' : IDL.Vec(IDL.Float64),
+    'decayModes' : IDL.Vec(IDL.Text),
+    'name' : IDL.Text,
+    'lastUpdated' : IDL.Text,
+    'sourceUri' : IDL.Text,
+    'atomicMassAMU' : IDL.Float64,
+    'massExcessKeV' : IDL.Float64,
+    'bindingEnergyPerNucleon' : IDL.Float64,
+    'abundance' : IDL.Float64,
+    'halfLifeSeconds' : IDL.Float64,
+    'qValueMeV' : IDL.Float64,
+    'symbol' : IDL.Text,
+  });
+  const IsotopePageResult = IDL.Record({
+    'records' : IDL.Vec(IsotopeRecord),
+    'page' : IDL.Nat,
+    'totalCount' : IDL.Nat,
+    'pageSize' : IDL.Nat,
+  });
+  const Result_1 = IDL.Variant({ 'ok' : IsotopePageResult, 'err' : IDL.Text });
+  const Result = IDL.Variant({ 'ok' : IsotopeRecord, 'err' : IDL.Text });
+  
+  return IDL.Service({
+    'fetchAllIsotopesPage' : IDL.Func([IDL.Nat, IDL.Nat], [Result_1], []),
+    'fetchIsotopeData' : IDL.Func([IDL.Nat, IDL.Nat], [Result], []),
+    'getCachedIsotopeCount' : IDL.Func([], [IDL.Nat], ['query']),
+    'getLastFetchTimestamp' : IDL.Func([], [IDL.Int], ['query']),
+  });
+};
 
 export const init = ({ IDL }) => { return []; };

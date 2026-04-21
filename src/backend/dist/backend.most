@@ -1,4 +1,77 @@
 // Version: 1.0.0
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type IsotopeRecord__175317692 =
+  {
+    abundance : Float;
+    atomicMassAMU : Float;
+    bindingEnergyPerNucleon : Float;
+    branchingRatios : [Float];
+    decayModes : [Text];
+    halfLifeSeconds : Float;
+    lastUpdated : Text;
+    massExcessKeV : Float;
+    n : Nat;
+    name : Text;
+    qValueMeV : Float;
+    sourceUri : Text;
+    symbol : Text;
+    z : Nat
+  };
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
 actor {
-  
+  stable MAX_BULK_BYTES : Nat64;
+  stable MAX_SINGLE_BYTES : Nat64;
+  stable RATE_LIMIT_NS : Int;
+  stable cachedIsotopes :
+    {
+      var root : Node__46230540<Text, IsotopeRecord__175317692>;
+      var size : Nat__490723111
+    };
+  stable ic :
+    actor {
+      http_request :
+        shared {
+                 body : ?Blob;
+                 headers : [{name : Text; value : Text}];
+                 is_replicated : ?Bool;
+                 max_response_bytes : ?Nat64;
+                 method : {#get; #head; #post};
+                 transform :
+                   ?{
+                      context : Blob;
+                      function :
+                        shared query {
+                                       context : Blob;
+                                       response :
+                                         {
+                                           body : Blob;
+                                           headers :
+                                             [{name : Text; value : Text}];
+                                           status : Nat
+                                         }
+                                     } ->
+                          async
+                            {
+                              body : Blob;
+                              headers : [{name : Text; value : Text}];
+                              status : Nat
+                            }
+                    };
+                 url : Text
+               } ->
+          async
+            {
+              body : Blob;
+              headers : [{name : Text; value : Text}];
+              status : Nat
+            }
+    };
+  stable var lastFetchTimestamp : Int
 };

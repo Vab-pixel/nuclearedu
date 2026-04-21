@@ -1,13 +1,19 @@
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 import { type DecayMode, type Nuclide, nuclides } from "@/data/nuclides";
+import { useAutoRefreshIsotopes } from "@/hooks/useAutoRefreshIsotopes";
+import { useIsotopeStore } from "@/store/isotopeStore";
 import { Link } from "@tanstack/react-router";
 import Fuse from "fuse.js";
 import {
+  AlertCircle,
+  CheckCircle2,
   ChevronDown,
   ChevronUp,
   Download,
   ExternalLink,
+  Loader2,
+  RefreshCw,
   Search,
   X,
 } from "lucide-react";
@@ -23,7 +29,7 @@ import {
   YAxis,
 } from "recharts";
 
-// ─── decay mode colours (match NuclideChart palette) ──────────────────────────
+// ─── decay mode colours ────────────────────────────────────────────────────────
 const DECAY_COLORS: Record<string, string> = {
   stable: "bg-emerald-600/80 text-emerald-100",
   alpha: "bg-yellow-600/80 text-yellow-100",
@@ -60,6 +66,128 @@ const fuseInstance = new Fuse(nuclides, {
   includeScore: true,
 });
 
+// ─── Relative time formatter ──────────────────────────────────────────────────
+function formatRelativeTime(isoString: string): string {
+  const date = new Date(isoString);
+  const diffMs = Date.now() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)}mo ago`;
+  return `${Math.floor(diffDays / 365)}y ago`;
+}
+
+function formatAbsoluteUTC(isoString: string): string {
+  return new Date(isoString).toUTCString();
+}
+
+function formatLocalTimestamp(ts: number): string {
+  return new Date(ts).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatUTCTimestamp(ts: number): string {
+  return new Date(ts).toUTCString();
+}
+
+// ─── Live Data Status Bar ─────────────────────────────────────────────────────
+function LiveDataBar({
+  onRefresh,
+  isFetching,
+}: { onRefresh: () => void; isFetching: boolean }) {
+  const { fetchStatus, errorMessage, lastFetchTimestamp, cachedCount } =
+    useIsotopeStore();
+
+  return (
+    <div
+      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card/60 px-4 py-2.5 mb-5"
+      data-ocid="data-explorer.live_data_bar"
+    >
+      <div className="flex items-center gap-3 flex-wrap">
+        {/* Status badge */}
+        {fetchStatus === "success" && (
+          <span
+            className="flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 text-xs font-semibold text-emerald-400"
+            data-ocid="data-explorer.live_badge"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            Live Data
+          </span>
+        )}
+        {fetchStatus === "loading" && (
+          <span
+            className="flex items-center gap-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 text-xs font-semibold text-amber-400 animate-pulse"
+            data-ocid="data-explorer.syncing_badge"
+          >
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            Syncing…
+          </span>
+        )}
+        {fetchStatus === "error" && (
+          <span
+            className="flex items-center gap-1.5 rounded-full bg-destructive/15 border border-destructive/30 px-2.5 py-1 text-xs font-semibold text-destructive cursor-help"
+            title={errorMessage ?? "Live data unavailable"}
+            data-ocid="data-explorer.error_badge"
+          >
+            <AlertCircle className="h-3.5 w-3.5" />
+            Cached Data
+          </span>
+        )}
+        {fetchStatus === "idle" && (
+          <span className="flex items-center gap-1.5 rounded-full bg-muted/60 border border-border px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+            Initializing…
+          </span>
+        )}
+
+        {/* Count */}
+        {cachedCount > 0 && (
+          <span className="text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground tabular-nums">
+              {cachedCount.toLocaleString()}
+            </span>{" "}
+            isotopes cached
+          </span>
+        )}
+
+        {/* Last updated */}
+        {lastFetchTimestamp && (
+          <span
+            className="text-xs text-muted-foreground"
+            title={formatUTCTimestamp(lastFetchTimestamp)}
+          >
+            Last sync:{" "}
+            <span className="text-foreground">
+              {formatLocalTimestamp(lastFetchTimestamp)}
+            </span>
+          </span>
+        )}
+      </div>
+
+      {/* Refresh button */}
+      <button
+        type="button"
+        onClick={onRefresh}
+        disabled={isFetching}
+        className="flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        data-ocid="data-explorer.refresh_button"
+        aria-label="Refresh isotope data from live source"
+      >
+        <RefreshCw
+          className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`}
+        />
+        {isFetching ? "Refreshing…" : "Refresh"}
+      </button>
+    </div>
+  );
+}
+
+// ─── Decay Badge ──────────────────────────────────────────────────────────────
 function DecayBadge({ mode }: { mode: DecayMode }) {
   return (
     <span
@@ -70,6 +198,7 @@ function DecayBadge({ mode }: { mode: DecayMode }) {
   );
 }
 
+// ─── Nuclide Detail Panel ─────────────────────────────────────────────────────
 function NuclideDetail({
   nuclide,
   onClose,
@@ -122,7 +251,13 @@ function NuclideDetail({
                   : "N/A",
               ],
               [
-                "Binding Energy / Nucleon (MeV)",
+                "Atomic Mass (AMU)",
+                nuclide.atomicMass_AMU != null
+                  ? nuclide.atomicMass_AMU.toFixed(9)
+                  : "N/A",
+              ],
+              [
+                "B.E. / Nucleon (MeV)",
                 nuclide.bindingEnergyPerNucleon_MeV != null
                   ? nuclide.bindingEnergyPerNucleon_MeV.toFixed(4)
                   : "N/A",
@@ -141,6 +276,27 @@ function NuclideDetail({
             </div>
           ))}
         </dl>
+
+        {/* Branching Ratios */}
+        {nuclide.branchingRatios && nuclide.branchingRatios.length > 0 && (
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-2">
+              Branching Ratios
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {nuclide.branchingRatios.map((ratio, i) => (
+                <span
+                  // biome-ignore lint/suspicious/noArrayIndexKey: static list
+                  key={i}
+                  className="inline-block rounded-full bg-primary/15 border border-primary/30 px-2.5 py-1 text-xs font-mono text-primary"
+                >
+                  {ratio.toFixed(1)}%
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div>
           <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-2">
             Decay Modes
@@ -151,6 +307,20 @@ function NuclideDetail({
             ))}
           </div>
         </div>
+
+        {/* Source info */}
+        {nuclide.lastUpdated && (
+          <p
+            className="text-xs text-muted-foreground"
+            title={formatAbsoluteUTC(nuclide.lastUpdated)}
+          >
+            NNDC data updated:{" "}
+            <span className="text-foreground">
+              {formatRelativeTime(nuclide.lastUpdated)}
+            </span>
+          </p>
+        )}
+
         <Link
           to="/visualizations/nuclide-chart"
           className="flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -164,7 +334,10 @@ function NuclideDetail({
   );
 }
 
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function DataExplorer() {
+  const { manualRefresh, isFetching } = useAutoRefreshIsotopes();
+
   const [query, setQuery] = useState("");
   const [decayFilter, setDecayFilter] = useState("All");
   const [sizeFilter, setSizeFilter] = useState("All");
@@ -225,7 +398,6 @@ export default function DataExplorer() {
     setPage(1);
   }, []);
 
-  // Decay mode histogram data
   const histData = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const n of filtered) {
@@ -236,10 +408,9 @@ export default function DataExplorer() {
     return Object.entries(counts).map(([mode, count]) => ({ mode, count }));
   }, [filtered]);
 
-  // CSV export
   const handleExport = () => {
     const header =
-      "Symbol,Name,Z,N,A,HalfLife,DecayModes,BindingEnergy_MeV,Abundance\n";
+      "Symbol,Name,Z,N,A,HalfLife,DecayModes,BindingEnergy_MeV,Abundance,AtomicMass_AMU,MassExcess_keV\n";
     const rows = filtered
       .map((n) =>
         [
@@ -252,6 +423,8 @@ export default function DataExplorer() {
           `"${n.decayModes.join("|")}"`,
           n.bindingEnergyPerNucleon_MeV ?? "",
           n.abundance ?? "",
+          n.atomicMass_AMU ?? "",
+          n.massExcess_keV ?? "",
         ].join(","),
       )
       .join("\n");
@@ -277,10 +450,13 @@ export default function DataExplorer() {
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <PageHeader
         title="Nuclear Data Explorer"
-        subtitle="Search, filter, and explore data on 200+ nuclides — from stable isotopes to radioactive species. Click any row for detailed properties."
+        subtitle="Search, filter, and explore data on 720+ nuclides — from stable isotopes to radioactive species. Click any row for detailed properties."
         audienceLevel="intermediate"
         readTimeMin={5}
       />
+
+      {/* Live Data Status Bar */}
+      <LiveDataBar onRefresh={manualRefresh} isFetching={isFetching} />
 
       {/* Histogram */}
       <SectionCard className="mb-6" data-ocid="data-explorer.histogram.card">
@@ -423,6 +599,9 @@ export default function DataExplorer() {
                     ["Decay Mode(s)", null],
                     ["B.E. (MeV/u)", "bindingEnergyPerNucleon_MeV"],
                     ["Abundance (%)", "abundance"],
+                    ["Mass (AMU)", null],
+                    ["Branching (%)", null],
+                    ["Updated", null],
                   ] as [string, SortKey | null][]
                 ).map(([label, key]) => (
                   <th
@@ -457,7 +636,7 @@ export default function DataExplorer() {
               {paginated.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={9}
+                    colSpan={12}
                     className="py-12 text-center text-muted-foreground"
                     data-ocid="data-explorer.table.empty_state"
                   >
@@ -478,7 +657,7 @@ export default function DataExplorer() {
                     <td className="px-4 py-2.5 font-mono font-bold text-primary">
                       {n.symbol}
                     </td>
-                    <td className="px-4 py-2.5 text-foreground max-w-[180px] truncate">
+                    <td className="px-4 py-2.5 text-foreground max-w-[160px] truncate">
                       {n.name}
                     </td>
                     <td className="px-4 py-2.5 tabular-nums text-right pr-6">
@@ -507,6 +686,27 @@ export default function DataExplorer() {
                     </td>
                     <td className="px-4 py-2.5 tabular-nums text-right pr-6">
                       {n.abundance != null ? n.abundance.toFixed(3) : "—"}
+                    </td>
+                    <td className="px-4 py-2.5 tabular-nums text-right pr-6 font-mono text-xs">
+                      {n.atomicMass_AMU != null
+                        ? n.atomicMass_AMU.toFixed(6)
+                        : "—"}
+                    </td>
+                    <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                      {n.branchingRatios && n.branchingRatios.length > 0
+                        ? n.branchingRatios
+                            .map((r) => `${r.toFixed(1)}%`)
+                            .join(", ")
+                        : "—"}
+                    </td>
+                    <td className="px-4 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
+                      {n.lastUpdated ? (
+                        <span title={formatAbsoluteUTC(n.lastUpdated)}>
+                          {formatRelativeTime(n.lastUpdated)}
+                        </span>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                   </tr>
                 ))

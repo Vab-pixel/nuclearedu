@@ -1,23 +1,29 @@
 {
-  "overview": "An interactive educational website about nuclear science and engineering. Covers atoms, radioactivity, nuclear reactions, reactor types, radiation, and applications — with 3D visualizations, animated simulations, and audience-tailored content for everyone from curious beginners to nuclear engineers.",
+  "overview": "NuclearEdu is a professional-grade interactive educational platform for nuclear science and engineering. It features cinematic 3D visualizations, advanced simulation tools, a comprehensive learning lab with quizzes, and live nuclear database integration — all built for students, professionals, and researchers.",
   "features": [
-    "Nucleus Visualizer — interactive 3D model with proton/neutron sliders",
-    "Decay Chain Explorer — animated D3 graph tracing U-238 decay to Pb-206",
-    "Chart of Nuclides — color-coded heatmap of 50+ key nuclides",
-    "Reactor Cross-Section — animated SVG with control rod slider",
-    "Multi-level content — beginner through professional audience paths",
-    "KaTeX equations with plain-language explanations",
-    "Glossary, References, and About pages",
-    "Dark mode default with WCAG 2.1 AA accessibility"
+    "Reactor Digital Twin with split-pane comparison modal and cinematic Cherenkov glow effects",
+    "Live IAEA isotope database integration with auto-refresh and graceful fallback",
+    "Learning Lab with quizzes, achievement badges, streak tracking, and local progress persistence",
+    "Advanced Decay Chain Explorer with secular equilibrium curves and gamma-ray spectroscopy",
+    "High-fidelity 3D Nucleus Visualizer with decay mode animations and binding energy graphs",
+    "Carbon Dating Calculator with IntCal20 calibration and sample presets",
+    "Interactive Chart of Nuclides heatmap with 720+ isotopes",
+    "Data Explorer with enriched fields from live IAEA data",
+    "Radiation Safety deep-dive with dose reference chart",
+    "200+ term glossary with multi-level definitions and equations"
   ],
   "category": "education",
   "tags": [
-    "nuclear",
+    "nuclear-science",
     "education",
-    "science",
     "interactive",
     "visualization",
-    "physics"
+    "physics",
+    "3d-simulation",
+    "isotopes",
+    "reactor-design",
+    "dark-mode",
+    "research-tools"
   ],
-  "last_updated": "2026-04-16T03:15:09.684Z"
+  "last_updated": "2026-04-18T16:58:59.327Z"
 }

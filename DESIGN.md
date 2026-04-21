@@ -60,38 +60,39 @@ Line-height: 1.6 (body), 1.3 (display). Letter-spacing: -0.02em (display), norma
 - **Cards:** bg-card with border border-border, shadow-card, rounded-md. Hover state: shadow-elevated + scale-102 transition-smooth.
 - **Inputs:** bg-input border-border focus:ring-2 focus:ring-accent. Clearance: 12px padding.
 - **Audience Badges:** audience-badge class + audience-{level} for semantic colors (green/blue/amber/purple).
+- **Data Refresh Badges:** data-refresh-badge with live (emerald pulse)/synced (blue static)/pending (amber pulse) states.
 - **Focus States:** All interactive elements: glow-focus utility (ring-2 ring-accent ring-offset-2, dark-offset-background).
 - **Tables:** Striped rows (even: bg-muted/20), hover highlight, sortable headers bold, sticky headers.
+- **Split-pane Modals:** split-pane-container (grid 2-col) with cherenkov-glow-border on left pane. Compare reactor types side-by-side with synchronized scroll.
+- **Progress Rings:** progress-ring wrapper with animated progress indicator + export button. Status indicator pulse for live sync.
+- **3D Reactor Visualization:** Rendered canvas (Three.js + React Three Fiber) with reactor-core-glow container. Holo-text for data overlays (holo-text + holo-flicker animations). Holo-panel for dashboard cards (semi-transparent bg-card with inset glow). Heatmap overlays layer on 3D geometry using heatmap-cold → heatmap-warm → heatmap-hot gradient. Timeline scrubber uses timeline-track + timeline-handle (glowing interactive element). Particle systems rendered as point clouds with particle-glow effect. Data output grid uses data-overlay-grid (monospace labels, muted color for readability over 3D scene).
 
 ## Motion & Animation
 - **Transition default:** transition-smooth (0.3s cubic-bezier(0.4, 0, 0.2, 1)) on all interactive elements.
 - **Fade-in:** 0.4s ease-out for content reveals.
 - **Pulse-glow:** 2s infinite subtle glow on interactive accents (Cerenkov radiation inspired).
+- **Data-refresh:** 1.5s infinite for live data sync cycles, subtle opacity pulse without jarring effects.
+- **Pulse-live:** 2.5s infinite for active live data indicators, slower than standard pulse.
+- **Reactor-pulse:** 3s infinite for 3D core respiration effect, combining outer glow + inset shadow for depth.
+- **Holo-flicker:** 0.15s for holographic UI text, subtle realistic flicker without distraction.
+- **Particle-float:** 2s ease-out for neutron flux and decay particle animations rising/fading through 3D scene.
+- **Heatmap-shift:** 4s infinite for temperature gradient overlay pulsing across reactor core.
 - **Page transitions:** Fade-in on route change, staggered content entrance (200ms per element).
 - **Interactions:** Click response 150ms, hover response immediate (no delay).
+- **Split-pane animations:** Left pane cherenkov-glow-border strengthens on active comparison, smooth transitions between reactor types.
+- **3D Scene interactions:** Smooth camera rotation with OrbitControls, real-time material property updates tied to timeline scrub, particle system time acceleration/deceleration tied to simulation speed slider.
 
 ## Signature Detail
-**Cerenkov Glow Border:** Nuclear data visualization areas + prominent interactive CTAs feature a subtle glowing left or top border (cyan 0.6 0.05 240) with 0.2 opacity, strengthening on focus. Subtly conveys "radiation" + "energy" metaphor without melodrama.
+**Cerenkov Glow + 3D Reactor Hyper-Detail:** Glowing cyan border (0.75 0.2 256) on data viz + split-pane modals. New cutaway core: ray-traced reflections, soft blue Cherenkov glow from cooling systems, particle effects. Primary glow uses oklch(var(--primary)), secondary warmth from oklch(var(--secondary)) for fuel rod incandescence. Temperature heatmap overlays: cyan (cold) → amber (warm) → red (hot). Holographic UI elements use text-shadow glow in oklch(var(--accent)) (0.72 0.25 286). Dashboard panels: glass-morphism (backdrop-blur-sm, border-primary/30, inset glow). Reactor respiration pulse (3s animation) creates breathing effect. Particle systems (neutron flux, decay) float upward with fade-out (2s) at 30–60 fps via Three.js. Overall: premium CERN monitor + real-time research dashboard.
 
 ## Accessibility Constraints
-- **WCAG 2.1 AA minimum:** All text contrast ≥ 4.5:1 (AAA where practical, ≥ 3:1 for large text).
-- **Color-blind safe:** Data viz palette tested for deuteranopia; never color-only encoding.
-- **Keyboard navigation:** Tab order logical, all interactive elements reachable.
-- **Focus visibility:** Focus indicators always visible (ring-2 ring-accent), never subtle.
-- **Type scale:** Minimum 16px body font, scalable to 200% without layout breakage.
-- **Reduced motion:** Respect `prefers-reduced-motion` — disable pulse-glow + fade animations.
-- **Screen readers:** ARIA labels on all data viz, semantic HTML, live regions for updates.
+WCAG 2.1 AA minimum (AAA where practical). All text contrast ≥ 4.5:1. Color-blind safe palette. Keyboard navigation logical. Focus indicators always visible (ring-2 ring-accent). Type scale minimum 16px, scalable to 200%. Respect `prefers-reduced-motion`. ARIA labels on all data viz.
 
 ## Anti-Patterns Rejected
-- ❌ Full-page gradients (use depth via layering)
-- ❌ Color-only distinction (always add pattern, icon, or label)
-- ❌ Bouncy animations on core content
-- ❌ Same surface treatment throughout (use elevation differentiation)
-- ❌ System font fallback (always deliver bundled fonts)
-- ❌ Uniform border-radius (vary intentionally: 0, 4px, 6px, 12px, full)
+❌ Full-page gradients (use layering), ❌ Color-only distinction, ❌ Bouncy animations, ❌ Same surface treatment, ❌ System font fallback, ❌ Uniform border-radius
 
 ## Dark Mode Tuning
-Primary design in dark mode. Light mode inverts intelligently (not just lightness swap): backgrounds become near-white (0.98), text near-black (0.12), accents darken to preserve gamut and prevent blow-out. Borders lighten (0.88). Shadows become subtle (opacity-reduced).
+Primary design in dark mode. Light mode inverts intelligently (not just lightness swap): backgrounds become near-white (0.98), text near-black (0.12), accents darken to preserve gamut and prevent blow-out. Borders lighten (0.88). Shadows become subtle (opacity-reduced). Live data indicators (emerald/blue/amber) remain saturated in both modes for clarity. Split-pane borders maintain Cherenkov glow effect in both modes with appropriate opacity adjustments.
 
 ## Differentiation
-**What makes this unforgettable:** Glowing cyan accent (Cerenkov radiation metaphor) combined with restraint. No gradients except subtle hero background. Typography pair (geometric SpaceGrotesk + clean PlusJakartaSans) signals "scientific precision meets modern UX." Data viz palette optimized for accessibility, not RGB rainbow cliché. Footer + header borders create distinct zones. Overall effect: premium journal + CERN monitor room.
+**What makes this unforgettable:** Glowing cyan accent (Cerenkov radiation metaphor) combined with restraint. No gradients except subtle hero background. Typography pair (geometric SpaceGrotesk + clean PlusJakartaSans) signals "scientific precision meets modern UX." Data viz palette optimized for accessibility, not RGB rainbow cliché. Footer + header borders create distinct zones. Live data badges with emerald pulse (active sync) provide real-time feedback without visual noise. Split-pane reactor comparison modals elevate cinematic detail with inset glows and synchronized animations. Overall effect: premium journal + CERN monitor room + real-time research dashboard.

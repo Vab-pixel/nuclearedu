@@ -10,7 +10,38 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface _SERVICE {}
+export interface IsotopePageResult {
+  'records' : Array<IsotopeRecord>,
+  'page' : bigint,
+  'totalCount' : bigint,
+  'pageSize' : bigint,
+}
+export interface IsotopeRecord {
+  'n' : bigint,
+  'z' : bigint,
+  'branchingRatios' : Array<number>,
+  'decayModes' : Array<string>,
+  'name' : string,
+  'lastUpdated' : string,
+  'sourceUri' : string,
+  'atomicMassAMU' : number,
+  'massExcessKeV' : number,
+  'bindingEnergyPerNucleon' : number,
+  'abundance' : number,
+  'halfLifeSeconds' : number,
+  'qValueMeV' : number,
+  'symbol' : string,
+}
+export type Result = { 'ok' : IsotopeRecord } |
+  { 'err' : string };
+export type Result_1 = { 'ok' : IsotopePageResult } |
+  { 'err' : string };
+export interface _SERVICE {
+  'fetchAllIsotopesPage' : ActorMethod<[bigint, bigint], Result_1>,
+  'fetchIsotopeData' : ActorMethod<[bigint, bigint], Result>,
+  'getCachedIsotopeCount' : ActorMethod<[], bigint>,
+  'getLastFetchTimestamp' : ActorMethod<[], bigint>,
+}
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
 export declare const idlFactory: IDL.InterfaceFactory;

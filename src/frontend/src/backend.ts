@@ -89,10 +89,151 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface backendInterface {
+export interface IsotopeRecord {
+    n: bigint;
+    z: bigint;
+    branchingRatios: Array<number>;
+    decayModes: Array<string>;
+    name: string;
+    lastUpdated: string;
+    sourceUri: string;
+    atomicMassAMU: number;
+    massExcessKeV: number;
+    bindingEnergyPerNucleon: number;
+    abundance: number;
+    halfLifeSeconds: number;
+    qValueMeV: number;
+    symbol: string;
 }
+export interface IsotopePageResult {
+    records: Array<IsotopeRecord>;
+    page: bigint;
+    totalCount: bigint;
+    pageSize: bigint;
+}
+export type Result = {
+    __kind__: "ok";
+    ok: IsotopeRecord;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export type Result_1 = {
+    __kind__: "ok";
+    ok: IsotopePageResult;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export interface backendInterface {
+    fetchAllIsotopesPage(page: bigint, pageSize: bigint): Promise<Result_1>;
+    fetchIsotopeData(z: bigint, n: bigint): Promise<Result>;
+    getCachedIsotopeCount(): Promise<bigint>;
+    getLastFetchTimestamp(): Promise<bigint>;
+}
+import type { IsotopePageResult as _IsotopePageResult, IsotopeRecord as _IsotopeRecord, Result as _Result, Result_1 as _Result_1 } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async fetchAllIsotopesPage(arg0: bigint, arg1: bigint): Promise<Result_1> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.fetchAllIsotopesPage(arg0, arg1);
+                return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.fetchAllIsotopesPage(arg0, arg1);
+            return from_candid_Result_1_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async fetchIsotopeData(arg0: bigint, arg1: bigint): Promise<Result> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.fetchIsotopeData(arg0, arg1);
+                return from_candid_Result_n3(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.fetchIsotopeData(arg0, arg1);
+            return from_candid_Result_n3(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCachedIsotopeCount(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCachedIsotopeCount();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCachedIsotopeCount();
+            return result;
+        }
+    }
+    async getLastFetchTimestamp(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getLastFetchTimestamp();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getLastFetchTimestamp();
+            return result;
+        }
+    }
+}
+function from_candid_Result_1_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_1): Result_1 {
+    return from_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result): Result {
+    return from_candid_variant_n4(_uploadFile, _downloadFile, value);
+}
+function from_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _IsotopePageResult;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: IsotopePageResult;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _IsotopeRecord;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: IsotopeRecord;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
 }
 export interface CreateActorOptions {
     agent?: Agent;

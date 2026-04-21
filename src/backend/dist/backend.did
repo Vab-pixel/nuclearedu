@@ -1,2 +1,40 @@
+type Result_1 = 
+ variant {
+   err: text;
+   ok: IsotopePageResult;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok: IsotopeRecord;
+ };
+type IsotopeRecord = 
+ record {
+   abundance: float64;
+   atomicMassAMU: float64;
+   bindingEnergyPerNucleon: float64;
+   branchingRatios: vec float64;
+   decayModes: vec text;
+   halfLifeSeconds: float64;
+   lastUpdated: text;
+   massExcessKeV: float64;
+   n: nat;
+   name: text;
+   qValueMeV: float64;
+   sourceUri: text;
+   symbol: text;
+   z: nat;
+ };
+type IsotopePageResult = 
+ record {
+   page: nat;
+   pageSize: nat;
+   records: vec IsotopeRecord;
+   totalCount: nat;
+ };
 service : {
+  fetchAllIsotopesPage: (page: nat, pageSize: nat) -> (Result_1);
+  fetchIsotopeData: (z: nat, n: nat) -> (Result);
+  getCachedIsotopeCount: () -> (nat) query;
+  getLastFetchTimestamp: () -> (int) query;
 }

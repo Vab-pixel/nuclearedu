@@ -40,6 +40,10 @@
     --chart-4: 0.58 0.2 276;
     --chart-5: 0.62 0.18 50;
 
+    --status-live: 0.72 0.22 145;
+    --status-synced: 0.65 0.18 120;
+    --status-pending: 0.82 0.12 50;
+
     --sidebar: 0.99 0 0;
     --sidebar-foreground: 0.12 0 0;
     --sidebar-primary: 0.6 0.05 240;
@@ -81,6 +85,10 @@
     --chart-3: 0.75 0.18 90;
     --chart-4: 0.72 0.25 286;
     --chart-5: 0.68 0.22 48;
+
+    --status-live: 0.78 0.28 145;
+    --status-synced: 0.72 0.22 120;
+    --status-pending: 0.85 0.15 48;
 
     --sidebar: 0.12 0 0;
     --sidebar-foreground: 0.96 0 0;
@@ -152,5 +160,126 @@
 
   .nuclear-glow {
     @apply bg-gradient-to-r from-cyan-500/10 via-transparent to-cyan-500/5 dark:from-cyan-400/20 dark:via-transparent dark:to-cyan-400/10;
+  }
+
+  .split-pane-container {
+    @apply grid grid-cols-2 gap-4 bg-card border border-border rounded-lg overflow-hidden shadow-elevated;
+  }
+
+  .split-pane-left {
+    @apply relative border-r border-border p-4;
+    background-color: oklch(from var(--card) l c h / 0.5);
+  }
+
+  .split-pane-right {
+    @apply relative bg-card p-4;
+  }
+
+  .cherenkov-glow-border {
+    @apply relative border-l-2 border-transparent;
+    border-image: linear-gradient(
+        to bottom,
+        oklch(var(--primary) / 0.4),
+        oklch(var(--primary) / 0.05)
+      )
+      1;
+  }
+
+  .cherenkov-glow-border.active {
+    @apply border-l-2;
+    border-image: linear-gradient(
+        to bottom,
+        oklch(var(--primary) / 0.8),
+        oklch(var(--primary) / 0.2)
+      )
+      1;
+  }
+
+  .data-refresh-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-muted/60;
+  }
+
+  .data-refresh-badge.live {
+    @apply bg-emerald-900/40 text-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-100;
+  }
+
+  .data-refresh-badge.synced {
+    @apply bg-blue-900/40 text-blue-200 dark:bg-blue-950/60 dark:text-blue-100;
+  }
+
+  .data-refresh-badge.pending {
+    @apply bg-amber-900/40 text-amber-200 dark:bg-amber-950/60 dark:text-amber-100;
+  }
+
+  .progress-ring {
+    @apply relative w-full flex items-center justify-center;
+  }
+
+  .status-indicator {
+    @apply relative w-3 h-3 rounded-full;
+  }
+
+  .status-indicator.live {
+    @apply bg-emerald-400 animate-pulse shadow-md;
+  }
+
+  .status-indicator.synced {
+    @apply bg-blue-400;
+  }
+
+  .status-indicator.pending {
+    @apply bg-amber-400 animate-pulse;
+  }
+
+  /* 3D Reactor Visualization Enhanced Glows */
+  .reactor-core-glow {
+    @apply relative;
+    box-shadow: 0 0 32px oklch(var(--primary) / 0.5), inset 0 0 48px
+      oklch(var(--primary) / 0.15), 0 0 64px oklch(var(--secondary) / 0.2);
+  }
+
+  .holo-text {
+    @apply text-accent font-display font-bold tracking-wide;
+    text-shadow: 0 0 8px oklch(var(--accent) / 0.6), 0 0 16px
+      oklch(var(--accent) / 0.3);
+  }
+
+  .holo-panel {
+    @apply backdrop-blur-sm border border-primary/30;
+    background-color: oklch(from var(--card) l c h / 0.85);
+    box-shadow: inset 0 0 12px oklch(var(--primary) / 0.1), 0 0 24px
+      oklch(var(--primary) / 0.2);
+  }
+
+  .heatmap-cold {
+    @apply bg-blue-600 dark:bg-cyan-500;
+  }
+
+  .heatmap-warm {
+    @apply bg-amber-500 dark:bg-amber-400;
+  }
+
+  .heatmap-hot {
+    @apply bg-red-600 dark:bg-red-500;
+  }
+
+  .particle-glow {
+    @apply shadow-sm;
+    filter: drop-shadow(0 0 4px oklch(var(--primary) / 0.4));
+  }
+
+  .timeline-track {
+    @apply relative bg-muted/40 rounded-full h-2;
+  }
+
+  .timeline-handle {
+    @apply absolute top-1/2 w-4 h-4 -translate-y-1/2 bg-accent rounded-full cursor-grab active:cursor-grabbing;
+    box-shadow: 0 0 12px oklch(var(--accent) / 0.5), 0 2px 8px
+      rgba(0, 0, 0, 0.2);
+  }
+
+  .data-overlay-grid {
+    @apply text-xs font-mono;
+    color: oklch(from var(--foreground) l c h / 0.6);
   }
 }

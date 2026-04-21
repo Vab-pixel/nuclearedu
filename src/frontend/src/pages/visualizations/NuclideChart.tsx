@@ -26,6 +26,7 @@ const ZOOM_STEP = 0.15;
 
 type FilterMode = DecayMode | "all";
 type Palette = "default" | "deuteranopia";
+type ColorMode = "decay" | "freshness";
 
 const COLOR_MAPS: Record<Palette, Record<string, string>> = {
   default: {
@@ -46,6 +47,21 @@ const COLOR_MAPS: Record<Palette, Record<string, string>> = {
   },
 };
 
+function getFreshnessColor(nuclide: Nuclide): string {
+  if (!nuclide.lastUpdated) return "#374151"; // no live data — dark gray
+  const diffMs = Date.now() - new Date(nuclide.lastUpdated).getTime();
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+  if (diffDays <= 7) return "#10b981"; // emerald — fresh (0-7d)
+  if (diffDays <= 30) return "#f59e0b"; // amber — recent (8-30d)
+  return "#6b7280"; // gray — stale (>30d)
+}
+
+const FRESHNESS_LEGEND = [
+  { label: "0–7 days", color: "#10b981" },
+  { label: "8–30 days", color: "#f59e0b" },
+  { label: ">30 days / no data", color: "#6b7280" },
+];
+
 const FILTER_OPTIONS: { label: string; value: FilterMode }[] = [
   { label: "All", value: "all" },
   { label: "Alpha", value: "alpha" },
@@ -55,7 +71,12 @@ const FILTER_OPTIONS: { label: string; value: FilterMode }[] = [
   { label: "Gamma", value: "gamma" },
 ];
 
-function getColor(nuclide: Nuclide, palette: Palette): string {
+function getColor(
+  nuclide: Nuclide,
+  palette: Palette,
+  colorMode: ColorMode,
+): string {
+  if (colorMode === "freshness") return getFreshnessColor(nuclide);
   const primary = nuclide.decayModes[0] ?? "other";
   return COLOR_MAPS[palette][primary] ?? COLOR_MAPS[palette].other;
 }
@@ -66,6 +87,7 @@ export default function NuclideChart() {
   const [selected, setSelected] = useState<Nuclide | null>(null);
   const [filter, setFilter] = useState<FilterMode>("all");
   const [palette, setPalette] = useState<Palette>("default");
+  const [colorMode, setColorMode] = useState<ColorMode>("decay");
   const [zoom, setZoom] = useState(1);
   const [fitZoom, setFitZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -167,7 +189,7 @@ export default function NuclideChart() {
     for (const n of displayed) {
       const cx = 45 + n.N * STEP;
       const cy = svgH - 35 - n.Z * STEP;
-      const color = getColor(n, palette);
+      const color = getColor(n, palette, colorMode);
 
       svg
         .append("rect")
@@ -193,7 +215,7 @@ export default function NuclideChart() {
           if (evt.key === "Enter" || evt.key === " ") setSelected(n);
         });
     }
-  }, [displayed, palette, selected, maxN, maxZ, svgH]);
+  }, [displayed, palette, colorMode, selected, maxN, maxZ, svgH]);
 
   // Pointer-based panning
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -291,6 +313,29 @@ export default function NuclideChart() {
               ? "🎨 Colorblind-Safe"
               : "🎨 Default Palette"}
           </Button>
+          {/* Color mode selector */}
+          <div className="flex items-center gap-1 rounded-lg border border-border bg-card/60 p-1">
+            <Button
+              size="sm"
+              variant={colorMode === "decay" ? "default" : "ghost"}
+              className="h-7 px-2.5 text-xs"
+              onClick={() => setColorMode("decay")}
+              aria-pressed={colorMode === "decay"}
+              data-ocid="nuclide-chart.colormode_decay"
+            >
+              Decay Mode
+            </Button>
+            <Button
+              size="sm"
+              variant={colorMode === "freshness" ? "default" : "ghost"}
+              className="h-7 px-2.5 text-xs"
+              onClick={() => setColorMode("freshness")}
+              aria-pressed={colorMode === "freshness"}
+              data-ocid="nuclide-chart.colormode_freshness"
+            >
+              Data Freshness
+            </Button>
+          </div>
         </div>
 
         {/* Legend */}
@@ -298,16 +343,27 @@ export default function NuclideChart() {
           className="flex flex-wrap gap-4 text-xs text-muted-foreground"
           aria-label="Color legend"
         >
-          {Object.entries(COLOR_MAPS[palette]).map(([mode, color]) => (
-            <div key={mode} className="flex items-center gap-1.5">
-              <span
-                className="inline-block h-3 w-3 rounded-sm"
-                style={{ background: color }}
-                aria-hidden="true"
-              />
-              {mode}
-            </div>
-          ))}
+          {colorMode === "decay"
+            ? Object.entries(COLOR_MAPS[palette]).map(([mode, color]) => (
+                <div key={mode} className="flex items-center gap-1.5">
+                  <span
+                    className="inline-block h-3 w-3 rounded-sm"
+                    style={{ background: color }}
+                    aria-hidden="true"
+                  />
+                  {mode}
+                </div>
+              ))
+            : FRESHNESS_LEGEND.map(({ label, color }) => (
+                <div key={label} className="flex items-center gap-1.5">
+                  <span
+                    className="inline-block h-3 w-3 rounded-sm"
+                    style={{ background: color }}
+                    aria-hidden="true"
+                  />
+                  {label}
+                </div>
+              ))}
         </div>
 
         {/* Zoom toolbar */}
@@ -460,7 +516,7 @@ export default function NuclideChart() {
                   className="inline-block h-4 w-4 rounded-sm"
                   style={{
                     background: selected
-                      ? getColor(selected, palette)
+                      ? getColor(selected, palette, colorMode)
                       : "transparent",
                   }}
                   aria-hidden="true"

@@ -20,6 +20,11 @@ export interface Nuclide {
   abundance?: number;
   bindingEnergyPerNucleon_MeV: number | null;
   category?: string;
+  // Enriched fields (live data or pre-seeded)
+  atomicMass_AMU?: number;
+  branchingRatios?: number[];
+  lastUpdated?: string; // ISO-8601 UTC
+  sourceUri?: string;
 }
 
 export const nuclides: Nuclide[] = [
@@ -36,6 +41,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: 7288.97,
     abundance: 99.985,
     bindingEnergyPerNucleon_MeV: 0,
+    atomicMass_AMU: 1.00782503207,
+    branchingRatios: [],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=1H&unc=nds",
   },
   {
     symbol: "H-2",
@@ -50,6 +60,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: 13135.72,
     abundance: 0.015,
     bindingEnergyPerNucleon_MeV: 1.112,
+    atomicMass_AMU: 2.01410177785,
+    branchingRatios: [],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=2H&unc=nds",
   },
   {
     symbol: "H-3",
@@ -64,6 +79,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: 14949.81,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 2.827,
+    atomicMass_AMU: 3.01604927767,
+    branchingRatios: [100],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=3H&unc=nds",
   },
   {
     symbol: "He-4",
@@ -78,6 +98,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: 2424.92,
     abundance: 99.9998,
     bindingEnergyPerNucleon_MeV: 7.074,
+    atomicMass_AMU: 4.002603254,
+    branchingRatios: [],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=4He&unc=nds",
   },
   {
     symbol: "Li-6",
@@ -92,6 +117,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: 14086.9,
     abundance: 7.59,
     bindingEnergyPerNucleon_MeV: 5.332,
+    atomicMass_AMU: 6.015122795,
+    branchingRatios: [],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=6Li&unc=nds",
   },
   {
     symbol: "Li-7",
@@ -106,6 +136,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: 14907.67,
     abundance: 92.41,
     bindingEnergyPerNucleon_MeV: 5.606,
+    atomicMass_AMU: 7.01600455,
+    branchingRatios: [],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=7Li&unc=nds",
   },
   {
     symbol: "C-12",
@@ -120,6 +155,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: 0,
     abundance: 98.93,
     bindingEnergyPerNucleon_MeV: 7.68,
+    atomicMass_AMU: 12.0,
+    branchingRatios: [],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=12C&unc=nds",
   },
   {
     symbol: "C-14",
@@ -134,6 +174,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: 3019.89,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 7.52,
+    atomicMass_AMU: 14.003241988,
+    branchingRatios: [100],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=14C&unc=nds",
   },
   {
     symbol: "N-14",
@@ -148,6 +193,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: 2863.42,
     abundance: 99.636,
     bindingEnergyPerNucleon_MeV: 7.476,
+    atomicMass_AMU: 14.003074004,
+    branchingRatios: [],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=14N&unc=nds",
   },
   {
     symbol: "O-16",
@@ -162,6 +212,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -4737.0,
     abundance: 99.757,
     bindingEnergyPerNucleon_MeV: 7.976,
+    atomicMass_AMU: 15.99491461956,
+    branchingRatios: [],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=16O&unc=nds",
   },
   {
     symbol: "Na-22",
@@ -176,6 +231,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -5181.6,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 7.915,
+    atomicMass_AMU: 21.994436,
+    branchingRatios: [90.33, 9.67],
+    lastUpdated: "2024-02-20T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=22Na&unc=nds",
   },
   {
     symbol: "Na-24",
@@ -190,6 +250,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -8418.0,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.064,
+    atomicMass_AMU: 23.990963,
+    branchingRatios: [100],
+    lastUpdated: "2024-02-20T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=24Na&unc=nds",
   },
   {
     symbol: "K-40",
@@ -204,6 +269,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -33535.0,
     abundance: 0.0117,
     bindingEnergyPerNucleon_MeV: 8.538,
+    atomicMass_AMU: 39.96399848,
+    branchingRatios: [89.28, 10.72],
+    lastUpdated: "2024-03-01T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=40K&unc=nds",
   },
   {
     symbol: "Fe-56",
@@ -218,6 +288,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -60605.0,
     abundance: 91.754,
     bindingEnergyPerNucleon_MeV: 8.79,
+    atomicMass_AMU: 55.9349375,
+    branchingRatios: [],
+    lastUpdated: "2024-01-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=56Fe&unc=nds",
   },
   {
     symbol: "Co-60",
@@ -232,6 +307,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -61649.0,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.747,
+    atomicMass_AMU: 59.933819,
+    branchingRatios: [99.88, 0.12],
+    lastUpdated: "2024-03-10T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=60Co&unc=nds",
   },
   {
     symbol: "Sr-90",
@@ -246,6 +326,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -85942.0,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.696,
+    atomicMass_AMU: 89.907738,
+    branchingRatios: [100],
+    lastUpdated: "2024-03-10T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=90Sr&unc=nds",
   },
   {
     symbol: "Mo-99",
@@ -261,6 +346,11 @@ export const nuclides: Nuclide[] = [
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.631,
     category: "medical",
+    atomicMass_AMU: 98.907711,
+    branchingRatios: [87.6, 12.4],
+    lastUpdated: "2024-04-01T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=99Mo&unc=nds",
   },
   {
     symbol: "Tc-99m",
@@ -276,6 +366,11 @@ export const nuclides: Nuclide[] = [
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.642,
     category: "medical",
+    atomicMass_AMU: 98.906255,
+    branchingRatios: [88.9, 11.1],
+    lastUpdated: "2024-04-01T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=99mTc&unc=nds",
   },
   {
     symbol: "Ru-106",
@@ -290,6 +385,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -86322.0,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.613,
+    atomicMass_AMU: 105.90733,
+    branchingRatios: [100],
+    lastUpdated: "2024-03-15T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=106Ru&unc=nds",
   },
   {
     symbol: "I-125",
@@ -305,6 +405,11 @@ export const nuclides: Nuclide[] = [
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.575,
     category: "medical",
+    atomicMass_AMU: 124.90463,
+    branchingRatios: [100],
+    lastUpdated: "2024-04-01T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=125I&unc=nds",
   },
   {
     symbol: "I-131",
@@ -320,6 +425,11 @@ export const nuclides: Nuclide[] = [
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.556,
     category: "medical",
+    atomicMass_AMU: 130.906126,
+    branchingRatios: [89.9, 7.3, 2.8],
+    lastUpdated: "2024-04-01T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=131I&unc=nds",
   },
   {
     symbol: "Xe-131m",
@@ -335,6 +445,11 @@ export const nuclides: Nuclide[] = [
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.564,
     category: "medical",
+    atomicMass_AMU: 130.905082,
+    branchingRatios: [100],
+    lastUpdated: "2024-03-20T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=131mXe&unc=nds",
   },
   {
     symbol: "Xe-133",
@@ -349,6 +464,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -87644.0,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.547,
+    atomicMass_AMU: 132.905906,
+    branchingRatios: [100],
+    lastUpdated: "2024-03-20T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=133Xe&unc=nds",
   },
   {
     symbol: "Cs-134",
@@ -363,6 +483,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -88073.0,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.54,
+    atomicMass_AMU: 133.906718,
+    branchingRatios: [97.5, 2.5],
+    lastUpdated: "2024-03-20T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=134Cs&unc=nds",
   },
   {
     symbol: "Cs-137",
@@ -377,6 +502,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -86554.0,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.524,
+    atomicMass_AMU: 136.90709,
+    branchingRatios: [94.6, 5.4],
+    lastUpdated: "2024-03-20T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=137Cs&unc=nds",
   },
   {
     symbol: "Ba-137m",
@@ -391,6 +521,11 @@ export const nuclides: Nuclide[] = [
     massExcess_keV: -87717.0,
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.534,
+    atomicMass_AMU: 136.905827,
+    branchingRatios: [100],
+    lastUpdated: "2024-03-20T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=137mBa&unc=nds",
   },
   {
     symbol: "F-18",
@@ -406,6 +541,11 @@ export const nuclides: Nuclide[] = [
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 7.631,
     category: "medical",
+    atomicMass_AMU: 18.000938,
+    branchingRatios: [96.7, 3.3],
+    lastUpdated: "2024-04-01T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=18F&unc=nds",
   },
   {
     symbol: "Ga-67",
@@ -421,6 +561,11 @@ export const nuclides: Nuclide[] = [
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.719,
     category: "medical",
+    atomicMass_AMU: 66.928202,
+    branchingRatios: [38.8, 21.2, 16.7],
+    lastUpdated: "2024-04-01T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=67Ga&unc=nds",
   },
   {
     symbol: "In-111",
@@ -436,6 +581,11 @@ export const nuclides: Nuclide[] = [
     abundance: undefined,
     bindingEnergyPerNucleon_MeV: 8.594,
     category: "medical",
+    atomicMass_AMU: 110.905103,
+    branchingRatios: [90.6, 9.4],
+    lastUpdated: "2024-04-01T00:00:00Z",
+    sourceUri:
+      "https://www.nndc.bnl.gov/nudat3/getdatasetClassic.jsp?nucleus=111In&unc=nds",
   },
   {
     symbol: "Kr-85",
