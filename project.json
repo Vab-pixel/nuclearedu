@@ -1,29 +1,30 @@
 {
-  "overview": "NuclearEdu is a professional-grade interactive educational platform for nuclear science and engineering. It features cinematic 3D visualizations, advanced simulation tools, a comprehensive learning lab with quizzes, and live nuclear database integration — all built for students, professionals, and researchers.",
+  "overview": "NuclearEdu is a comprehensive interactive educational platform for nuclear science with 3D visualizations, simulations, and deep technical content for all learning levels.",
   "features": [
-    "Reactor Digital Twin with split-pane comparison modal and cinematic Cherenkov glow effects",
-    "Live IAEA isotope database integration with auto-refresh and graceful fallback",
-    "Learning Lab with quizzes, achievement badges, streak tracking, and local progress persistence",
-    "Advanced Decay Chain Explorer with secular equilibrium curves and gamma-ray spectroscopy",
-    "High-fidelity 3D Nucleus Visualizer with decay mode animations and binding energy graphs",
-    "Carbon Dating Calculator with IntCal20 calibration and sample presets",
-    "Interactive Chart of Nuclides heatmap with 720+ isotopes",
-    "Data Explorer with enriched fields from live IAEA data",
-    "Radiation Safety deep-dive with dose reference chart",
-    "200+ term glossary with multi-level definitions and equations"
+    "Interactive 3D reactor visualizations with cinematic effects",
+    "Chart of Nuclides heatmap with 3000+ isotopes",
+    "Decay Chain Explorer with gamma spectroscopy and secular equilibrium",
+    "Nucleus Visualizer with shell model and decay animations",
+    "Full interactive periodic table with 12+ heatmap overlays",
+    "Nuclear Power Plant World Map with 440+ reactors",
+    "Criticality and Dose Rate calculators",
+    "Monte Carlo neutron transport simulation",
+    "Reactor Fuel Cycle visualizer",
+    "Cross-Section Data Viewer",
+    "Interactive Nuclear History Timeline",
+    "Learning Lab with quizzes, badges, and progress tracking",
+    "Carbon Dating and Dosimetry calculators",
+    "Expert mode toggle for students and researchers",
+    "Internet Identity login and PWA offline support"
   ],
-  "category": "education",
+  "category": "educational-platform",
   "tags": [
     "nuclear-science",
     "education",
     "interactive",
-    "visualization",
+    "3d-visualization",
     "physics",
-    "3d-simulation",
-    "isotopes",
-    "reactor-design",
-    "dark-mode",
-    "research-tools"
+    "simulation"
   ],
-  "last_updated": "2026-04-18T16:58:59.327Z"
+  "last_updated": "2026-05-30T15:14:47.453Z"
 }

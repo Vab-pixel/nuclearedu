@@ -15,7 +15,7 @@ import {
   Play,
   RotateCcw,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -24,10 +24,6 @@ import {
   Legend,
   Line,
   LineChart,
-  PolarAngleAxis,
-  PolarGrid,
-  Radar,
-  RadarChart,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -36,7 +32,7 @@ import {
 } from "recharts";
 
 // ──────────────── COLOUR CONSTANTS ────────────────
-const DECAY_COLORS: Record<string, string> = {
+export const DECAY_COLORS: Record<string, string> = {
   alpha: "#fbbf24",
   "beta-": "#60a5fa",
   "beta+": "#f87171",
@@ -46,7 +42,7 @@ const DECAY_COLORS: Record<string, string> = {
   other: "#22d3ee",
 };
 
-const HALF_LIFE_LEGEND = [
+export const HALF_LIFE_LEGEND = [
   { label: "< 1 s", color: "#f87171" },
   { label: "Seconds", color: "#fb923c" },
   { label: "Minutes", color: "#fbbf24" },
@@ -57,7 +53,7 @@ const HALF_LIFE_LEGEND = [
   { label: "Stable", color: "#6b7280" },
 ];
 
-function halfLifeColor(s: number): string {
+export function halfLifeColor(s: number): string {
   if (!Number.isFinite(s)) return "#6b7280";
   if (s < 1) return "#f87171";
   if (s < 60) return "#fb923c";
@@ -67,252 +63,6 @@ function halfLifeColor(s: number): string {
   if (s < 3.156e9) return "#22d3ee";
   return "#a78bfa";
 }
-
-// ──────────────── EXTRA INLINE CHAINS ────────────────
-const ra226StandaloneSteps: DecayStep[] = [
-  {
-    nuclide: "Ra-226",
-    Z: 88,
-    N: 138,
-    A: 226,
-    decayMode: "alpha",
-    daughter: "Rn-222",
-    halfLifeStr: "1600 yr",
-    halfLifeSeconds: 5.05e10,
-    Qvalue_MeV: 4.87,
-    branchingPercent: 100,
-    particleEmitted: "⁴He (α)",
-    stepIndex: 1,
-  },
-  {
-    nuclide: "Rn-222",
-    Z: 86,
-    N: 136,
-    A: 222,
-    decayMode: "alpha",
-    daughter: "Po-218",
-    halfLifeStr: "3.82 d",
-    halfLifeSeconds: 330393,
-    Qvalue_MeV: 5.49,
-    branchingPercent: 100,
-    particleEmitted: "⁴He (α)",
-    stepIndex: 2,
-  },
-  {
-    nuclide: "Po-218",
-    Z: 84,
-    N: 134,
-    A: 218,
-    decayMode: "alpha",
-    daughter: "Pb-214",
-    halfLifeStr: "3.05 min",
-    halfLifeSeconds: 183,
-    Qvalue_MeV: 6.0,
-    branchingPercent: 99.98,
-    particleEmitted: "⁴He (α)",
-    stepIndex: 3,
-  },
-  {
-    nuclide: "Pb-214",
-    Z: 82,
-    N: 132,
-    A: 214,
-    decayMode: "beta-",
-    daughter: "Bi-214",
-    halfLifeStr: "19.7 min",
-    halfLifeSeconds: 1182,
-    Qvalue_MeV: 1.02,
-    branchingPercent: 100,
-    particleEmitted: "e⁻ (β⁻)",
-    stepIndex: 4,
-  },
-  {
-    nuclide: "Bi-214",
-    Z: 83,
-    N: 131,
-    A: 214,
-    decayMode: "beta-",
-    daughter: "Po-214",
-    halfLifeStr: "26.8 min",
-    halfLifeSeconds: 1608,
-    Qvalue_MeV: 3.27,
-    branchingPercent: 99.98,
-    particleEmitted: "e⁻ (β⁻)",
-    stepIndex: 5,
-  },
-  {
-    nuclide: "Po-214",
-    Z: 84,
-    N: 130,
-    A: 214,
-    decayMode: "alpha",
-    daughter: "Pb-210",
-    halfLifeStr: "164 μs",
-    halfLifeSeconds: 0.000164,
-    Qvalue_MeV: 7.69,
-    branchingPercent: 100,
-    particleEmitted: "⁴He (α)",
-    stepIndex: 6,
-  },
-  {
-    nuclide: "Pb-210",
-    Z: 82,
-    N: 128,
-    A: 210,
-    decayMode: "beta-",
-    daughter: "Bi-210",
-    halfLifeStr: "22.3 yr",
-    halfLifeSeconds: 7.04e8,
-    Qvalue_MeV: 0.064,
-    branchingPercent: 100,
-    particleEmitted: "e⁻ (β⁻)",
-    stepIndex: 7,
-  },
-  {
-    nuclide: "Bi-210",
-    Z: 83,
-    N: 127,
-    A: 210,
-    decayMode: "beta-",
-    daughter: "Po-210",
-    halfLifeStr: "5.01 d",
-    halfLifeSeconds: 432864,
-    Qvalue_MeV: 1.163,
-    branchingPercent: 100,
-    particleEmitted: "e⁻ (β⁻)",
-    stepIndex: 8,
-  },
-  {
-    nuclide: "Po-210",
-    Z: 84,
-    N: 126,
-    A: 210,
-    decayMode: "alpha",
-    daughter: "Pb-206",
-    halfLifeStr: "138.4 d",
-    halfLifeSeconds: 11957760,
-    Qvalue_MeV: 5.41,
-    branchingPercent: 100,
-    particleEmitted: "⁴He (α)",
-    stepIndex: 9,
-  },
-  {
-    nuclide: "Pb-206",
-    Z: 82,
-    N: 124,
-    A: 206,
-    decayMode: "stable",
-    daughter: "—",
-    halfLifeStr: "Stable",
-    halfLifeSeconds: Number.POSITIVE_INFINITY,
-    Qvalue_MeV: 0,
-    branchingPercent: 100,
-    particleEmitted: "None (stable)",
-    stepIndex: 10,
-  },
-];
-
-const c14Steps: DecayStep[] = [
-  {
-    nuclide: "C-14",
-    Z: 6,
-    N: 8,
-    A: 14,
-    decayMode: "beta-",
-    daughter: "N-14",
-    halfLifeStr: "5730 yr",
-    halfLifeSeconds: 1.808e11,
-    Qvalue_MeV: 0.156,
-    branchingPercent: 100,
-    particleEmitted: "e⁻ (β⁻) + ν̄ₑ",
-    stepIndex: 1,
-  },
-  {
-    nuclide: "N-14",
-    Z: 7,
-    N: 7,
-    A: 14,
-    decayMode: "stable",
-    daughter: "—",
-    halfLifeStr: "Stable",
-    halfLifeSeconds: Number.POSITIVE_INFINITY,
-    Qvalue_MeV: 0,
-    branchingPercent: 100,
-    particleEmitted: "None (stable)",
-    stepIndex: 2,
-  },
-];
-
-const k40Steps: DecayStep[] = [
-  {
-    nuclide: "K-40",
-    Z: 19,
-    N: 21,
-    A: 40,
-    decayMode: "beta-",
-    daughter: "Ca-40",
-    halfLifeStr: "1.248×10⁹ yr",
-    halfLifeSeconds: 3.94e16,
-    Qvalue_MeV: 1.311,
-    branchingPercent: 89.28,
-    particleEmitted: "e⁻ (β⁻) + ν̄ₑ",
-    stepIndex: 1,
-  },
-  {
-    nuclide: "K-40 (EC)",
-    Z: 19,
-    N: 21,
-    A: 40,
-    decayMode: "ec",
-    daughter: "Ar-40",
-    halfLifeStr: "1.248×10⁹ yr",
-    halfLifeSeconds: 3.94e16,
-    Qvalue_MeV: 1.504,
-    branchingPercent: 10.72,
-    particleEmitted: "ν̄ₑ (EC)",
-    stepIndex: 2,
-  },
-  {
-    nuclide: "Ca-40",
-    Z: 20,
-    N: 20,
-    A: 40,
-    decayMode: "stable",
-    daughter: "—",
-    halfLifeStr: "Stable",
-    halfLifeSeconds: Number.POSITIVE_INFINITY,
-    Qvalue_MeV: 0,
-    branchingPercent: 100,
-    particleEmitted: "None (stable)",
-    stepIndex: 3,
-  },
-];
-
-const EXTRA_CHAINS: DecayChain[] = [
-  {
-    id: "ra226s",
-    label: "Ra-226 → Pb-206 (standalone)",
-    parent: "Ra-226",
-    product: "Pb-206",
-    steps: ra226StandaloneSteps,
-  },
-  {
-    id: "c14",
-    label: "C-14 → N-14 (Carbon-14)",
-    parent: "C-14",
-    product: "N-14",
-    steps: c14Steps,
-  },
-  {
-    id: "k40",
-    label: "K-40 → Ca-40/Ar-40",
-    parent: "K-40",
-    product: "Ca-40/Ar-40",
-    steps: k40Steps,
-  },
-];
-
-const ALL_AVAILABLE_CHAINS = [...ALL_CHAINS, ...EXTRA_CHAINS];
 
 // ──────────────── GAMMA PEAK DATA ────────────────
 interface GammaPeak {
@@ -331,6 +81,13 @@ const GAMMA_PEAKS: Record<string, GammaPeak[]> = {
     { nuclide: "Bi-214", energy_keV: 1764, intensity: 15 },
     { nuclide: "Bi-214", energy_keV: 2204, intensity: 5 },
   ],
+  u235: [
+    { nuclide: "U-235", energy_keV: 185.7, intensity: 57 },
+    { nuclide: "Th-227", energy_keV: 236, intensity: 12 },
+    { nuclide: "Ra-223", energy_keV: 269, intensity: 14 },
+    { nuclide: "Ra-223", energy_keV: 154, intensity: 6 },
+    { nuclide: "Bi-211", energy_keV: 351, intensity: 13 },
+  ],
   th232: [
     { nuclide: "Ac-228", energy_keV: 911, intensity: 26 },
     { nuclide: "Ac-228", energy_keV: 969, intensity: 17 },
@@ -345,10 +102,34 @@ const GAMMA_PEAKS: Record<string, GammaPeak[]> = {
     { nuclide: "Bi-214", energy_keV: 609, intensity: 46 },
     { nuclide: "Bi-214", energy_keV: 1764, intensity: 15 },
   ],
-  ra226s: [
+  rn222: [
     { nuclide: "Pb-214", energy_keV: 352, intensity: 37 },
+    { nuclide: "Pb-214", energy_keV: 295, intensity: 19 },
     { nuclide: "Bi-214", energy_keV: 609, intensity: 46 },
+    { nuclide: "Bi-214", energy_keV: 1120, intensity: 15 },
   ],
+  cs137: [{ nuclide: "Ba-137m", energy_keV: 661.7, intensity: 100 }],
+  co60: [
+    { nuclide: "Ni-60m", energy_keV: 1173.2, intensity: 100 },
+    { nuclide: "Ni-60m", energy_keV: 1332.5, intensity: 100 },
+  ],
+  am241: [
+    { nuclide: "Am-241", energy_keV: 59.5, intensity: 100 },
+    { nuclide: "Am-241", energy_keV: 26.3, intensity: 24 },
+    { nuclide: "Np-237", energy_keV: 86.5, intensity: 12 },
+  ],
+  np237: [
+    { nuclide: "Np-237", energy_keV: 86.5, intensity: 12 },
+    { nuclide: "Pa-233", energy_keV: 311, intensity: 38 },
+    { nuclide: "Pa-233", energy_keV: 341, intensity: 4 },
+  ],
+  i131: [
+    { nuclide: "I-131", energy_keV: 364.5, intensity: 100 },
+    { nuclide: "I-131", energy_keV: 637.0, intensity: 7.3 },
+    { nuclide: "I-131", energy_keV: 284.3, intensity: 6.1 },
+    { nuclide: "Xe-131m", energy_keV: 163.9, intensity: 2.0 },
+  ],
+  sr90: [{ nuclide: "Y-90", energy_keV: 1760.6, intensity: 0.01 }],
 };
 
 // ──────────────── BATEMAN EQUATIONS ────────────────
@@ -360,14 +141,11 @@ function batemanActivity(chain: DecayStep[], tSeconds: number): number[] {
   const lambdas = members.map((s) => Math.LN2 / s.halfLifeSeconds);
   const n = Math.min(members.length, 8);
   const A: number[] = new Array(n).fill(0);
-
-  // A[0] = N0 * lambda[0] * exp(-lambda[0]*t), normalized to 1 at t→0
   for (let i = 0; i < n; i++) {
     const li = lambdas[i];
     if (i === 0) {
       A[i] = Math.exp(-li * tSeconds);
     } else {
-      // Bateman solution for linear chain member i
       let sum = 0;
       for (let k = 0; k <= i; k++) {
         let denom = 1;
@@ -377,7 +155,6 @@ function batemanActivity(chain: DecayStep[], tSeconds: number): number[] {
         if (Math.abs(denom) < 1e-40) continue;
         sum += Math.exp(-lambdas[k] * tSeconds) / denom;
       }
-      // multiply by product of all lambda_j for j<i
       let lprod = 1;
       for (let j = 0; j < i; j++) lprod *= lambdas[j];
       A[i] = lprod * sum;
@@ -395,7 +172,6 @@ function buildActivityData(chain: DecayStep[], numPoints = 80) {
   const tMin = parentHL * 1e-4;
   const tMax = parentHL * 5;
   const data: Record<string, number | string>[] = [];
-
   for (let i = 0; i <= numPoints; i++) {
     const tFrac = i / numPoints;
     const tSec = tMin * (tMax / tMin) ** tFrac;
@@ -440,7 +216,7 @@ function downloadCSV(chain: DecayChain) {
   URL.revokeObjectURL(url);
 }
 
-// ──────────────── PARTICLE ANIMATION TYPES ────────────────
+// ──────────────── PARTICLE ANIMATION ────────────────
 interface Particle {
   id: number;
   x1: number;
@@ -449,9 +225,10 @@ interface Particle {
   y2: number;
   mode: string;
   born: number;
+  offset: number;
 }
 
-// ──────────────── NODE / LAYOUT CONSTANTS ────────────────
+// ──────────────── LAYOUT CONSTANTS ────────────────
 const NW = 90;
 const NH = 56;
 const HX = 160;
@@ -473,10 +250,11 @@ function DecayTree({
   const [particles, setParticles] = useState<Particle[]>([]);
   const particleId = useRef(0);
   const animRef = useRef<number>(0);
+  const renderRef = useRef(0);
 
   const chain = chainDef.steps;
   const svgW = chain.length * HX + MX * 2 + NW;
-  const svgH = NH + MY * 2 + 32;
+  const svgH = NH + MY * 2 + 48;
   const cy = MY + NH / 2;
 
   // Spawn particles when activeStep changes
@@ -489,47 +267,33 @@ function DecayTree({
     const mode = step.decayMode;
     const newParticles: Particle[] = [];
 
-    if (mode === "alpha") {
+    const count = mode === "alpha" ? 3 : mode === "gamma" ? 2 : 2;
+    for (let i = 0; i < count; i++) {
       newParticles.push({
         id: ++particleId.current,
         x1,
-        y1: cy - 6,
+        y1: cy + (i - Math.floor(count / 2)) * 8,
         x2,
-        y2: cy - 6,
+        y2: cy + (i - Math.floor(count / 2)) * 4,
         mode,
         born: now,
-      });
-      newParticles.push({
-        id: ++particleId.current,
-        x1,
-        y1: cy + 6,
-        x2,
-        y2: cy + 6,
-        mode,
-        born: now,
-      });
-    } else {
-      newParticles.push({
-        id: ++particleId.current,
-        x1,
-        y1: cy,
-        x2,
-        y2: cy,
-        mode,
-        born: now,
+        offset: i * 80,
       });
     }
     setParticles((p) => [...p, ...newParticles]);
   }, [activeStep, chain, cy]);
 
-  // Animation loop for particles
+  // Animation loop
   useEffect(() => {
     let running = true;
-    const DURATION = 800;
+    const DURATION = 1000;
     function loop() {
       if (!running) return;
       const now = performance.now();
-      setParticles((prev) => prev.filter((p) => now - p.born < DURATION));
+      setParticles((prev) =>
+        prev.filter((p) => now - p.born < DURATION + p.offset),
+      );
+      renderRef.current += 1;
       animRef.current = requestAnimationFrame(loop);
     }
     animRef.current = requestAnimationFrame(loop);
@@ -546,7 +310,7 @@ function DecayTree({
     const wrap = d3.select(wrapRef.current);
     const zoomBehavior = d3
       .zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.25, 3])
+      .scaleExtent([0.2, 4])
       .on("zoom", (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
         wrap.attr("transform", event.transform.toString());
       });
@@ -556,33 +320,37 @@ function DecayTree({
     };
   }, []);
 
-  const resetZoom = () => {
+  const resetZoom = useCallback(() => {
     if (!svgRef.current) return;
     const svg = d3.select(svgRef.current);
     svg
       .transition()
       .duration(400)
       .call(d3.zoom<SVGSVGElement, unknown>().transform, d3.zoomIdentity);
-  };
+  }, []);
 
   const now = performance.now();
-  const DURATION = 800;
+  const DURATION = 1000;
 
   return (
     <div className="flex flex-col h-full min-h-0 gap-2">
-      {/* Zoom reset */}
-      <div className="flex justify-end px-2">
+      <div className="flex justify-between items-center px-1">
+        <p className="text-xs text-muted-foreground">
+          <span className="font-mono text-primary">
+            {chainDef.steps.length}
+          </span>{" "}
+          steps — scroll/pinch to zoom, drag to pan
+        </p>
         <Button
           size="sm"
           variant="ghost"
           className="h-7 px-2 text-xs gap-1"
           onClick={resetZoom}
         >
-          <RotateCcw className="h-3 w-3" /> Reset Zoom
+          <RotateCcw className="h-3 w-3" /> Reset
         </Button>
       </div>
 
-      {/* SVG canvas */}
       <div
         className="flex-1 min-h-0 overflow-hidden rounded-xl border border-border bg-card relative"
         style={{ minHeight: 160 }}
@@ -599,6 +367,26 @@ function DecayTree({
         >
           <title>{chainDef.label} Decay Chain</title>
           <g ref={wrapRef as React.RefObject<SVGGElement>}>
+            {/* Background glow for active node */}
+            {chain.map((step, i) => {
+              if (i !== activeStep) return null;
+              const nx = MX + i * HX;
+              const modeColor =
+                DECAY_COLORS[step.decayMode] ?? DECAY_COLORS.other;
+              return (
+                <ellipse
+                  key={`glow-${step.nuclide}`}
+                  cx={nx + NW / 2}
+                  cy={cy}
+                  rx={NW * 0.8}
+                  ry={NH * 0.9}
+                  fill={modeColor}
+                  opacity={0.06}
+                  style={{ filter: "blur(8px)" }}
+                />
+              );
+            })}
+
             {/* Edges */}
             {chain.map((step, i) => {
               if (step.decayMode === "stable") return null;
@@ -616,9 +404,11 @@ function DecayTree({
                       ? "α"
                       : step.decayMode === "ec"
                         ? "ε"
-                        : step.decayMode;
+                        : step.decayMode === "gamma"
+                          ? "γ"
+                          : step.decayMode;
               return (
-                <g key={`edge-${step.nuclide}`} opacity={isAct ? 1 : 0.35}>
+                <g key={`edge-${step.nuclide}-${i}`} opacity={isAct ? 1 : 0.3}>
                   {isAct && (
                     <line
                       x1={x1}
@@ -626,8 +416,8 @@ function DecayTree({
                       x2={x2 - 10}
                       y2={cy}
                       stroke={color}
-                      strokeWidth={10}
-                      opacity={0.15}
+                      strokeWidth={12}
+                      opacity={0.12}
                     />
                   )}
                   <line
@@ -643,9 +433,9 @@ function DecayTree({
                     fill={color}
                   />
                   <rect
-                    x={midX - 16}
-                    y={cy - 30}
-                    width={32}
+                    x={midX - 18}
+                    y={cy - 32}
+                    width={36}
                     height={18}
                     rx={9}
                     fill={`${color}22`}
@@ -654,10 +444,10 @@ function DecayTree({
                   />
                   <text
                     x={midX}
-                    y={cy - 17}
+                    y={cy - 18}
                     textAnchor="middle"
                     fill={color}
-                    fontSize="10"
+                    fontSize="11"
                     fontFamily="monospace"
                     fontWeight={isAct ? "bold" : "normal"}
                   >
@@ -665,9 +455,9 @@ function DecayTree({
                   </text>
                   <text
                     x={midX}
-                    y={cy + 28}
+                    y={cy + 30}
                     textAnchor="middle"
-                    fill={isAct ? "#d1d5db" : "#6b7280"}
+                    fill={isAct ? "#d1d5db" : "#4b5563"}
                     fontSize="7.5"
                     fontFamily="monospace"
                   >
@@ -675,26 +465,26 @@ function DecayTree({
                   </text>
                   <text
                     x={midX}
-                    y={cy + 38}
+                    y={cy + 40}
                     textAnchor="middle"
-                    fill={isAct ? color : "#4b5563"}
+                    fill={isAct ? color : "#374151"}
                     fontSize="7"
                     fontFamily="monospace"
                   >
-                    {step.Qvalue_MeV} MeV
+                    {step.Qvalue_MeV > 0 ? `${step.Qvalue_MeV} MeV` : ""}
                   </text>
                 </g>
               );
             })}
 
-            {/* Particle animations */}
+            {/* Particles */}
             {particles.map((p) => {
-              const elapsed = now - p.born;
+              const elapsed = now - p.born - p.offset;
+              if (elapsed < 0) return null;
               const progress = Math.min(elapsed / DURATION, 1);
-              // Only travel 30% of edge
-              const travelProgress = Math.min(progress / 0.3, 1);
-              const cx2 = p.x1 + (p.x2 - p.x1) * 0.3 * travelProgress;
-              const opacity = progress < 0.6 ? 1 : 1 - (progress - 0.6) / 0.4;
+              const travel = Math.min(progress / 0.4, 1);
+              const px = p.x1 + (p.x2 - p.x1) * 0.35 * travel;
+              const opacity = progress < 0.5 ? 1 : 1 - (progress - 0.5) / 0.5;
               const color =
                 p.mode === "alpha"
                   ? "#fbbf24"
@@ -702,19 +492,31 @@ function DecayTree({
                     ? "#60a5fa"
                     : p.mode === "beta+"
                       ? "#f87171"
-                      : "#c084fc";
-              const r = p.mode === "alpha" ? 5 : 3;
-              return (
-                <circle
-                  key={p.id}
-                  cx={cx2}
-                  cy={p.y1}
-                  r={r}
-                  fill={color}
-                  opacity={opacity}
-                  style={{ filter: `drop-shadow(0 0 ${r + 2}px ${color})` }}
-                />
-              );
+                      : p.mode === "gamma"
+                        ? "#c084fc"
+                        : "#22d3ee";
+              const r = p.mode === "alpha" ? 5.5 : p.mode === "gamma" ? 3.5 : 3;
+              const shape =
+                p.mode === "gamma" ? (
+                  <polygon
+                    key={p.id}
+                    points={`${px},${p.y1 - r * 1.4} ${px + r},${p.y1 + r * 0.7} ${px - r},${p.y1 + r * 0.7}`}
+                    fill={color}
+                    opacity={opacity}
+                    style={{ filter: `drop-shadow(0 0 ${r + 3}px ${color})` }}
+                  />
+                ) : (
+                  <circle
+                    key={p.id}
+                    cx={px}
+                    cy={p.y1}
+                    r={r}
+                    fill={color}
+                    opacity={opacity}
+                    style={{ filter: `drop-shadow(0 0 ${r + 2}px ${color})` }}
+                  />
+                );
+              return shape;
             })}
 
             {/* Nodes */}
@@ -729,7 +531,7 @@ function DecayTree({
               const handleClick = () => onStepSelect(i);
               return (
                 <g
-                  key={`node-${step.nuclide}-${step.stepIndex}`}
+                  key={`node-${step.nuclide}-${i}`}
                   data-ocid={`decay-chain.node.${i + 1}`}
                   style={{ cursor: "pointer" }}
                   onClick={handleClick}
@@ -739,18 +541,17 @@ function DecayTree({
                 >
                   {isAct && (
                     <rect
-                      x={nx - 4}
-                      y={ny - 4}
-                      width={NW + 8}
-                      height={NH + 8}
-                      rx={12}
-                      fill={`${modeColor}15`}
+                      x={nx - 5}
+                      y={ny - 5}
+                      width={NW + 10}
+                      height={NH + 10}
+                      rx={13}
+                      fill={`${modeColor}18`}
                       stroke={modeColor}
-                      strokeWidth={1.5}
-                      style={{ filter: `drop-shadow(0 0 8px ${modeColor})` }}
+                      strokeWidth={2}
+                      style={{ filter: `drop-shadow(0 0 10px ${modeColor}80)` }}
                     />
                   )}
-                  {/* Half-life stripe */}
                   <rect
                     x={nx}
                     y={ny + NH - 5}
@@ -758,7 +559,7 @@ function DecayTree({
                     height={5}
                     rx={3}
                     fill={isStable ? "#6b7280" : hlColor}
-                    opacity={0.8}
+                    opacity={0.85}
                   />
                   <rect
                     x={nx}
@@ -766,7 +567,7 @@ function DecayTree({
                     width={NW}
                     height={NH}
                     rx={8}
-                    fill={isAct ? `${modeColor}22` : "#131b2a"}
+                    fill={isAct ? `${modeColor}28` : "#0d1520"}
                     stroke={isAct ? modeColor : "#1e2d45"}
                     strokeWidth={isAct ? 2 : 1}
                     tabIndex={0}
@@ -792,7 +593,7 @@ function DecayTree({
                     x={nx + NW / 2}
                     y={ny + 37}
                     textAnchor="middle"
-                    fill={isStable ? "#4ade80" : isAct ? "#9ca3af" : "#4b5563"}
+                    fill={isStable ? "#4ade80" : isAct ? "#9ca3af" : "#374151"}
                     fontSize="9"
                     fontFamily="monospace"
                     fontWeight={isStable ? "bold" : "normal"}
@@ -807,60 +608,81 @@ function DecayTree({
         </svg>
       </div>
 
-      {/* Accessibility table */}
-      <details className="rounded-lg border border-border/60 bg-card/50 text-xs">
-        <summary className="px-3 py-2 cursor-pointer font-semibold text-muted-foreground select-none hover:text-foreground">
-          Accessible Table ({chain.length} steps)
-        </summary>
-        <div className="overflow-x-auto p-3">
-          <table
-            className="w-full text-left"
-            aria-label={`${chainDef.label} decay chain`}
+      {/* Nuclide detail card for active step */}
+      <NuclideDetailCard
+        step={chain[activeStep]}
+        stepIndex={activeStep}
+        total={chain.length}
+      />
+    </div>
+  );
+}
+
+function NuclideDetailCard({
+  step,
+  stepIndex,
+  total,
+}: { step: DecayStep; stepIndex: number; total: number }) {
+  if (!step) return null;
+  const modeColor = DECAY_COLORS[step.decayMode] ?? DECAY_COLORS.other;
+  return (
+    <div className="rounded-xl border border-border bg-card/80 p-3 shrink-0">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <span
+            className="text-base font-mono font-bold"
+            style={{ color: modeColor }}
           >
-            <thead>
-              <tr className="border-b border-border text-muted-foreground">
-                {[
-                  "#",
-                  "Nuclide",
-                  "Mode",
-                  "Daughter",
-                  "t½",
-                  "Q (MeV)",
-                  "Branch%",
-                ].map((h) => (
-                  <th key={h} className="pb-1 pr-3 font-semibold">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {chain.map((step) => (
-                <tr
-                  key={step.stepIndex}
-                  className="border-b border-border/30 hover:bg-muted/20"
-                  data-ocid={`decay-chain.table_row.${step.stepIndex}`}
-                >
-                  <td className="py-1 pr-3 font-mono">{step.stepIndex}</td>
-                  <td className="py-1 pr-3 font-mono font-bold">
-                    {step.nuclide}
-                  </td>
-                  <td
-                    className="py-1 pr-3 font-mono"
-                    style={{ color: DECAY_COLORS[step.decayMode] }}
-                  >
-                    {step.decayMode}
-                  </td>
-                  <td className="py-1 pr-3 font-mono">{step.daughter}</td>
-                  <td className="py-1 pr-3 font-mono">{step.halfLifeStr}</td>
-                  <td className="py-1 pr-3 font-mono">{step.Qvalue_MeV}</td>
-                  <td className="py-1 font-mono">{step.branchingPercent}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            {step.nuclide}
+          </span>
+          <span
+            className="rounded-full px-2 py-0.5 text-xs font-semibold font-mono"
+            style={{
+              background: `${modeColor}20`,
+              color: modeColor,
+              border: `1px solid ${modeColor}40`,
+            }}
+          >
+            {step.decayMode}
+          </span>
         </div>
-      </details>
+        <span className="text-xs text-muted-foreground font-mono">
+          Step {stepIndex + 1} / {total}
+        </span>
+      </div>
+      <div className="grid grid-cols-4 gap-2 text-xs">
+        {[
+          { label: "Z", value: step.Z },
+          { label: "N", value: step.N },
+          { label: "A", value: step.A },
+          { label: "Q (MeV)", value: step.Qvalue_MeV || "—" },
+          { label: "t½", value: step.halfLifeStr, span: 2 },
+          { label: "Daughter", value: step.daughter, span: 2 },
+        ].map((f) => (
+          <div
+            key={f.label}
+            className={`rounded-lg bg-muted/20 border border-border/40 px-2 py-1.5 ${(f as { span?: number }).span === 2 ? "col-span-2" : ""}`}
+          >
+            <p className="text-muted-foreground text-[10px] uppercase tracking-widest">
+              {f.label}
+            </p>
+            <p className="font-mono font-semibold text-foreground truncate">
+              {String(f.value)}
+            </p>
+          </div>
+        ))}
+      </div>
+      {step.particleEmitted && step.decayMode !== "stable" && (
+        <p className="mt-1.5 text-xs text-muted-foreground font-mono">
+          Emitted:{" "}
+          <span style={{ color: modeColor }}>{step.particleEmitted}</span>
+          {step.branchingPercent < 100 && (
+            <span className="ml-2 text-muted-foreground">
+              ({step.branchingPercent}% branch)
+            </span>
+          )}
+        </p>
+      )}
     </div>
   );
 }
@@ -881,17 +703,14 @@ function ActivityTab({ chain }: { chain: DecayStep[] }) {
   const members = chain.filter(
     (s) => s.decayMode !== "stable" && Number.isFinite(s.halfLifeSeconds),
   );
-  const data = buildActivityData(chain, 80);
-  if (members.length === 0 || data.length === 0)
+  const data = useMemo(() => buildActivityData(chain, 80), [chain]);
+  if (members.length === 0 || data.length === 0) {
     return (
-      <p className="text-muted-foreground p-4">
+      <p className="text-muted-foreground p-4 text-sm">
         No radioactive members in this chain.
       </p>
     );
-
-  const xFormatter = (v: number) => formatTime(v);
-  const tooltipFormatter = (value: number) => value.toFixed(4);
-
+  }
   return (
     <div className="flex flex-col gap-3 p-3 h-full min-h-0">
       <div>
@@ -914,7 +733,7 @@ function ActivityTab({ chain }: { chain: DecayStep[] }) {
             scale="log"
             type="number"
             domain={["auto", "auto"]}
-            tickFormatter={xFormatter}
+            tickFormatter={(v: number) => formatTime(v)}
             tick={{ fontSize: 9, fill: "#6b7280", fontFamily: "monospace" }}
             label={{
               value: "Time (log scale)",
@@ -938,7 +757,7 @@ function ActivityTab({ chain }: { chain: DecayStep[] }) {
           />
           <ReferenceLine
             y={1}
-            stroke="#6b7280"
+            stroke="#4b5563"
             strokeDasharray="4 4"
             label={{ value: "Equilibrium", fill: "#6b7280", fontSize: 9 }}
           />
@@ -952,7 +771,7 @@ function ActivityTab({ chain }: { chain: DecayStep[] }) {
             labelStyle={{ color: "#9ca3af" }}
             labelFormatter={(v: number) => `t = ${formatTime(v)}`}
             formatter={(value: number, name: string) => [
-              tooltipFormatter(value),
+              value.toFixed(4),
               name,
             ]}
           />
@@ -977,153 +796,21 @@ function ActivityTab({ chain }: { chain: DecayStep[] }) {
   );
 }
 
-// ──────────────── TAB 2: MASS DEFECT ────────────────
-function MassDefectTab({ chain }: { chain: DecayStep[] }) {
-  const M_ALPHA = 4.002602;
-  const M_ELECTRON = 0.000549;
-  const U_TO_MEV = 931.494;
-
-  const rows = chain
-    .filter((s) => s.decayMode !== "stable")
-    .map((s) => {
-      let mEmitted = 0;
-      if (s.decayMode === "alpha") mEmitted = M_ALPHA;
-      else if (s.decayMode === "beta-") mEmitted = M_ELECTRON;
-      else if (s.decayMode === "beta+" || s.decayMode === "ec")
-        mEmitted = M_ELECTRON;
-      const massDefect = s.Qvalue_MeV / U_TO_MEV;
-      const beChange = massDefect * U_TO_MEV;
-      return {
-        step: s.stepIndex,
-        parent: s.nuclide,
-        daughter: s.daughter,
-        mode: s.decayMode,
-        massDefect: massDefect.toFixed(6),
-        Q: s.Qvalue_MeV,
-        beChange: beChange.toFixed(3),
-        mEmitted,
-      };
-    });
-
-  const barData = rows.map((r) => ({ name: r.parent, Q: r.Q, mode: r.mode }));
-
-  return (
-    <div className="flex flex-col gap-3 p-3 h-full min-h-0 overflow-y-auto">
-      <p className="text-xs font-semibold text-foreground">
-        Mass Defect & Q-Values per Step
-      </p>
-      <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="w-full text-xs">
-          <thead className="bg-muted/30">
-            <tr>
-              {[
-                "Step",
-                "Parent",
-                "Daughter",
-                "Mode",
-                "Δm (u)",
-                "Q (MeV)",
-                "ΔBE (MeV)",
-              ].map((h) => (
-                <th
-                  key={h}
-                  className="px-2 py-1.5 text-left font-semibold text-muted-foreground"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr
-                key={r.step}
-                className="border-t border-border/40 hover:bg-muted/20"
-              >
-                <td className="px-2 py-1 font-mono">{r.step}</td>
-                <td className="px-2 py-1 font-mono font-bold">{r.parent}</td>
-                <td className="px-2 py-1 font-mono">{r.daughter}</td>
-                <td
-                  className="px-2 py-1 font-mono"
-                  style={{ color: DECAY_COLORS[r.mode] }}
-                >
-                  {r.mode}
-                </td>
-                <td className="px-2 py-1 font-mono">{r.massDefect}</td>
-                <td className="px-2 py-1 font-mono text-primary">{r.Q}</td>
-                <td className="px-2 py-1 font-mono">{r.beChange}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <p className="text-xs text-muted-foreground font-mono bg-muted/20 p-2 rounded border border-border">
-        Δm = M(parent) − M(daughter) − m(emitted) &nbsp;|&nbsp; Q = Δm × 931.494
-        MeV/u &nbsp;|&nbsp; M(⁴He) = 4.002602 u
-      </p>
-      <ResponsiveContainer width="100%" height={180}>
-        <BarChart
-          data={barData}
-          layout="vertical"
-          margin={{ top: 4, right: 16, left: 60, bottom: 4 }}
-        >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke="#1a2535"
-            horizontal={false}
-          />
-          <XAxis
-            type="number"
-            tick={{ fontSize: 9, fill: "#6b7280" }}
-            label={{
-              value: "Q (MeV)",
-              position: "insideBottom",
-              fill: "#6b7280",
-              fontSize: 10,
-            }}
-          />
-          <YAxis
-            dataKey="name"
-            type="category"
-            tick={{ fontSize: 9, fill: "#9ca3af", fontFamily: "monospace" }}
-            width={56}
-          />
-          <Tooltip
-            contentStyle={{
-              background: "#0d1520",
-              border: "1px solid #1e2d45",
-              borderRadius: 8,
-              fontSize: 11,
-            }}
-          />
-          <Bar dataKey="Q" radius={[0, 3, 3, 0]} barSize={10}>
-            {barData.map((entry) => (
-              <Cell
-                key={`m-${entry.name}`}
-                fill={DECAY_COLORS[entry.mode] ?? DECAY_COLORS.other}
-                opacity={0.85}
-              />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-// ──────────────── TAB 3: GAMMA SPECTROSCOPY ────────────────
+// ──────────────── TAB 2: GAMMA SPECTROSCOPY ────────────────
 function GammaTab({ chainId }: { chainId: string }) {
   const peaks = GAMMA_PEAKS[chainId];
   const [marker, setMarker] = useState<number | null>(null);
+  const [hovered, setHovered] = useState<GammaPeak | null>(null);
 
-  if (!peaks) {
+  if (!peaks || peaks.length === 0) {
     return (
-      <div className="p-4 text-muted-foreground text-sm">
-        <p className="mb-2">
-          Detailed gamma spectroscopy data is available for the U-238 and Th-232
-          series.
+      <div className="p-4 text-sm">
+        <p className="text-muted-foreground mb-2">
+          Detailed gamma spectroscopy data is not catalogued for this chain.
+          Selected chains with gamma data: U-238, U-235, Th-232, Ra-226, Rn-222,
+          Cs-137, Co-60, Am-241, Np-237, I-131, Sr-90.
         </p>
-        <p className="text-xs">
+        <p className="text-xs text-muted-foreground">
           Source: NNDC/ENSDF. Relative intensities normalized to strongest peak.
         </p>
       </div>
@@ -1131,10 +818,14 @@ function GammaTab({ chainId }: { chainId: string }) {
   }
 
   const sorted = [...peaks].sort((a, b) => a.energy_keV - b.energy_keV);
+  const maxIntensity = Math.max(...sorted.map((p) => p.intensity));
   const chartData = sorted.map((p) => ({
     energy: p.energy_keV,
     intensity: p.intensity,
-    label: `${p.nuclide} ${p.energy_keV}keV`,
+    normalizedIntensity: (p.intensity / maxIntensity) * 100,
+    label: `${p.nuclide} ${p.energy_keV} keV`,
+    nuclide: p.nuclide,
+    raw: p,
   }));
   const maxEnergy = Math.max(...sorted.map((p) => p.energy_keV));
 
@@ -1145,7 +836,8 @@ function GammaTab({ chainId }: { chainId: string }) {
           Gamma-Ray Spectroscopy Peaks
         </p>
         <p className="text-xs text-muted-foreground">
-          Click chart to place energy marker. Source: NNDC/ENSDF
+          Click a peak to place energy marker. Hover for isotope details.
+          Source: NNDC/ENSDF
         </p>
       </div>
       <ResponsiveContainer width="100%" height={240}>
@@ -1154,7 +846,9 @@ function GammaTab({ chainId }: { chainId: string }) {
           margin={{ top: 8, right: 16, left: 0, bottom: 32 }}
           onClick={(state) => {
             if (state?.activePayload?.[0]) {
-              setMarker(state.activePayload[0].payload.energy as number);
+              const energy = state.activePayload[0].payload.energy as number;
+              setMarker(energy);
+              setHovered(state.activePayload[0].payload.raw as GammaPeak);
             }
           }}
         >
@@ -1193,8 +887,11 @@ function GammaTab({ chainId }: { chainId: string }) {
             formatter={(
               value: number,
               _: string,
-              entry: { payload?: { label?: string } },
-            ) => [`${value}%`, entry?.payload?.label ?? ""]}
+              entry: { payload?: { nuclide?: string; energy?: number } },
+            ) => [
+              `${value.toFixed(1)}%`,
+              `${entry?.payload?.nuclide ?? ""} @ ${entry?.payload?.energy ?? ""} keV`,
+            ]}
           />
           {marker !== null && (
             <ReferenceLine
@@ -1204,156 +901,537 @@ function GammaTab({ chainId }: { chainId: string }) {
               label={{ value: `${marker} keV`, fill: "#22d3ee", fontSize: 9 }}
             />
           )}
-          <Bar
-            dataKey="intensity"
-            fill="#c084fc"
-            barSize={3}
-            radius={[2, 2, 0, 0]}
-            opacity={0.9}
-          />
+          <Bar dataKey="intensity" barSize={4} radius={[3, 3, 0, 0]}>
+            {chartData.map((_entry, i) => (
+              <Cell
+                key={`gamma-peak-${peaks[i]?.nuclide ?? i}-${peaks[i]?.energy_keV ?? i}`}
+                fill={
+                  DECAY_COLORS[peaks[i]?.nuclide ? "alpha" : "other"] ??
+                  "#c084fc"
+                }
+                style={{ fill: "#c084fc" }}
+                opacity={0.9}
+              />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
-      {marker !== null && (
-        <p className="text-xs text-primary font-mono">
-          Marker: {marker} keV &nbsp;
+      {hovered && (
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-xs font-mono">
+          <span className="text-primary font-semibold">{hovered.nuclide}</span>
+          <span className="text-muted-foreground ml-2">
+            E = {hovered.energy_keV} keV
+          </span>
+          <span className="text-muted-foreground ml-2">
+            I = {hovered.intensity}%
+          </span>
           <button
             type="button"
-            className="underline text-muted-foreground"
-            onClick={() => setMarker(null)}
+            className="ml-auto float-right text-muted-foreground underline"
+            onClick={() => {
+              setMarker(null);
+              setHovered(null);
+            }}
           >
             clear
           </button>
-        </p>
+        </div>
       )}
-      <p className="text-xs text-muted-foreground border-t border-border pt-2">
-        Gamma spectroscopy peaks from NNDC/ENSDF. Relative intensities
-        normalized to strongest peak.
-      </p>
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <table className="w-full text-xs">
+          <thead className="bg-muted/30">
+            <tr>
+              {["Isotope", "Energy (keV)", "Intensity (%)", "Relative"].map(
+                (h) => (
+                  <th
+                    key={h}
+                    className="px-3 py-1.5 text-left font-semibold text-muted-foreground"
+                  >
+                    {h}
+                  </th>
+                ),
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((p) => (
+              <tr
+                key={`${p.nuclide}-${p.energy_keV}`}
+                className="border-t border-border/30 hover:bg-muted/20 cursor-pointer"
+                onClick={() => setMarker(p.energy_keV)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ")
+                    setMarker(p.energy_keV);
+                }}
+              >
+                <td className="px-3 py-1 font-mono text-primary">
+                  {p.nuclide}
+                </td>
+                <td className="px-3 py-1 font-mono">{p.energy_keV}</td>
+                <td className="px-3 py-1 font-mono">{p.intensity}</td>
+                <td className="px-3 py-1">
+                  <div className="flex items-center gap-1">
+                    <div
+                      className="h-2 rounded-full bg-primary/60"
+                      style={{
+                        width: `${(p.intensity / maxIntensity) * 60}px`,
+                      }}
+                    />
+                    <span className="text-muted-foreground text-[10px]">
+                      {((p.intensity / maxIntensity) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
 
-// ──────────────── TAB 4: CHAIN SUMMARY ────────────────
-function SummaryTab({ chainDef }: { chainDef: DecayChain }) {
-  const chain = chainDef.steps;
-  const decaySteps = chain.filter((s) => s.decayMode !== "stable");
-  const alphaCount = decaySteps.filter((s) => s.decayMode === "alpha").length;
-  const betaCount = decaySteps.filter(
-    (s) => s.decayMode === "beta-" || s.decayMode === "beta+",
-  ).length;
-  const totalQ = decaySteps.reduce((a, s) => a + s.Qvalue_MeV, 0);
-  const alphaTotalQ = decaySteps
-    .filter((s) => s.decayMode === "alpha")
-    .reduce((a, s) => a + s.Qvalue_MeV, 0);
-  const betaTotalQ = decaySteps
-    .filter((s) => s.decayMode === "beta-" || s.decayMode === "beta+")
-    .reduce((a, s) => a + s.Qvalue_MeV, 0);
-  const stableEnd = chain.find((s) => s.decayMode === "stable");
-  const slowest = decaySteps.reduce(
-    (a, s) => (s.halfLifeSeconds > a.halfLifeSeconds ? s : a),
-    decaySteps[0],
-  );
-  const parent = chain[0];
-  const chainTypeMap: Record<number, string> = {
-    0: "4n (Thorium)",
-    1: "4n+1 (Neptunium)",
-    2: "4n+2 (Uranium)",
-    3: "4n+3 (Actinium)",
-  };
-  const chainType = parent ? (chainTypeMap[parent.A % 4] ?? "—") : "—";
+// ──────────────── TAB 3: MASS DEFECT ────────────────
+function MassDefectTab({ chain }: { chain: DecayStep[] }) {
+  const U_TO_MEV = 931.494;
+  const rows = chain
+    .filter((s) => s.decayMode !== "stable")
+    .map((s) => {
+      const massDefect = s.Qvalue_MeV / U_TO_MEV;
+      return {
+        step: s.stepIndex,
+        parent: s.nuclide,
+        daughter: s.daughter,
+        mode: s.decayMode,
+        massDefect: massDefect.toFixed(7),
+        Q: s.Qvalue_MeV,
+        beChange: (massDefect * U_TO_MEV).toFixed(3),
+      };
+    });
 
-  const radarData = [
-    { subject: "Alpha Q", value: alphaTotalQ },
-    { subject: "Beta Q", value: betaTotalQ },
-    { subject: "Alpha Steps", value: alphaCount * 2 },
-    { subject: "Beta Steps", value: betaCount * 2 },
-    { subject: "Total Q/10", value: totalQ / 10 },
-  ];
-
-  const stats = [
-    { label: "Decay steps", value: decaySteps.length },
-    { label: "Alpha decays", value: alphaCount },
-    { label: "Beta decays", value: betaCount },
-    { label: "Total Q-value", value: `${totalQ.toFixed(2)} MeV` },
-    { label: "Final stable", value: stableEnd?.nuclide ?? "—" },
-    { label: "Chain type", value: chainType },
-    {
-      label: "Slowest step",
-      value: slowest ? `${slowest.nuclide} (${slowest.halfLifeStr})` : "—",
-    },
-  ];
+  const totalQ = rows.reduce((a, r) => a + r.Q, 0);
+  const barData = rows.map((r) => ({ name: r.parent, Q: r.Q, mode: r.mode }));
 
   return (
     <div className="flex flex-col gap-3 p-3 h-full min-h-0 overflow-y-auto">
-      <p className="text-xs font-semibold text-foreground">
-        Chain Summary Statistics
-      </p>
-      <div className="grid grid-cols-2 gap-2">
-        {stats.map((s) => (
-          <div
-            key={s.label}
-            className="rounded-lg bg-muted/20 border border-border/50 p-2"
-          >
-            <p className="text-xs text-muted-foreground">{s.label}</p>
-            <p className="text-sm font-mono font-bold text-foreground">
-              {s.value}
-            </p>
-          </div>
-        ))}
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold text-foreground">
+          Mass Defect & Q-Values per Step
+        </p>
+        <span className="rounded-full bg-primary/15 border border-primary/30 px-2.5 py-0.5 text-xs font-mono text-primary">
+          Total Q = {totalQ.toFixed(3)} MeV
+        </span>
       </div>
-      <ResponsiveContainer width="100%" height={200}>
-        <RadarChart
-          data={radarData}
-          margin={{ top: 8, right: 16, bottom: 8, left: 16 }}
+      <div className="rounded-lg border border-border bg-muted/10 px-3 py-2 text-xs font-mono text-muted-foreground">
+        Δm = Q / 931.494 MeV·u⁻¹ &nbsp;|&nbsp; M(⁴He) = 4.002602 u &nbsp;|&nbsp;
+        m(e) = 0.000549 u
+      </div>
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <table className="w-full text-xs">
+          <thead className="bg-muted/30">
+            <tr>
+              {[
+                "Step",
+                "Parent",
+                "Daughter",
+                "Mode",
+                "Δm (u)",
+                "Q (MeV)",
+                "ΔBE (MeV)",
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="px-2 py-1.5 text-left font-semibold text-muted-foreground"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr
+                key={r.step}
+                className="border-t border-border/40 hover:bg-muted/20"
+              >
+                <td className="px-2 py-1 font-mono">{r.step}</td>
+                <td className="px-2 py-1 font-mono font-bold">{r.parent}</td>
+                <td className="px-2 py-1 font-mono">{r.daughter}</td>
+                <td
+                  className="px-2 py-1 font-mono"
+                  style={{ color: DECAY_COLORS[r.mode] }}
+                >
+                  {r.mode}
+                </td>
+                <td className="px-2 py-1 font-mono text-xs">{r.massDefect}</td>
+                <td className="px-2 py-1 font-mono text-primary">{r.Q}</td>
+                <td className="px-2 py-1 font-mono">{r.beChange}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <ResponsiveContainer width="100%" height={160}>
+        <BarChart
+          data={barData}
+          layout="vertical"
+          margin={{ top: 4, right: 16, left: 64, bottom: 4 }}
         >
-          <PolarGrid stroke="#1e2d45" />
-          <PolarAngleAxis
-            dataKey="subject"
-            tick={{ fill: "#6b7280", fontSize: 9 }}
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="#1a2535"
+            horizontal={false}
           />
-          <Radar
-            name="Chain"
-            dataKey="value"
-            stroke="#60a5fa"
-            fill="#60a5fa"
-            fillOpacity={0.3}
+          <XAxis
+            type="number"
+            tick={{ fontSize: 9, fill: "#6b7280" }}
+            label={{
+              value: "Q (MeV)",
+              position: "insideBottom",
+              fill: "#6b7280",
+              fontSize: 10,
+            }}
           />
-        </RadarChart>
+          <YAxis
+            dataKey="name"
+            type="category"
+            tick={{ fontSize: 9, fill: "#9ca3af", fontFamily: "monospace" }}
+            width={60}
+          />
+          <Tooltip
+            contentStyle={{
+              background: "#0d1520",
+              border: "1px solid #1e2d45",
+              borderRadius: 8,
+              fontSize: 11,
+            }}
+          />
+          <Bar dataKey="Q" radius={[0, 3, 3, 0]} barSize={9}>
+            {barData.map((entry) => (
+              <Cell
+                key={`qbar-${entry.name}`}
+                fill={DECAY_COLORS[entry.mode] ?? DECAY_COLORS.other}
+                opacity={0.85}
+              />
+            ))}
+          </Bar>
+        </BarChart>
       </ResponsiveContainer>
-      <Button
-        variant="outline"
-        size="sm"
-        className="self-start"
-        onClick={() => downloadCSV(chainDef)}
-        data-ocid="decay-chain.csv_download_button"
+    </div>
+  );
+}
+
+// ──────────────── TAB 4: CARBON DATING CALCULATOR ────────────────
+const C14_HALF_LIFE = 5730;
+const C14_LAMBDA = Math.LN2 / C14_HALF_LIFE;
+const SAMPLE_PRESETS = [
+  {
+    id: "wood",
+    label: "Wood",
+    pMC: 100,
+    note: "Trees equilibrate with atmospheric CO₂; initial pMC ≈ 100",
+  },
+  {
+    id: "bone",
+    label: "Bone",
+    pMC: 100,
+    note: "Collagen carbon derives from diet; pMC reflects atmospheric C-14 at death",
+  },
+  {
+    id: "charcoal",
+    label: "Charcoal",
+    pMC: 100,
+    note: "From wood — retains the C-14 signature of the living wood",
+  },
+  {
+    id: "cloth",
+    label: "Cloth/Linen",
+    pMC: 100,
+    note: "Plant-fiber textiles incorporate atmospheric C-14 during growth",
+  },
+  {
+    id: "peat",
+    label: "Peat",
+    pMC: 100,
+    note: "Organic peat accumulates from contemporary plant material",
+  },
+];
+
+const DECAY_CURVE_DATA = Array.from({ length: 101 }, (_, i) => {
+  const t = (i / 100) * 50000;
+  return { t, fraction: Math.exp(-C14_LAMBDA * t) * 100 };
+});
+
+function CarbonDatingTab() {
+  const [preset, setPreset] = useState("wood");
+  const [nPMC, setNpMC] = useState(50);
+  const [result, setResult] = useState<{ age: number; sigma: number } | null>(
+    null,
+  );
+  const [inputError, setInputError] = useState<string | null>(null);
+
+  const selectedPreset =
+    SAMPLE_PRESETS.find((p) => p.id === preset) ?? SAMPLE_PRESETS[0];
+
+  function handleCalculate() {
+    if (nPMC <= 0 || nPMC >= 100) {
+      setInputError("Current pMC must be between 0 and 100 (exclusive).");
+      return;
+    }
+    setInputError(null);
+    const ratio = nPMC / 100;
+    const age = -Math.log(ratio) / C14_LAMBDA;
+    const sigmaAge =
+      age * Math.sqrt(2 * 0.005 ** 2 + (40 / C14_HALF_LIFE) ** 2);
+    setResult({ age, sigma: sigmaAge });
+  }
+
+  const samplePoint = result
+    ? { t: Math.round(result.age), fraction: nPMC }
+    : null;
+  const HALF_LIFE_MARKERS = [5730, 11460, 17190, 22920];
+
+  return (
+    <div className="flex flex-col gap-4 p-3 h-full min-h-0 overflow-y-auto">
+      <div>
+        <p className="text-xs font-semibold text-foreground">
+          ¹⁴C Carbon Dating Calculator
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Calculate radiocarbon age using the Libby half-life (5730 ± 40 yr).
+          Based on first-order decay: N(t) = N₀ · e^(−λt)
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label
+            htmlFor="material-preset-select"
+            className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5"
+          >
+            Material Preset
+          </label>
+          <select
+            id="material-preset-select"
+            value={preset}
+            onChange={(e) => {
+              setPreset(e.target.value);
+              setResult(null);
+              setInputError(null);
+            }}
+            className="w-full rounded-lg border border-input bg-background px-2.5 py-1.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            data-ocid="carbon-tab.sample_type.select"
+          >
+            {SAMPLE_PRESETS.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-[10px] text-muted-foreground leading-relaxed">
+            {selectedPreset.note}
+          </p>
+        </div>
+        <div>
+          <label
+            htmlFor="npmc-input"
+            className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5"
+          >
+            Current ¹⁴C Activity — N(t) [pMC]
+          </label>
+          <input
+            id="npmc-input"
+            type="number"
+            min="0.001"
+            max="99.999"
+            step="0.1"
+            value={nPMC}
+            onChange={(e) => {
+              setNpMC(Number.parseFloat(e.target.value) || 0);
+              setResult(null);
+              setInputError(null);
+            }}
+            className="w-full rounded-lg border border-input bg-background px-2.5 py-1.5 text-xs font-mono text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            data-ocid="carbon-tab.npmc.input"
+          />
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            % Modern Carbon (pMC). Modern standard = 100 pMC.
+          </p>
+        </div>
+      </div>
+
+      {inputError && (
+        <div
+          className="rounded-lg border border-amber-500/40 bg-amber-950/30 px-3 py-2 text-xs text-amber-300"
+          role="alert"
+          data-ocid="carbon-tab.error_state"
+        >
+          ⚠ {inputError}
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={handleCalculate}
+        className="w-full rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-opacity"
+        data-ocid="carbon-tab.calculate.primary_button"
       >
-        <Download className="h-3.5 w-3.5 mr-1.5" />
-        Export All Data (CSV)
-      </Button>
+        Calculate Age
+      </button>
+
+      {result && (
+        <div
+          className="rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-2"
+          data-ocid="carbon-tab.result.card"
+        >
+          <div className="grid grid-cols-2 gap-2">
+            <div className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-center">
+              <p className="text-[10px] text-muted-foreground mb-0.5">
+                Radiocarbon Age
+              </p>
+              <p className="font-mono text-xl font-bold text-primary">
+                {Math.round(result.age).toLocaleString()}
+              </p>
+              <p className="text-[10px] text-muted-foreground">yr BP</p>
+            </div>
+            <div className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-center">
+              <p className="text-[10px] text-muted-foreground mb-0.5">
+                ±1σ Uncertainty
+              </p>
+              <p className="font-mono text-xl font-bold text-foreground">
+                ±{Math.round(result.sigma).toLocaleString()}
+              </p>
+              <p className="text-[10px] text-muted-foreground">yr</p>
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground">
+            Age = {result.age.toFixed(1)} ± {result.sigma.toFixed(1)} yr BP
+            &nbsp;|&nbsp; Precision:{" "}
+            {((result.sigma / result.age) * 100).toFixed(2)}%
+          </p>
+          {result.age > 50000 && (
+            <div className="rounded-lg border border-red-500/40 bg-red-950/30 px-3 py-2 text-xs text-red-300">
+              ⚠ Age exceeds ~50,000 yr practical limit for radiocarbon dating.
+            </div>
+          )}
+          <p className="text-[10px] text-muted-foreground">
+            IntCal20 calibration (Reimer et al. 2020) may shift calendar age
+            ±100–500 yr.
+          </p>
+        </div>
+      )}
+
+      <div>
+        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1.5">
+          ¹⁴C Decay Curve (50,000 yr)
+        </p>
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart
+            data={DECAY_CURVE_DATA}
+            margin={{ top: 4, right: 12, left: 0, bottom: 20 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#1a2535" />
+            <XAxis
+              dataKey="t"
+              type="number"
+              tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
+              tick={{ fontSize: 9, fill: "#6b7280" }}
+              label={{
+                value: "Time (yr BP)",
+                position: "insideBottom",
+                offset: -12,
+                fill: "#6b7280",
+                fontSize: 9,
+              }}
+            />
+            <YAxis
+              domain={[0, 100]}
+              tickFormatter={(v: number) => `${v}%`}
+              tick={{ fontSize: 9, fill: "#6b7280" }}
+            />
+            <Tooltip
+              contentStyle={{
+                background: "#0d1520",
+                border: "1px solid #1e2d45",
+                borderRadius: 8,
+                fontSize: 10,
+              }}
+              formatter={(v: number) => [`${v.toFixed(2)}%`, "¹⁴C remaining"]}
+              labelFormatter={(v: number) =>
+                `${Math.round(v).toLocaleString()} yr BP`
+              }
+            />
+            {HALF_LIFE_MARKERS.map((yr, i) => (
+              <ReferenceLine
+                key={yr}
+                x={yr}
+                stroke="#a855f7"
+                strokeDasharray="6 3"
+                strokeWidth={1}
+                opacity={0.6}
+                label={{
+                  value: `${i + 1}t½`,
+                  position: "top",
+                  fontSize: 9,
+                  fill: "#a855f7",
+                }}
+              />
+            ))}
+            {samplePoint && (
+              <ReferenceLine
+                x={samplePoint.t}
+                stroke="#f59e0b"
+                strokeWidth={2}
+                label={{
+                  value: `${samplePoint.fraction.toFixed(1)}% pMC`,
+                  position: "insideTopRight",
+                  fontSize: 9,
+                  fill: "#f59e0b",
+                }}
+              />
+            )}
+            <Line
+              type="monotone"
+              dataKey="fraction"
+              stroke="#22d3ee"
+              strokeWidth={2.5}
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="rounded-lg border border-border bg-muted/10 p-2.5 text-[10px] text-muted-foreground">
+        <strong className="text-foreground">Methodology:</strong> Libby
+        half-life 5730 ± 40 yr. Uncertainty propagated via quadrature
+        (analytical 0.5% + t½ uncertainty). Conventional radiocarbon age in yr
+        BP (AD 1950 reference). Calibrate with IntCal20 before research use.
+      </div>
     </div>
   );
 }
 
 // ──────────────── MAIN COMPONENT ────────────────
-const TABS = ["Activity", "Mass Defect", "Gamma", "Summary"] as const;
+const TABS = ["Activity", "Gamma", "Mass Defect", "Carbon Dating"] as const;
 type TabId = (typeof TABS)[number];
+
+const SPEED_OPTIONS = [0.5, 1, 2, 4] as const;
+type SpeedOption = (typeof SPEED_OPTIONS)[number];
 
 export function DecayChainExplorer() {
   const [selectedChainId, setSelectedChainId] = useState("u238");
   const [activeStep, setActiveStep] = useState(0);
   const [activeTab, setActiveTab] = useState<TabId>("Activity");
   const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState<0.5 | 1 | 2>(1);
+  const [speed, setSpeed] = useState<SpeedOption>(1);
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const chainDef =
-    ALL_AVAILABLE_CHAINS.find((c) => c.id === selectedChainId) ??
-    ALL_AVAILABLE_CHAINS[0];
-  const chain = chainDef.steps;
-  const chainLen = chain.length;
   const prevChainId = useRef(selectedChainId);
 
-  // Reset step when chain changes (using ref to avoid stale dep)
+  const chainDef =
+    ALL_CHAINS.find((c) => c.id === selectedChainId) ?? ALL_CHAINS[0];
+  const chain = chainDef.steps;
+  const chainLen = chain.length;
+
   if (prevChainId.current !== selectedChainId) {
     prevChainId.current = selectedChainId;
     setActiveStep(0);
@@ -1375,8 +1453,7 @@ export function DecayChainExplorer() {
   useEffect(() => {
     if (intervalRef.current) clearTimeout(intervalRef.current);
     if (!isPlaying) return;
-
-    const delay = 2000 / speed;
+    const delay = 1800 / speed;
     intervalRef.current = setTimeout(() => {
       setActiveStep((s) => {
         const next = s + 1;
@@ -1387,7 +1464,6 @@ export function DecayChainExplorer() {
         return next;
       });
     }, delay);
-
     return () => {
       if (intervalRef.current) clearTimeout(intervalRef.current);
     };
@@ -1401,6 +1477,7 @@ export function DecayChainExplorer() {
   };
 
   const currentStep = chain[activeStep] ?? chain[0];
+  const modeColor = DECAY_COLORS[currentStep?.decayMode] ?? DECAY_COLORS.other;
 
   return (
     <div
@@ -1416,13 +1493,17 @@ export function DecayChainExplorer() {
           <Badge variant="outline" className="text-xs">
             D3 · Recharts · Bateman
           </Badge>
+          <Badge variant="outline" className="text-xs">
+            {ALL_CHAINS.length} Chains
+          </Badge>
         </div>
         <h1 className="font-display text-xl font-bold text-foreground">
           Decay Chain Explorer & Simulator
         </h1>
         <p className="text-muted-foreground text-xs mt-0.5 max-w-2xl">
-          Split-pane research dashboard with animated decay trees, secular
-          equilibrium curves, gamma spectroscopy, and mass defect analysis.
+          Split-pane research dashboard — animated decay trees, secular
+          equilibrium curves, gamma spectroscopy, mass defect analysis, and
+          integrated Carbon Dating Calculator.
         </p>
       </div>
 
@@ -1432,20 +1513,20 @@ export function DecayChainExplorer() {
           <span className="text-xs text-muted-foreground mr-1 font-semibold">
             Chain:
           </span>
-          {ALL_AVAILABLE_CHAINS.map((c) => (
+          {ALL_CHAINS.map((c) => (
             <button
               key={c.id}
               type="button"
               onClick={() => setSelectedChainId(c.id)}
               data-ocid={`decay-chain.chain_selector.${c.id}`}
               aria-pressed={selectedChainId === c.id}
-              className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
+              className={`rounded-full border px-2 py-0.5 text-xs font-medium transition-all ${
                 selectedChainId === c.id
                   ? "border-primary bg-primary/15 text-primary shadow-sm"
                   : "border-border bg-card/50 text-muted-foreground hover:border-primary/50 hover:text-foreground"
               }`}
             >
-              {c.label}
+              {c.parent}
             </button>
           ))}
         </div>
@@ -1482,10 +1563,11 @@ export function DecayChainExplorer() {
             <RotateCcw className="h-3 w-3" /> Reset
           </Button>
         </div>
+
         {/* Speed selector */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <span className="text-xs text-muted-foreground">Speed:</span>
-          {([0.5, 1, 2] as const).map((s) => (
+          {SPEED_OPTIONS.map((s) => (
             <button
               key={s}
               type="button"
@@ -1493,10 +1575,11 @@ export function DecayChainExplorer() {
               data-ocid={`decay-chain.speed_${s}x`}
               className={`rounded px-2 py-0.5 text-xs font-mono transition-colors ${speed === s ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
             >
-              {s}x
+              {s}×
             </button>
           ))}
         </div>
+
         {/* Step nav */}
         <div className="flex items-center gap-2 ml-auto">
           <Button
@@ -1510,7 +1593,7 @@ export function DecayChainExplorer() {
           >
             <ChevronLeft className="h-3.5 w-3.5" /> Prev
           </Button>
-          <span className="text-xs font-mono text-foreground min-w-[64px] text-center">
+          <span className="text-xs font-mono text-foreground min-w-[72px] text-center">
             Step {activeStep + 1} / {chain.length}
           </span>
           <Button
@@ -1527,31 +1610,41 @@ export function DecayChainExplorer() {
             Next <ChevronRight className="h-3.5 w-3.5" />
           </Button>
         </div>
-        {/* Current step badge */}
-        <div className="hidden lg:flex items-center gap-1.5 ml-2 rounded-full border border-border bg-card px-3 py-1">
+
+        {/* Current step info */}
+        <div className="hidden xl:flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1">
           <span
             className="h-2 w-2 rounded-full"
-            style={{
-              background:
-                DECAY_COLORS[currentStep.decayMode] ?? DECAY_COLORS.other,
-            }}
+            style={{ background: modeColor }}
           />
           <span className="text-xs font-mono text-foreground">
-            {currentStep.nuclide}
+            {currentStep?.nuclide}
           </span>
           <span className="text-xs text-muted-foreground">→</span>
           <span className="text-xs font-mono text-foreground">
-            {currentStep.daughter}
+            {currentStep?.daughter}
           </span>
           <span className="text-xs text-muted-foreground ml-1">
-            {currentStep.halfLifeStr}
+            {currentStep?.halfLifeStr}
           </span>
         </div>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 px-2 text-xs gap-1 hidden lg:flex"
+          onClick={() => downloadCSV(chainDef)}
+          data-ocid="decay-chain.csv_download_button"
+        >
+          <Download className="h-3 w-3" /> CSV
+        </Button>
       </div>
 
       {/* ── Half-life legend ── */}
       <div className="flex flex-wrap gap-2 px-4 py-1.5 bg-card/30 shrink-0 border-b border-border/40">
-        <span className="text-xs text-muted-foreground font-semibold">t½:</span>
+        <span className="text-xs text-muted-foreground font-semibold">
+          t½ color:
+        </span>
         {HALF_LIFE_LEGEND.map((item) => (
           <div key={item.label} className="flex items-center gap-1">
             <span
@@ -1562,6 +1655,19 @@ export function DecayChainExplorer() {
             <span className="text-xs text-muted-foreground">{item.label}</span>
           </div>
         ))}
+        <div className="flex items-center gap-2 ml-auto">
+          {(["alpha", "beta-", "gamma", "ec"] as const).map((mode) => (
+            <div key={mode} className="flex items-center gap-1">
+              <span
+                className="h-2 w-2 rounded-full"
+                style={{ background: DECAY_COLORS[mode] }}
+              />
+              <span className="text-xs text-muted-foreground">
+                {mode === "beta-" ? "β⁻" : mode === "ec" ? "EC" : mode}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ── Resizable split-pane ── */}
@@ -1569,8 +1675,8 @@ export function DecayChainExplorer() {
         <ResizablePanelGroup direction="horizontal" className="h-full">
           {/* LEFT PANEL */}
           <ResizablePanel
-            defaultSize={52}
-            minSize={38}
+            defaultSize={50}
+            minSize={35}
             maxSize={65}
             className="flex flex-col min-h-0"
           >
@@ -1590,7 +1696,7 @@ export function DecayChainExplorer() {
 
           {/* RIGHT PANEL */}
           <ResizablePanel
-            defaultSize={48}
+            defaultSize={50}
             minSize={35}
             className="flex flex-col min-h-0"
           >
@@ -1607,7 +1713,7 @@ export function DecayChainExplorer() {
                   role="tab"
                   aria-selected={activeTab === tab}
                   onClick={() => setActiveTab(tab)}
-                  data-ocid={`decay-chain.tab_${tab.toLowerCase().replace(" ", "_")}`}
+                  data-ocid={`decay-chain.tab_${tab.toLowerCase().replace(/ /g, "_")}`}
                   className={`px-3 py-2 text-xs font-semibold transition-colors border-b-2 ${
                     activeTab === tab
                       ? "border-primary text-primary"
@@ -1622,9 +1728,9 @@ export function DecayChainExplorer() {
             {/* Tab content */}
             <div className="flex-1 min-h-0 overflow-y-auto" role="tabpanel">
               {activeTab === "Activity" && <ActivityTab chain={chain} />}
-              {activeTab === "Mass Defect" && <MassDefectTab chain={chain} />}
               {activeTab === "Gamma" && <GammaTab chainId={selectedChainId} />}
-              {activeTab === "Summary" && <SummaryTab chainDef={chainDef} />}
+              {activeTab === "Mass Defect" && <MassDefectTab chain={chain} />}
+              {activeTab === "Carbon Dating" && <CarbonDatingTab />}
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>

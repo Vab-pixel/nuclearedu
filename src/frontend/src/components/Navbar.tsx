@@ -4,6 +4,7 @@ import type { AudienceLevel } from "@/store/useAppStore";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Atom,
+  BookOpen,
   ChevronDown,
   FlaskConical,
   GraduationCap,
@@ -30,12 +31,21 @@ const vizLinks = [
   { label: "Decay Chain Explorer", href: "/visualizations/decay-chain" },
   { label: "Chart of Nuclides", href: "/visualizations/nuclide-chart" },
   { label: "Reactor Cross-Section", href: "/visualizations/reactor" },
+  { label: "Reactor World Map", href: "/visualizations/reactor-world-map" },
+  { label: "Periodic Table", href: "/visualizations/periodic-table" },
 ];
 
 const toolLinks = [
   { label: "Data Explorer", href: "/tools/data-explorer" },
   { label: "Isotope Comparison", href: "/tools/isotope-comparison" },
+  { label: "Radioisotope Database", href: "/tools/radioisotope-database" },
+  { label: "Cross-Section Viewer", href: "/tools/cross-section-viewer" },
   { label: "Dosimetry Calculator", href: "/tools/dosimetry-calculator" },
+  { label: "Carbon Dating Calculator", href: "/tools/carbon-dating" },
+  { label: "Criticality Calculator", href: "/tools/criticality-calculator" },
+  { label: "Dose Rate Calculator", href: "/tools/dose-rate-calculator" },
+  { label: "Fuel Cycle Visualizer", href: "/tools/fuel-cycle" },
+  { label: "Monte Carlo Simulation", href: "/tools/monte-carlo-sim" },
 ];
 
 const safetyLinks = [
@@ -617,6 +627,23 @@ export function Navbar() {
                     aria-hidden="true"
                   />
                   Learning Lab
+                </Link>
+                <Link
+                  to="/learning-lab/reading-list"
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-md transition-colors glow-focus",
+                    pathname === "/learning-lab/reading-list"
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                  )}
+                  data-ocid="nav.mobile_reading_list_link"
+                >
+                  <BookOpen
+                    className="h-3.5 w-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
+                  Reading List
                 </Link>
                 <Link
                   to="/news"

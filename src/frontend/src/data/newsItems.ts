@@ -663,4 +663,114 @@ export const newsItems: NewsItem[] = [
     ],
     audience: "student",
   },
+  // ── ADDITIONAL 2024 ITEMS ────────────────────────────────────────────────────
+  {
+    id: "microsoft-tmi-restart-2024",
+    title:
+      "Microsoft–Constellation Deal Revives Three Mile Island Unit 1 for AI Data Centers",
+    summary:
+      "Microsoft's landmark 20-year PPA with Constellation Energy to purchase all output from the restarted Three Mile Island Unit 1 (renamed Crane Clean Energy Center) exemplifies how AI and cloud computing companies are turning to nuclear power to meet soaring electricity demands. The plant is expected to restart in 2028, supplying 835 MWe of carbon-free electricity. Analysts view the deal as a signal that corporate energy buyers are increasingly willing to pay a premium for reliable, dispatchable zero-carbon power.",
+    date: "2024-09",
+    category: "policy",
+    source: "Constellation Energy / Microsoft",
+    url: "https://www.constellationenergy.com/newsroom/2023/constellation-to-launch-crane-clean-energy-center.html",
+    tags: [
+      "Microsoft",
+      "TMI",
+      "Crane Clean Energy",
+      "AI power",
+      "nuclear revival",
+    ],
+    audience: "public",
+    highlighted: true,
+  },
+  {
+    id: "eu-taxonomy-nuclear-2023",
+    title:
+      "EU Taxonomy Labels Nuclear Energy as Sustainable Investment Under Green Finance Rules",
+    summary:
+      "The European Union's delegated act classifying nuclear energy and natural gas as transitional 'green' investments under the EU Taxonomy for Sustainable Activities entered into force in January 2023. Nuclear is eligible provided new plants meet strict waste management requirements and are in EU member states with plans for deep geological repositories. The classification enables nuclear to attract ESG investment funds and green bonds, removing a significant financing barrier for new European plants.",
+    date: "2023-01",
+    category: "policy",
+    source: "European Commission",
+    url: "https://ec.europa.eu/info/business-economy-euro/banking-and-finance/sustainable-finance/eu-taxonomy-sustainable-activities_en",
+    tags: [
+      "EU taxonomy",
+      "green finance",
+      "ESG",
+      "sustainable investment",
+      "Europe",
+    ],
+    audience: "public",
+  },
+  {
+    id: "nif-oct-2023-ignition",
+    title:
+      "NIF Achieves Third Fusion Ignition Shot, Validating Reproducibility at Scale",
+    summary:
+      "Lawrence Livermore National Laboratory confirmed a third successful ignition experiment in October 2023 with energy gain exceeding 2×, further validating that NIF ignition is reproducible and not a single anomalous event. Researchers continue refining capsule implosion symmetry, laser pulse shaping, and surface finish specifications. The consistent results have energized the broader ICF community and attracted new private investment into companies developing inertial confinement power plant concepts.",
+    date: "2023-11",
+    category: "fusion",
+    source: "LLNL / DOE",
+    url: "https://www.energy.gov/science/articles/department-energy-national-nuclear-security-administration-achieve-fusion-ignition",
+    tags: ["NIF", "ignition", "ICF", "reproducibility", "LLNL", "fusion"],
+    audience: "researcher",
+  },
+  {
+    id: "iaea-salto-2023",
+    title:
+      "IAEA Launches SALTO Peer Review at 10 Additional Nuclear Plants in 2023",
+    summary:
+      "The IAEA's Safety Aspects of Long-Term Operation (SALTO) program conducted peer reviews at ten nuclear power plants in 2023, an increase from previous years reflecting the global wave of life-extension decisions. SALTO reviews assess aging management, obsolescence, and organizational readiness for operation beyond the original design life (typically 40 years). Over 80 reactors worldwide are now operating under approved long-term operation programmes, making SALTO reviews critical for continued safe operation.",
+    date: "2023-10",
+    category: "safety",
+    source: "IAEA",
+    url: "https://www.iaea.org/topics/long-term-operation",
+    tags: [
+      "SALTO",
+      "long-term operation",
+      "life extension",
+      "IAEA",
+      "aging management",
+    ],
+    audience: "researcher",
+  },
+  {
+    id: "helion-fusion-milestone-2024",
+    title: "Helion Energy Reaches 100 Million°C Plasma Temperature Milestone",
+    summary:
+      "Helion Energy, the US fusion startup backed by Sam Altman and OpenAI, announced in early 2024 that its seventh prototype, Polaris, has sustained plasma at 100 million°C — the temperature needed for fusion reactions — and is on track for its 2024 demonstration target. Helion uses field-reversed configuration (FRC) and pulsed operation, a distinct approach from tokamaks. Microsoft has signed a PPA for Helion's power by 2028, representing the world's first commercial fusion electricity contract.",
+    date: "2024-04",
+    category: "fusion",
+    source: "Helion Energy",
+    url: "https://www.helionenergy.com/articles/helion-reaches-100-million-degrees/",
+    tags: [
+      "Helion",
+      "FRC",
+      "private fusion",
+      "100 million degrees",
+      "Microsoft PPA",
+    ],
+    audience: "public",
+  },
+  {
+    id: "tc99m-global-supply-2024",
+    title:
+      "SHINE Medical Technologies Begins Commercial Tc-99m Production Without Nuclear Reactor",
+    summary:
+      "SHINE Medical Technologies in Janesville, Wisconsin began commercial production of Molybdenum-99 using a linear accelerator–driven neutron source in 2024, eliminating reactor dependence for this critical medical isotope. Mo-99 decays to Tc-99m, used in ~40 million nuclear medicine scans per year worldwide. SHINE's non-reactor approach provides supply chain resilience and avoids the extended outages that have historically caused global Tc-99m shortages when aging research reactors shut down for maintenance.",
+    date: "2024-02",
+    category: "medicine",
+    source: "SHINE Medical / NRC",
+    url: "https://shinemed.com/products/",
+    tags: [
+      "Mo-99",
+      "Tc-99m",
+      "SHINE",
+      "accelerator production",
+      "medical supply",
+    ],
+    audience: "student",
+    highlighted: true,
+  },
 ];

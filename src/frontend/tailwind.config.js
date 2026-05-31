@@ -72,6 +72,9 @@ export default {
         body: ["var(--font-body)", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
+      gridTemplateColumns: {
+        '18': 'repeat(18, minmax(0, 1fr))',
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -79,11 +82,11 @@ export default {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
-        elevated: "0 4px 12px rgba(0,0,0,0.1)",
-        card: "0 2px 8px rgba(0,0,0,0.08)",
-        "glow-accent": "0 0 16px rgba(56, 189, 248, 0.4)",
-        "glow-cherenkov": "inset 0 0 16px rgba(34, 197, 94, 0.1), 0 0 24px rgba(56, 189, 248, 0.2)",
-        "glow-live": "0 0 20px rgba(34, 197, 94, 0.3)",
+        elevated: "0 8px 24px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08)",
+        card: "0 2px 12px rgba(0,0,0,0.15), inset 0 0 8px rgba(0,0,0,0.3)",
+        "glow-accent": "0 0 20px rgba(56, 189, 248, 0.5), 0 0 40px rgba(56, 189, 248, 0.25)",
+        "glow-cherenkov": "inset 0 0 20px rgba(34, 197, 94, 0.15), 0 0 32px rgba(56, 189, 248, 0.3), 0 2px 16px rgba(0,0,0,0.2)",
+        "glow-live": "0 0 24px rgba(34, 197, 94, 0.4), 0 0 48px rgba(34, 197, 94, 0.15)",
       },
       keyframes: {
         "accordion-down": {
@@ -103,8 +106,8 @@ export default {
           to: { opacity: "0" },
         },
         "pulse-glow": {
-          "0%, 100%": { opacity: "1", boxShadow: "0 0 16px rgba(56, 189, 248, 0.4)" },
-          "50%": { opacity: "0.8", boxShadow: "0 0 24px rgba(56, 189, 248, 0.6)" },
+          "0%, 100%": { opacity: "1", boxShadow: "0 0 20px rgba(56, 189, 248, 0.5)" },
+          "50%": { opacity: "0.8", boxShadow: "0 0 40px rgba(56, 189, 248, 0.7)" },
         },
         "data-refresh": {
           "0%": { opacity: "1" },
@@ -116,8 +119,8 @@ export default {
           "50%": { opacity: "0.7", boxShadow: "0 0 16px rgba(34, 197, 94, 0.6)" },
         },
         "reactor-pulse": {
-          "0%, 100%": { boxShadow: "0 0 32px rgba(56, 189, 248, 0.4), inset 0 0 48px rgba(56, 189, 248, 0.08)" },
-          "50%": { boxShadow: "0 0 48px rgba(56, 189, 248, 0.6), inset 0 0 64px rgba(56, 189, 248, 0.15)" },
+          "0%, 100%": { boxShadow: "0 0 48px rgba(56, 189, 248, 0.5), inset 0 0 64px rgba(56, 189, 248, 0.12)" },
+          "50%": { boxShadow: "0 0 72px rgba(56, 189, 248, 0.7), inset 0 0 96px rgba(56, 189, 248, 0.2)" },
         },
         "holo-flicker": {
           "0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%": { opacity: "1" },

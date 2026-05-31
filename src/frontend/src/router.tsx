@@ -1,5 +1,14 @@
 import { Layout } from "@/components/Layout";
 import Home from "@/pages/Home";
+import InteractiveTimeline from "@/pages/history/InteractiveTimeline";
+import ReadingList from "@/pages/learning/ReadingList";
+import CriticalityCalculator from "@/pages/tools/CriticalityCalculator";
+import CrossSectionViewer from "@/pages/tools/CrossSectionViewer";
+import DoseRateCalculator from "@/pages/tools/DoseRateCalculator";
+import FuelCycleVisualizer from "@/pages/tools/FuelCycleVisualizer";
+import MonteCarloSim from "@/pages/tools/MonteCarloSim";
+import RadioisotopeDatabase from "@/pages/tools/RadioisotopeDatabase";
+import ReactorWorldMap from "@/pages/visualizations/ReactorWorldMap";
 import {
   createRootRoute,
   createRoute,
@@ -67,6 +76,9 @@ const Quiz = lazy(() => import("@/pages/learning/Quiz"));
 // Visualization pages
 const NucleusVisualizer = lazy(
   () => import("@/pages/visualizations/NucleusVisualizer"),
+);
+const PeriodicTable = lazy(
+  () => import("@/pages/visualizations/PeriodicTable"),
 );
 const DecayChainExplorer = lazy(
   () => import("@/pages/visualizations/DecayChainExplorer"),
@@ -305,6 +317,11 @@ const keyFiguresRoute = createRoute({
   path: "/history/key-figures",
   component: () => <LazyPage component={KeyFiguresPage} />,
 });
+const interactiveTimelineRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/history/interactive-timeline",
+  component: () => <LazyPage component={InteractiveTimeline} />,
+});
 const milestonesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/history/milestones",
@@ -340,6 +357,16 @@ const reactorCrossSectionRoute = createRoute({
   path: "/visualizations/reactor",
   component: () => <LazyPage component={ReactorCrossSection} />,
 });
+const reactorWorldMapRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/visualizations/reactor-world-map",
+  component: () => <LazyPage component={ReactorWorldMap} />,
+});
+const periodicTableRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/visualizations/periodic-table",
+  component: () => <LazyPage component={PeriodicTable} />,
+});
 
 const glossaryRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -373,6 +400,36 @@ const toolsDosimetryCalculatorRoute = createRoute({
   path: "/tools/dosimetry-calculator",
   component: () => <LazyPage component={DosimetryCalculator} />,
 });
+const toolsRadioisotopeDatabaseRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/radioisotope-database",
+  component: () => <LazyPage component={RadioisotopeDatabase} />,
+});
+const toolsCrossSectionViewerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/cross-section-viewer",
+  component: () => <LazyPage component={CrossSectionViewer} />,
+});
+const toolsCriticalityCalculatorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/criticality-calculator",
+  component: () => <LazyPage component={CriticalityCalculator} />,
+});
+const toolsDoseRateCalculatorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/dose-rate-calculator",
+  component: () => <LazyPage component={DoseRateCalculator} />,
+});
+const toolsFuelCycleVisualizerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/fuel-cycle",
+  component: () => <LazyPage component={FuelCycleVisualizer} />,
+});
+const toolsMonteCarloSimRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/monte-carlo-sim",
+  component: () => <LazyPage component={MonteCarloSim} />,
+});
 const toolsCarbonDatingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/tools/carbon-dating",
@@ -387,6 +444,11 @@ const learningLabRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/learning-lab",
   component: () => <LazyPage component={LearningLab} />,
+});
+const readingListRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/learning-lab/reading-list",
+  component: () => <LazyPage component={ReadingList} />,
 });
 const quizRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -428,21 +490,31 @@ const routeTree = rootRoute.addChildren([
   historyRoute,
   timelineRoute,
   keyFiguresRoute,
+  interactiveTimelineRoute,
   milestonesRoute,
   visualizationsRoute,
   nucleusVisualizerRoute,
   decayChainExplorerRoute,
   nuclideChartRoute,
   reactorCrossSectionRoute,
+  reactorWorldMapRoute,
+  periodicTableRoute,
   glossaryRoute,
   referencesRoute,
   aboutRoute,
   toolsDataExplorerRoute,
   toolsIsotopeComparisonRoute,
   toolsDosimetryCalculatorRoute,
+  toolsRadioisotopeDatabaseRoute,
+  toolsCrossSectionViewerRoute,
   toolsCarbonDatingRoute,
+  toolsCriticalityCalculatorRoute,
+  toolsDoseRateCalculatorRoute,
+  toolsFuelCycleVisualizerRoute,
+  toolsMonteCarloSimRoute,
   newsRoute,
   learningLabRoute,
+  readingListRoute,
   quizRoute,
 ]);
 
@@ -488,19 +560,29 @@ export const routeLabels: Record<string, string> = {
   "/history": "History",
   "/history/timeline": "Timeline",
   "/history/key-figures": "Key Figures",
+  "/history/interactive-timeline": "Interactive Timeline",
   "/history/milestones": "Milestones",
   "/visualizations": "Visualizations",
   "/visualizations/nucleus": "Nucleus Visualizer",
   "/visualizations/decay-chain": "Decay Chain Explorer",
   "/visualizations/nuclide-chart": "Nuclide Chart",
   "/visualizations/reactor": "Reactor Cross-Section",
+  "/visualizations/periodic-table": "Periodic Table",
+  "/visualizations/reactor-world-map": "Reactor World Map",
   "/glossary": "Glossary",
   "/references": "References",
   "/about": "About",
   "/tools/data-explorer": "Data Explorer",
   "/tools/isotope-comparison": "Isotope Comparison",
   "/tools/dosimetry-calculator": "Dosimetry Calculator",
+  "/tools/radioisotope-database": "Radioisotope Database",
+  "/tools/cross-section-viewer": "Cross-Section Viewer",
   "/tools/carbon-dating": "Carbon Dating Calculator",
+  "/tools/criticality-calculator": "Criticality Calculator",
+  "/tools/dose-rate-calculator": "Dose Rate Calculator",
+  "/tools/fuel-cycle": "Fuel Cycle Visualizer",
+  "/tools/monte-carlo-sim": "Monte Carlo Simulation",
+  "/learning-lab/reading-list": "Reading List",
   "/news": "News & Research",
   "/learning-lab": "Learning Lab",
   "/learning-lab/$topicId": "Quiz",

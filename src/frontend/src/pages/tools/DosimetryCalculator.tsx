@@ -4,7 +4,10 @@ import { PageHeader } from "@/components/PageHeader";
 import { SafetyCallout } from "@/components/SafetyCallout";
 import { useId, useMemo, useState } from "react";
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
+  Cell,
   Line,
   LineChart,
   ReferenceLine,
@@ -45,7 +48,7 @@ const COMMON_ISOTOPES: Record<
   "U-238": { halfLifeStr: "4.47×10⁹ yr", halfLifeSec: 1.41e17 },
 };
 
-const BKG_MILLI_SV = 2.4;
+const BKG_MILLI_SV = 3.1;
 const TIME_FACTORS: Record<string, number> = {
   s: 1,
   min: 60,
@@ -53,6 +56,62 @@ const TIME_FACTORS: Record<string, number> = {
   day: 86400,
   yr: 3.156e7,
 };
+
+// ─── Dose Reference Benchmarks (mSv) ──────────────────────────────────────────
+const DOSE_BENCHMARKS = [
+  { label: "Dental X-ray", mSv: 0.005, color: "#22d3ee" },
+  { label: "Chest X-ray", mSv: 0.1, color: "#22d3ee" },
+  { label: "Transatlantic flight", mSv: 0.06, color: "#22d3ee" },
+  { label: "Background/yr", mSv: 3.1, color: "#a78bfa" },
+  { label: "Chest CT scan", mSv: 5.0, color: "#fb923c" },
+  { label: "Annual limit (public)", mSv: 1.0, color: "#f472b6" },
+  { label: "Rad worker limit/yr", mSv: 50, color: "#f87171" },
+  { label: "Fukushima zone", mSv: 20, color: "#f97316" },
+  { label: "Acute effects threshold", mSv: 1000, color: "#ef4444" },
+];
+
+// ─── ALARA guidance based on dose level ───────────────────────────────────────
+function alaraGuidance(mSv: number): {
+  level: string;
+  color: string;
+  text: string;
+} {
+  if (mSv < 0.01)
+    return {
+      level: "Negligible",
+      color: "text-emerald-400",
+      text: "Dose is negligible — no specific precautions needed beyond routine good practice.",
+    };
+  if (mSv < 1)
+    return {
+      level: "Low",
+      color: "text-emerald-400",
+      text: "Below 1 mSv — within IAEA public dose limit per year. Standard ALARA: minimize time, maximize distance.",
+    };
+  if (mSv < 5)
+    return {
+      level: "Moderate",
+      color: "text-amber-400",
+      text: "Approaching annual background dose level. Justify this exposure and apply all feasible ALARA measures: Time–Distance–Shielding.",
+    };
+  if (mSv < 20)
+    return {
+      level: "Elevated",
+      color: "text-orange-400",
+      text: "Above IAEA 1 mSv public limit. Occupational work only. Dose monitoring required. Reduce time, increase distance, add shielding.",
+    };
+  if (mSv < 50)
+    return {
+      level: "High",
+      color: "text-rose-400",
+      text: "Approaching Fukushima evacuation threshold (20 mSv). Serious protective action required. Qualified Health Physicist must supervise.",
+    };
+  return {
+    level: "Critical",
+    color: "text-red-400",
+    text: "Exceeds annual radiation worker dose limit (50 mSv). Immediate withdrawal and medical assessment. Emergency protocols apply.",
+  };
+}
 
 // ─── Unit Converter ────────────────────────────────────────────────────────────
 function UnitConverter() {
@@ -96,86 +155,91 @@ function UnitConverter() {
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      {/* Gy ↔ rad */}
-      <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
-        <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground">
-          Absorbed Dose
-        </p>
-        <div className="flex flex-wrap gap-3 items-end">
-          <div className="flex-1 min-w-28">
-            <label
-              htmlFor={`${id}-gy`}
-              className="block text-xs font-semibold text-muted-foreground mb-1.5"
-            >
-              Gray <span className="font-mono text-primary">[Gy]</span>
-            </label>
-            <input
-              id={`${id}-gy`}
-              type="number"
-              value={gyVal}
-              onChange={(e) => setGyVal(e.target.value)}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            />
+      {[
+        {
+          title: "Absorbed Dose",
+          note: "1 Gy = 100 rad",
+          left: {
+            id: `${id}-gy`,
+            label: "Gray",
+            unit: "Gy",
+            val: gyVal,
+            onChange: setGyVal,
+            readOnly: false,
+          },
+          right: {
+            id: `${id}-rad`,
+            label: "rad",
+            unit: "rad",
+            val: gyToRad(gyVal),
+            readOnly: true,
+          },
+        },
+        {
+          title: "Equivalent Dose",
+          note: "1 Sv = 100 rem",
+          left: {
+            id: `${id}-sv`,
+            label: "Sievert",
+            unit: "Sv",
+            val: svVal,
+            onChange: setSvVal,
+            readOnly: false,
+          },
+          right: {
+            id: `${id}-rem`,
+            label: "rem",
+            unit: "rem",
+            val: svToRem(svVal),
+            readOnly: true,
+          },
+        },
+      ].map(({ title, note, left, right }) => (
+        <div
+          key={title}
+          className="rounded-lg border border-border bg-muted/20 p-4 space-y-3"
+        >
+          <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground">
+            {title}
+          </p>
+          <div className="flex flex-wrap gap-3 items-end">
+            <div className="flex-1 min-w-28">
+              <label
+                htmlFor={left.id}
+                className="block text-xs font-semibold text-muted-foreground mb-1.5"
+              >
+                {left.label}{" "}
+                <span className="font-mono text-primary">[{left.unit}]</span>
+              </label>
+              <input
+                id={left.id}
+                type="number"
+                value={left.val}
+                onChange={(e) => left.onChange?.(e.target.value)}
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+            <span className="text-muted-foreground text-sm pb-2">⇄</span>
+            <div className="flex-1 min-w-28">
+              <label
+                htmlFor={right.id}
+                className="block text-xs font-semibold text-muted-foreground mb-1.5"
+              >
+                {right.label}{" "}
+                <span className="font-mono text-primary">[{right.unit}]</span>
+              </label>
+              <input
+                id={right.id}
+                type="text"
+                readOnly
+                value={right.val}
+                className="w-full rounded-lg border border-input bg-muted px-3 py-2 text-sm font-mono text-foreground"
+              />
+            </div>
           </div>
-          <span className="text-muted-foreground text-sm pb-2">⇄</span>
-          <div className="flex-1 min-w-28">
-            <label
-              htmlFor={`${id}-rad`}
-              className="block text-xs font-semibold text-muted-foreground mb-1.5"
-            >
-              rad <span className="font-mono text-primary">[rad]</span>
-            </label>
-            <input
-              id={`${id}-rad`}
-              type="text"
-              readOnly
-              value={gyToRad(gyVal)}
-              className="w-full rounded-lg border border-input bg-muted px-3 py-2 text-sm font-mono text-foreground"
-            />
-          </div>
+          <p className="text-xs text-muted-foreground">{note}</p>
         </div>
-        <p className="text-xs text-muted-foreground">1 Gy = 100 rad</p>
-      </div>
-      {/* Sv ↔ rem */}
-      <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
-        <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground">
-          Equivalent Dose
-        </p>
-        <div className="flex flex-wrap gap-3 items-end">
-          <div className="flex-1 min-w-28">
-            <label
-              htmlFor={`${id}-sv`}
-              className="block text-xs font-semibold text-muted-foreground mb-1.5"
-            >
-              Sievert <span className="font-mono text-primary">[Sv]</span>
-            </label>
-            <input
-              id={`${id}-sv`}
-              type="number"
-              value={svVal}
-              onChange={(e) => setSvVal(e.target.value)}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            />
-          </div>
-          <span className="text-muted-foreground text-sm pb-2">⇄</span>
-          <div className="flex-1 min-w-28">
-            <label
-              htmlFor={`${id}-rem`}
-              className="block text-xs font-semibold text-muted-foreground mb-1.5"
-            >
-              rem <span className="font-mono text-primary">[rem]</span>
-            </label>
-            <input
-              id={`${id}-rem`}
-              type="text"
-              readOnly
-              value={svToRem(svVal)}
-              className="w-full rounded-lg border border-input bg-muted px-3 py-2 text-sm font-mono text-foreground"
-            />
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground">1 Sv = 100 rem</p>
-      </div>
+      ))}
       {/* Bq ↔ Ci */}
       <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
         <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground">
@@ -260,6 +324,388 @@ function UnitConverter() {
   );
 }
 
+// ─── Dose Rate Calculator (Point Source) with Log-Scale Benchmark Chart ────────
+function DoseRateCalc() {
+  const id = useId();
+  const [activity, setActivity] = useState("1e9");
+  const [distance, setDistance] = useState(1);
+  const [exposureHr, setExposureHr] = useState(1);
+  const [gammaProb, setGammaProb] = useState("0.85");
+  const [energy, setEnergy] = useState("0.662");
+  const [shieldHVL, setShieldHVL] = useState(0);
+  const [targetDoseMsv, setTargetDoseMsv] = useState("1");
+
+  const GAMMA_CONST = 5.76e-13;
+  const A = Number.parseFloat(activity) || 0;
+  const Py = Number.parseFloat(gammaProb) || 0;
+  const Eg = Number.parseFloat(energy) || 0;
+
+  // Dose rate µSv/h at given distance
+  const doseRateRaw =
+    ((A * Py * Eg * GAMMA_CONST) / (distance * distance)) * 3600 * 1e6;
+  // Shielding transmission
+  const transmission = shieldHVL > 0 ? 0.5 ** shieldHVL : 1;
+  const doseRateShielded = doseRateRaw * transmission;
+
+  // Total dose for exposure time
+  const totalDoseMicroSv = doseRateShielded * exposureHr;
+  const totalDoseMSv = totalDoseMicroSv / 1000;
+
+  // Shielding calc: required HVLs to reach target dose rate
+  const targetRateMicroSv =
+    (Number.parseFloat(targetDoseMsv) * 1000) / exposureHr;
+  const requiredHVLs =
+    doseRateRaw > 0
+      ? Math.log2(doseRateRaw / Math.max(targetRateMicroSv, 1e-10))
+      : 0;
+
+  const guidance = alaraGuidance(totalDoseMSv);
+
+  // Distance curve
+  const distanceChartData = useMemo(() => {
+    return Array.from({ length: 50 }, (_, i) => {
+      const r = 0.1 + i * 0.2;
+      const dr =
+        ((A * Py * Eg * GAMMA_CONST) / (r * r)) * 3600 * 1e6 * transmission;
+      return { r: Number(r.toFixed(2)), doseRate: Number(dr.toFixed(3)) };
+    });
+  }, [A, Py, Eg, transmission]);
+
+  // Log-scale benchmark bar chart data
+  const benchmarkData = useMemo(() => {
+    const calcBar = { label: "Your dose", mSv: totalDoseMSv, color: "#22d3ee" };
+    return [...DOSE_BENCHMARKS, calcBar].sort((a, b) => a.mSv - b.mSv);
+  }, [totalDoseMSv]);
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <label
+            htmlFor={`${id}-act`}
+            className="block text-xs font-semibold text-muted-foreground mb-1.5"
+          >
+            Activity [Bq]
+          </label>
+          <input
+            id={`${id}-act`}
+            type="number"
+            value={activity}
+            onChange={(e) => setActivity(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            data-ocid="dosimetry.dose_rate.activity_input"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor={`${id}-gp`}
+            className="block text-xs font-semibold text-muted-foreground mb-1.5"
+          >
+            Gamma Probability (0–1)
+          </label>
+          <input
+            id={`${id}-gp`}
+            type="number"
+            min="0"
+            max="1"
+            step="0.01"
+            value={gammaProb}
+            onChange={(e) => setGammaProb(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            data-ocid="dosimetry.dose_rate.gamma_prob_input"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor={`${id}-eng`}
+            className="block text-xs font-semibold text-muted-foreground mb-1.5"
+          >
+            Photon Energy [MeV]
+          </label>
+          <input
+            id={`${id}-eng`}
+            type="number"
+            min="0"
+            step="0.01"
+            value={energy}
+            onChange={(e) => setEnergy(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            data-ocid="dosimetry.dose_rate.energy_input"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor={`${id}-dist`}
+            className="block text-xs font-semibold text-muted-foreground mb-1.5"
+          >
+            Distance:{" "}
+            <span className="text-primary font-mono">{distance} m</span>
+          </label>
+          <input
+            id={`${id}-dist`}
+            type="range"
+            min="0.1"
+            max="10"
+            step="0.1"
+            value={distance}
+            onChange={(e) => setDistance(Number.parseFloat(e.target.value))}
+            className="w-full accent-primary"
+            data-ocid="dosimetry.dose_rate.distance.toggle"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground mt-1">
+            <span>0.1 m</span>
+            <span>10 m</span>
+          </div>
+        </div>
+
+        <div>
+          <label
+            htmlFor={`${id}-exp`}
+            className="block text-xs font-semibold text-muted-foreground mb-1.5"
+          >
+            Exposure Time:{" "}
+            <span className="text-primary font-mono">{exposureHr} hr</span>
+          </label>
+          <input
+            id={`${id}-exp`}
+            type="range"
+            min="0.0167"
+            max="8"
+            step="0.0167"
+            value={exposureHr}
+            onChange={(e) => setExposureHr(Number.parseFloat(e.target.value))}
+            className="w-full accent-primary"
+            data-ocid="dosimetry.dose_rate.exposure.toggle"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground mt-1">
+            <span>1 min</span>
+            <span>8 hr</span>
+          </div>
+        </div>
+
+        <div>
+          <label
+            htmlFor={`${id}-hvl`}
+            className="block text-xs font-semibold text-muted-foreground mb-1.5"
+          >
+            Shielding:{" "}
+            <span className="text-primary font-mono">{shieldHVL} HVL</span>
+          </label>
+          <input
+            id={`${id}-hvl`}
+            type="range"
+            min="0"
+            max="10"
+            step="0.5"
+            value={shieldHVL}
+            onChange={(e) => setShieldHVL(Number.parseFloat(e.target.value))}
+            className="w-full accent-primary"
+            data-ocid="dosimetry.dose_rate.hvl.toggle"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground mt-1">
+            <span>No shield</span>
+            <span>10 HVL ({(100 * (1 - 0.5 ** 10)).toFixed(1)}% blocked)</span>
+          </div>
+        </div>
+      </div>
+
+      <EquationBlock
+        latex="\dot{H} = \frac{A \cdot P_\gamma \cdot E_\gamma \cdot \Gamma}{r^2} \cdot 0.5^{n_{HVL}}"
+        annotation="Dose rate Ḣ equals activity A × gamma probability × photon energy × Γ constant ÷ r² × shielding transmission (0.5 per HVL)."
+        label="Point Source Dose Rate with Shielding"
+      />
+
+      {/* Result Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          {
+            label: "Dose Rate (unshielded)",
+            value: doseRateRaw.toExponential(3),
+            unit: "µSv/h",
+          },
+          {
+            label: `Dose Rate (${shieldHVL} HVL shield)`,
+            value: doseRateShielded.toExponential(3),
+            unit: "µSv/h",
+          },
+          {
+            label: `Total Dose (${exposureHr.toFixed(1)} hr)`,
+            value: totalDoseMicroSv.toExponential(3),
+            unit: "µSv",
+          },
+          {
+            label: "Equiv. to Annual BKG",
+            value: `${((totalDoseMSv / BKG_MILLI_SV) * 100).toFixed(2)}%`,
+            unit: "",
+          },
+        ].map(({ label, value, unit }) => (
+          <div
+            key={label}
+            className="rounded-lg border border-border bg-muted/20 px-4 py-3 text-center"
+            data-ocid="dosimetry.dose_rate.result_card"
+          >
+            <p className="text-xs text-muted-foreground mb-1 leading-tight">
+              {label}
+            </p>
+            <p className="font-mono text-lg font-bold text-primary">{value}</p>
+            {unit && <p className="text-xs text-muted-foreground">{unit}</p>}
+          </div>
+        ))}
+      </div>
+
+      {/* ALARA Guidance */}
+      <div
+        className="rounded-lg border border-border bg-muted/10 p-4 flex items-start gap-3"
+        data-ocid="dosimetry.alara.callout"
+      >
+        <div
+          className={`h-2 w-2 rounded-full mt-1.5 flex-shrink-0 ${guidance.level === "Negligible" || guidance.level === "Low" ? "bg-emerald-400" : guidance.level === "Moderate" ? "bg-amber-400" : "bg-rose-400"}`}
+        />
+        <div>
+          <p className={`text-sm font-semibold ${guidance.color} mb-1`}>
+            ALARA: {guidance.level} Dose Level
+          </p>
+          <p className="text-sm text-muted-foreground">{guidance.text}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Distance decay chart */}
+        <div className="rounded-lg border border-border bg-muted/10 p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
+            Dose Rate vs Distance (µSv/h, {shieldHVL} HVL shield)
+          </p>
+          <ResponsiveContainer width="100%" height={180}>
+            <LineChart data={distanceChartData}>
+              <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
+              <XAxis
+                dataKey="r"
+                label={{
+                  value: "Distance (m)",
+                  position: "insideBottom",
+                  offset: -2,
+                  fontSize: 10,
+                  fill: "var(--muted-foreground)",
+                }}
+                tick={{ fontSize: 10, fill: "var(--muted-foreground)" }}
+              />
+              <YAxis tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} />
+              <Tooltip
+                contentStyle={{
+                  background: "var(--popover)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 8,
+                  fontSize: 11,
+                }}
+                formatter={(v: number) => [`${v} µSv/h`, "Dose Rate"]}
+              />
+              <Line
+                type="monotone"
+                dataKey="doseRate"
+                stroke="#a855f7"
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Log-scale benchmark chart */}
+        <div className="rounded-lg border border-border bg-muted/10 p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
+            Dose Comparison (Log Scale, mSv)
+          </p>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart
+              data={benchmarkData}
+              layout="vertical"
+              margin={{ top: 0, right: 40, left: 110, bottom: 0 }}
+            >
+              <XAxis
+                type="number"
+                scale="log"
+                domain={[0.001, 2000]}
+                tick={{ fontSize: 9, fill: "var(--muted-foreground)" }}
+                tickFormatter={(v: number) =>
+                  v >= 1 ? `${v}` : `${v.toFixed(3)}`
+                }
+              />
+              <YAxis
+                type="category"
+                dataKey="label"
+                tick={{ fontSize: 9, fill: "var(--muted-foreground)" }}
+                width={105}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: "var(--popover)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 8,
+                  fontSize: 11,
+                }}
+                formatter={(v: number) => [`${v} mSv`, "Dose"]}
+              />
+              <Bar dataKey="mSv" radius={[0, 3, 3, 0]}>
+                {benchmarkData.map((d) => (
+                  <Cell
+                    key={d.label}
+                    fill={d.label === "Your dose" ? "#22d3ee" : d.color}
+                    fillOpacity={d.label === "Your dose" ? 1 : 0.65}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Shielding Calculator */}
+      <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Shielding Requirement Calculator
+        </p>
+        <div className="flex flex-wrap gap-4 items-end">
+          <div className="flex-1 min-w-40">
+            <label
+              htmlFor={`${id}-target`}
+              className="block text-xs font-semibold text-muted-foreground mb-1.5"
+            >
+              Target Total Dose (mSv)
+            </label>
+            <input
+              id={`${id}-target`}
+              type="number"
+              min="0.001"
+              step="0.1"
+              value={targetDoseMsv}
+              onChange={(e) => setTargetDoseMsv(e.target.value)}
+              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              data-ocid="dosimetry.shielding.target_input"
+            />
+          </div>
+          <div className="rounded-lg border border-border bg-muted/20 px-4 py-3 text-center min-w-40">
+            <p className="text-xs text-muted-foreground mb-0.5">
+              Required Shielding
+            </p>
+            <p className="font-mono text-xl font-bold text-primary">
+              {requiredHVLs > 0 ? requiredHVLs.toFixed(2) : "0"} HVL
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Transmission:{" "}
+              {(0.5 ** Math.max(0, requiredHVLs) * 100).toFixed(2)}%
+            </p>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          HVL (Half-Value Layer) varies by material: ~1.5 cm lead, ~4 cm
+          concrete, ~11 cm water for 1 MeV gamma.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Effective Dose Calculator ─────────────────────────────────────────────────
 function EffectiveDoseCalc() {
   const id = useId();
@@ -272,7 +718,9 @@ function EffectiveDoseCalc() {
   const d = Number.parseFloat(dose);
   const H = Number.isNaN(d) ? 0 : d * wR;
   const E = H * wT;
-  const chestXrays = (E * 1000) / 0.1;
+  const EMsv = E * 1000;
+  const chestXrays = EMsv / 0.1;
+  const guidance = alaraGuidance(EMsv);
 
   return (
     <div className="space-y-5">
@@ -370,9 +818,21 @@ function EffectiveDoseCalc() {
         <span className="font-semibold text-foreground">Context: </span>
         This effective dose equals ≈{" "}
         <span className="font-mono text-primary">{chestXrays.toFixed(2)}</span>{" "}
-        chest X-rays (0.1 mSv each). Natural background radiation is
-        approximately{" "}
-        <span className="font-mono text-primary">{BKG_MILLI_SV} mSv/year</span>.
+        chest X-rays (0.1 mSv each). Natural background is{" "}
+        <span className="font-mono text-primary">{BKG_MILLI_SV} mSv/year</span>{" "}
+        (UNSCEAR global average).
+      </div>
+
+      <div className="rounded-lg border border-border bg-muted/10 p-4 flex items-start gap-3">
+        <div
+          className={`h-2 w-2 rounded-full mt-1.5 flex-shrink-0 ${guidance.level === "Negligible" || guidance.level === "Low" ? "bg-emerald-400" : "bg-amber-400"}`}
+        />
+        <div>
+          <p className={`text-sm font-semibold ${guidance.color} mb-1`}>
+            ALARA: {guidance.level}
+          </p>
+          <p className="text-sm text-muted-foreground">{guidance.text}</p>
+        </div>
       </div>
     </div>
   );
@@ -529,11 +989,10 @@ function ActivityCalc() {
               <span className="text-sm text-muted-foreground">Bq</span>
             </p>
             <p
-              className="text-xs mt-0.5"
-              style={{ color: isSafe ? "#34d399" : "#fbbf24" }}
+              className={`text-xs mt-0.5 ${isSafe ? "text-emerald-400" : "text-amber-400"}`}
             >
               {decayPct.toFixed(1)}% decayed ·{" "}
-              {isSafe ? "Below 1 µCi" : "Above 1 µCi threshold"}
+              {isSafe ? "Below 1 µCi" : "Above 1 µCi"}
             </p>
           </div>
         </div>
@@ -541,7 +1000,7 @@ function ActivityCalc() {
 
       <EquationBlock
         latex="A(t) = A_0 \cdot e^{-\lambda t}, \quad \lambda = \frac{\ln 2}{t_{1/2}}"
-        annotation="Radioactive decay law: activity at time t equals initial activity times e to the power of negative decay constant times t. Decay constant λ = ln(2) divided by half-life."
+        annotation="Radioactive decay law: activity at time t equals initial activity × e^(−λt). Decay constant λ = ln(2) / half-life."
         label="Radioactive Decay Law"
       />
 
@@ -600,214 +1059,38 @@ function ActivityCalc() {
   );
 }
 
-// ─── Dose Rate from Point Source ───────────────────────────────────────────────
-function DoseRateCalc() {
-  const id = useId();
-  const [activity, setActivity] = useState("1e9");
-  const [distance, setDistance] = useState(1);
-  const [gammaProb, setGammaProb] = useState("0.85");
-  const [energy, setEnergy] = useState("0.662");
-
-  // Simplified point-source dose rate (µSv/h) using Γ factor approximation
-  const GAMMA_CONST = 5.76e-13;
-  const A = Number.parseFloat(activity) || 0;
-  const Py = Number.parseFloat(gammaProb) || 0;
-  const Eg = Number.parseFloat(energy) || 0;
-
-  const doseRateAtDist =
-    ((A * Py * Eg * GAMMA_CONST) / (distance * distance)) * 3600 * 1e6;
-
-  const chartData = useMemo(() => {
-    return Array.from({ length: 50 }, (_, i) => {
-      const r = 0.1 + i * 0.2;
-      const dr = ((A * Py * Eg * GAMMA_CONST) / (r * r)) * 3600 * 1e6;
-      return { r: Number(r.toFixed(2)), doseRate: Number(dr.toFixed(3)) };
-    });
-  }, [A, Py, Eg]);
-
-  return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
-          <label
-            htmlFor={`${id}-act`}
-            className="block text-xs font-semibold text-muted-foreground mb-1.5"
-          >
-            Activity [Bq]
-          </label>
-          <input
-            id={`${id}-act`}
-            type="number"
-            value={activity}
-            onChange={(e) => setActivity(e.target.value)}
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            data-ocid="dosimetry.dose_rate.activity_input"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor={`${id}-gp`}
-            className="block text-xs font-semibold text-muted-foreground mb-1.5"
-          >
-            Gamma Probability (0–1)
-          </label>
-          <input
-            id={`${id}-gp`}
-            type="number"
-            min="0"
-            max="1"
-            step="0.01"
-            value={gammaProb}
-            onChange={(e) => setGammaProb(e.target.value)}
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            data-ocid="dosimetry.dose_rate.gamma_prob_input"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor={`${id}-eng`}
-            className="block text-xs font-semibold text-muted-foreground mb-1.5"
-          >
-            Photon Energy [MeV]
-          </label>
-          <input
-            id={`${id}-eng`}
-            type="number"
-            min="0"
-            step="0.01"
-            value={energy}
-            onChange={(e) => setEnergy(e.target.value)}
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            data-ocid="dosimetry.dose_rate.energy_input"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor={`${id}-dist`}
-            className="block text-xs font-semibold text-muted-foreground mb-1.5"
-          >
-            Distance:{" "}
-            <span className="text-primary font-mono">{distance} m</span>
-          </label>
-          <input
-            id={`${id}-dist`}
-            type="range"
-            min="0.1"
-            max="10"
-            step="0.1"
-            value={distance}
-            onChange={(e) => setDistance(Number.parseFloat(e.target.value))}
-            className="w-full accent-primary"
-            data-ocid="dosimetry.dose_rate.distance.toggle"
-          />
-          <div className="flex justify-between text-xs text-muted-foreground mt-1">
-            <span>0.1 m</span>
-            <span>10 m</span>
-          </div>
-        </div>
-      </div>
-
-      <EquationBlock
-        latex="\dot{H} = \frac{A \cdot P_\gamma \cdot E_\gamma \cdot \Gamma}{r^2}"
-        annotation="Dose rate Ḣ equals activity A times gamma emission probability Pγ times photon energy Eγ times gamma constant Γ divided by distance squared (inverse square law)."
-        label="Point Source Dose Rate (simplified)"
-      />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div
-          className="rounded-lg border border-border bg-muted/20 px-4 py-3 text-center"
-          data-ocid="dosimetry.dose_rate.result_card"
-        >
-          <p className="text-xs text-muted-foreground mb-1">
-            Dose Rate at {distance} m
-          </p>
-          <p className="font-mono text-2xl font-bold text-primary">
-            {doseRateAtDist.toExponential(3)}
-          </p>
-          <p className="text-sm text-muted-foreground">µSv/h</p>
-          {doseRateAtDist > 25000 && (
-            <p className="text-xs text-amber-400 mt-1 font-semibold">
-              ⚠ Exceeds 25 mSv/h occupational limit
-            </p>
-          )}
-        </div>
-        <div className="rounded-lg border border-border bg-muted/10 p-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-            Dose Rate vs Distance (µSv/h)
-          </p>
-          <ResponsiveContainer width="100%" height={140}>
-            <LineChart data={chartData}>
-              <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-              <XAxis
-                dataKey="r"
-                label={{
-                  value: "Distance (m)",
-                  position: "insideBottom",
-                  offset: -2,
-                  fontSize: 10,
-                  fill: "var(--muted-foreground)",
-                }}
-                tick={{ fontSize: 10, fill: "var(--muted-foreground)" }}
-              />
-              <YAxis tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} />
-              <Tooltip
-                contentStyle={{
-                  background: "var(--popover)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 8,
-                  fontSize: 11,
-                }}
-                formatter={(v: number) => [`${v} µSv/h`, "Dose Rate"]}
-              />
-              <Line
-                type="monotone"
-                dataKey="doseRate"
-                stroke="#a855f7"
-                strokeWidth={2}
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── Page ──────────────────────────────────────────────────────────────────────
 export default function DosimetryCalculator() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <PageHeader
         title="Radiation Dosimetry Calculator"
-        subtitle="Interactive calculators for unit conversion, effective dose, radioactive decay activity, and point-source dose rates. All formulas shown with references."
+        subtitle="Interactive calculators for dose rate (with log-scale benchmarks and shielding), effective dose, unit conversion, and radioactive decay activity."
         audienceLevel="professional"
         readTimeMin={8}
       />
 
       <SafetyCallout title="Educational Use Only — Not for Medical or Safety Decisions">
-        These calculators are provided for{" "}
-        <strong>educational and training purposes only</strong>. They use
-        simplified models and should never be used to make actual radiation
-        safety, medical, or regulatory decisions. Always consult qualified
-        health physicists, medical professionals, and relevant regulatory
-        guidance (IAEA, NRC, ICRP) for real-world assessments.
+        These calculators use{" "}
+        <strong>simplified models for educational purposes only</strong>. Never
+        use them for real radiation safety, medical, or regulatory decisions.
+        Always consult qualified health physicists and IAEA/NRC/ICRP guidance.
       </SafetyCallout>
 
       <div className="space-y-4 mt-6">
         <CollapsibleSection
-          id="unit-converter"
-          title="Unit Converter"
+          id="dose-rate"
+          title="Dose Rate from Point Source (with Shielding & ALARA)"
           defaultOpen={true}
-          data-ocid="dosimetry.unit_converter.section"
+          data-ocid="dosimetry.dose_rate.section"
         >
-          <UnitConverter />
+          <DoseRateCalc />
         </CollapsibleSection>
 
         <CollapsibleSection
           id="effective-dose"
           title="Effective Dose Calculator"
-          defaultOpen={true}
+          defaultOpen={false}
           data-ocid="dosimetry.effective_dose.section"
         >
           <EffectiveDoseCalc />
@@ -823,21 +1106,22 @@ export default function DosimetryCalculator() {
         </CollapsibleSection>
 
         <CollapsibleSection
-          id="dose-rate"
-          title="Dose Rate from Point Source"
+          id="unit-converter"
+          title="Unit Converter (Gy, Sv, Bq, Ci, R)"
           defaultOpen={false}
-          data-ocid="dosimetry.dose_rate.section"
+          data-ocid="dosimetry.unit_converter.section"
         >
-          <DoseRateCalc />
+          <UnitConverter />
         </CollapsibleSection>
       </div>
 
       <div className="mt-8 rounded-lg border border-border bg-muted/20 p-4 text-xs text-muted-foreground">
         <p>
           <strong className="text-foreground">References:</strong> ICRP
-          Publication 103 (2007) — The 2007 Recommendations of the International
-          Commission on Radiological Protection. NIST Standard Reference
-          Database 126. IAEA Safety Standards Series No. GSR Part 3.
+          Publication 103 (2007) — Radiation weighting and tissue weighting
+          factors. NIST Standard Reference Database 126. IAEA Safety Standards
+          Series No. GSR Part 3. UNSCEAR 2020 Report — Sources and Effects of
+          Ionizing Radiation.
         </p>
       </div>
     </div>

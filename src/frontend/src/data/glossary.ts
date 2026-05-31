@@ -2460,6 +2460,315 @@ export const glossaryTerms: GlossaryTerm[] = [
     audienceLevel: "intermediate",
     relatedTerms: ["sievert-unit", "gray-unit", "rad"],
   },
+  // ────────────────────────────────────────────────
+  // NEW TERMS — Reactor Engineering
+  // ────────────────────────────────────────────────
+  {
+    id: "prompt-criticality",
+    term: "Prompt criticality",
+    definition:
+      "The condition where k_eff > 1 based on prompt neutrons alone (without relying on delayed neutrons), i.e., ρ ≥ β_eff. The reactor period becomes ~10⁻⁵ s — impossibly fast for control. All power reactors are designed to remain below prompt criticality under all credible accident conditions. Prompt criticality caused the power excursion in the SL-1 accident (1961) and contributed to Chernobyl.",
+    category: "Reactor Engineering",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "criticality",
+      "delayed-neutron-fraction",
+      "reactivity",
+      "keff",
+    ],
+    equation:
+      "\\rho \\geq \\beta_{\\rm eff} \\Rightarrow \\text{prompt critical}",
+  },
+  {
+    id: "fast-reactor",
+    term: "Fast reactor",
+    definition:
+      "A reactor operating with fast (unmoderated) neutrons rather than thermal neutrons. Fast neutrons have higher fission cross-sections for Pu-239 and can breed fissile material from fertile U-238 at a breeding ratio >1. Fast reactors can also transmute long-lived minor actinides (Am, Cm, Np) into shorter-lived fission products. Examples: BN-800/BN-1200 (Russia), EBR-II (USA, retired), CFR-600 (China, under construction).",
+    category: "Reactor Engineering",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["sfr", "breeding-ratio", "fertile", "neutron-economy"],
+  },
+  {
+    id: "fuel-rod",
+    term: "Fuel rod",
+    definition:
+      "A slender tube of zircaloy cladding containing stacked UO₂ fuel pellets (~10 mm diameter, ~10 mm tall). Each pellet contains ~8g of UO₂ at ~95% theoretical density. A typical PWR fuel rod is ~3.7 m long, 9.5 mm OD, containing ~200 pellets. Rods are bundled into fuel assemblies. The rod-to-rod gap contains helium pressurisation (~30 bar) to aid heat transfer.",
+    category: "Fuel Cycle",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["fuel-assembly", "zircaloy", "cladding", "burnup"],
+  },
+  {
+    id: "cladding",
+    term: "Cladding",
+    definition:
+      "The outer protective tube of a fuel rod, typically Zircaloy-4 or Zircaloy-2 in LWRs. Serves as the second barrier in defense-in-depth (first: UO₂ fuel matrix, which retains ~95% of fission products). Cladding must withstand high temperature, radiation, and corrosive coolant while maintaining low neutron absorption. Advanced cladding materials include stainless steel and silicon carbide composites.",
+    category: "Fuel Cycle",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["zircaloy", "fuel-rod", "peak-cladding-temperature", "loca"],
+  },
+  {
+    id: "thermal-efficiency-reactor",
+    term: "Thermal efficiency (nuclear plant)",
+    definition:
+      "The fraction of reactor thermal power converted to electrical energy: η = W_electric / Q_thermal. Limited by the Carnot efficiency η_Carnot = 1 − T_cold/T_hot. LWRs: T_hot ≈ 310°C → η ≈ 33%. HTGRs: T_hot ≈ 750°C → η ≈ 45%. The difference (~12%) represents a major economic advantage for high-temperature reactors. Steam Rankine cycle (LWR) vs. gas Brayton cycle (HTGR) vs. supercritical CO₂ (future SFR).",
+    category: "Reactor Engineering",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["htgr", "smr", "coolant", "reactor"],
+    equation: "\\eta = 1 - T_{\\rm cold}/T_{\\rm hot}",
+  },
+  {
+    id: "containment",
+    term: "Containment (reactor building)",
+    definition:
+      "The reinforced concrete structure surrounding the reactor vessel that serves as the fourth barrier in defense-in-depth. Designed to withstand internal pressure from a design-basis LOCA without releasing radioactivity to the environment. PWR containment: steel-lined reinforced concrete, ~1.5 m thick, designed for ~0.5 MPa internal overpressure. Post-Fukushima improvements include filtered containment venting (FCVS) for severe accidents.",
+    category: "Safety",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "defense-in-depth",
+      "loca",
+      "eccs",
+      "severe-accident-management",
+    ],
+  },
+  {
+    id: "primary-loop",
+    term: "Primary loop",
+    definition:
+      "The pressurised circuit carrying coolant through the reactor core and back, removing heat from fuel. In a PWR: high-pressure water (~155 bar, ~300°C) circulated by large reactor coolant pumps through the core and steam generators. The primary loop is the third barrier (cladding, primary boundary, containment). It is radioactive due to activation products in the coolant and trace fission products from defective fuel.",
+    category: "Reactor Engineering",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["pwr", "coolant", "steam-generator", "containment"],
+  },
+  {
+    id: "steam-generator",
+    term: "Steam generator",
+    definition:
+      "A large heat exchanger in pressurised water reactors (PWRs) transferring heat from the primary (radioactive) loop to the secondary (non-radioactive) steam loop. Each PWR has 2–4 steam generators containing ~4,000 U-tubes (inverted or once-through designs). Steam generator tube integrity is critical — tubes are the boundary between primary and secondary loops. Tube failures are a leading cause of reactor shutdowns.",
+    category: "Reactor Engineering",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["pwr", "primary-loop", "coolant"],
+  },
+  // ────────────────────────────────────────────────
+  // NEW TERMS — Radiation Biology
+  // ────────────────────────────────────────────────
+  {
+    id: "committed-effective-dose",
+    term: "Committed effective dose",
+    definition:
+      "The integral of the effective dose rate over 50 years following intake of a radioactive substance (or to age 70 for children): E_committed = ∫₀⁵⁰ Ė(t) dt. Used to assess internal contamination and nuclear medicine patient doses from long-lived radiopharmaceuticals. Expressed in sieverts. For short-lived nuclides (Tc-99m T½=6h), the committed dose equals essentially the entire dose delivered within days of intake.",
+    category: "Radiation & Biology",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["effective-dose", "internal-dosimetry", "alara"],
+    equation: "E_{\\rm committed} = \\int_0^{50\\,\\rm yr} \\dot{E}(t)\\,dt",
+  },
+  {
+    id: "tld",
+    term: "Thermoluminescent dosimeter (TLD)",
+    definition:
+      "A passive personal radiation dosimeter in which ionizing radiation creates trapped electrons in a crystalline material (LiF, CaF₂, Al₂O₃). When heated, trapped electrons release as light — the intensity proportional to accumulated dose. Read by laboratory heating equipment. Advantages: small, passive, no power needed, integrates dose over a monitoring period (1–3 months). Accuracy: ~10–15%. Used by nuclear workers, medical staff, and in environmental monitoring.",
+    category: "Detection",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "geiger-counter",
+      "proportional-counter",
+      "occupational-exposure",
+    ],
+  },
+  {
+    id: "osld",
+    term: "Optically stimulated luminescence dosimeter (OSLD)",
+    definition:
+      "A personal dosimeter using Al₂O₃:C (aluminium oxide doped with carbon). Ionizing radiation creates trapped electron populations; laser light stimulates emission of light proportional to accumulated dose. More sensitive than TLD; re-readable; lower fading. The InLight® and Luxel® systems are widely used for occupational monitoring. Energy range: 5 keV to >40 MeV photons. Minimum detectable dose: ~1 μSv.",
+    category: "Detection",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["tld", "occupational-exposure", "absorbed-dose"],
+  },
+  // ────────────────────────────────────────────────
+  // NEW TERMS — Fusion Physics
+  // ────────────────────────────────────────────────
+  {
+    id: "stellarator",
+    term: "Stellarator",
+    definition:
+      "A toroidal magnetic confinement device where all magnetic field shaping is done by complex 3D non-planar external coils — no plasma current is required. Intrinsically steady-state and disruption-free (unlike tokamaks). The complex coil geometry was historically impossible to manufacture precisely; modern CNC machining and computational optimisation have revived interest. Wendelstein 7-X (Germany) is the world's largest optimised stellarator.",
+    category: "Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["tokamak", "fusion", "plasma", "lawson-criterion"],
+  },
+  {
+    id: "tritium-breeding",
+    term: "Tritium breeding",
+    definition:
+      "The production of tritium (T, ³H, T½=12.32 yr) by irradiating lithium-6 with fusion neutrons inside a breeding blanket: ⁶Li + n → ⁴He + T + 4.78 MeV. Tritium does not occur naturally in useful quantities; a D-T fusion power plant must breed its own fuel. The Tritium Breeding Ratio (TBR) must exceed ~1.05 to account for losses and provide startup inventory for future reactors. ITER uses test blanket modules (TBMs) to validate breeding concepts.",
+    category: "Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["fusion", "lawson-criterion", "tokamak", "plasma"],
+    equation:
+      "^6\\text{Li} + n \\rightarrow ^4\\text{He} + T + 4.78\\,\\text{MeV}",
+  },
+  {
+    id: "divertor",
+    term: "Divertor",
+    definition:
+      "A specialised region at the bottom of a tokamak plasma that intercepts and removes power, helium ash, and impurities from the plasma exhaust ('scrape-off layer'). The divertor target plates absorb 10–20 MW/m² in ITER (peak) — one of the most demanding heat flux environments in engineering. Tungsten and carbon-fibre composite (CFC) are used. Divertor technology is one of the major engineering challenges on the path to DEMO.",
+    category: "Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["tokamak", "fusion", "plasma"],
+  },
+  {
+    id: "high-temperature-superconductor",
+    term: "High-temperature superconductor (HTS)",
+    definition:
+      "Superconducting materials that operate at 30–100 K (vs. ~4 K for conventional NbTi/Nb₃Sn), enabling more compact and powerful magnets. REBCO (Rare Earth Barium Copper Oxide) tape coils achieved 20 T in September 2021 (Commonwealth Fusion Systems) — enabling tokamaks small enough to achieve fusion-relevant conditions in a room-sized device rather than a stadium. HTS is the key enabling technology for compact private fusion (SPARC, etc.).",
+    category: "Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["tokamak", "fusion", "lawson-criterion"],
+  },
+  // ────────────────────────────────────────────────
+  // NEW TERMS — Instrumentation
+  // ────────────────────────────────────────────────
+  {
+    id: "fission-chamber",
+    term: "Fission chamber",
+    definition:
+      "A specialised neutron detector in which a layer of fissile material (U-235 or Pu-239) is coated inside a gas-filled ionisation chamber. Incident neutrons induce fission in the coating; the highly ionising fission fragments create large, easily detectable pulses. Fission chambers are exceptionally sensitive (can detect a single neutron) and can operate over 10 decades of neutron flux in reactor startup — used in nuclear instrumentation systems (NIS) for power monitoring.",
+    category: "Detection",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["neutron-detector", "proportional-counter", "neutron-flux"],
+  },
+  {
+    id: "boron-neutron-capture",
+    term: "Boron neutron capture therapy (BNCT)",
+    definition:
+      "A cancer treatment in which a boron-10 compound is delivered to tumour cells, then the patient is irradiated with thermal neutrons. ¹⁰B + n → [¹¹B*] → ⁴He + ⁷Li + 2.79 MeV. The alpha particle and lithium ion travel only ~5–9 μm in tissue (single cell diameters), delivering lethal dose directly to B-10-containing tumour cells with minimal effect on adjacent healthy tissue. FDA-approved for head/neck cancers (boronophenylalanine-F, 2023 in Japan).",
+    category: "Applications",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "neutron-detector",
+      "cross-section-nuclear",
+      "nuclear-medicine",
+      "therapeutic-isotope",
+    ],
+  },
+  // ────────────────────────────────────────────────
+  // NEW TERMS — History
+  // ────────────────────────────────────────────────
+  {
+    id: "fermi",
+    term: "Enrico Fermi",
+    definition:
+      "Italian-American physicist (1901–1954); Nobel Prize in Physics 1938 for discovery of nuclear reactions induced by slow neutrons. Led the team that built Chicago Pile-1, achieving first artificial nuclear chain reaction on 2 December 1942. Pioneer of nuclear reactor theory, quantum statistics (Fermi-Dirac distribution), and neutrino physics. He coined the term 'neutrino'. His work directly enabled both the Manhattan Project and peaceful nuclear energy.",
+    category: "History",
+    audience: "beginner",
+    audienceLevel: "beginner",
+    relatedTerms: [
+      "chicago-pile-1",
+      "chain-reaction",
+      "thermal-neutron",
+      "neutron",
+    ],
+  },
+  {
+    id: "curie-marie",
+    term: "Marie Curie",
+    definition:
+      "Polish-French physicist and chemist (1867–1934), the first woman to win a Nobel Prize and the only person to win Nobel Prizes in two sciences: Physics (1903, with Pierre Curie and Henri Becquerel, for research on radiation) and Chemistry (1911, for discovery of radium and polonium). She coined the term 'radioactivity.' Her work laid the experimental foundations of nuclear science. She developed mobile X-ray units ('Petites Curies') in World War I.",
+    category: "History",
+    audience: "beginner",
+    audienceLevel: "beginner",
+    relatedTerms: ["radioactivity", "alpha-decay", "becquerel-unit"],
+  },
+  {
+    id: "nuclear-winter",
+    term: "Nuclear winter hypothesis",
+    definition:
+      "A theoretical climate effect following large-scale nuclear conflict in which soot and smoke from nuclear-ignited fires would be lofted into the stratosphere, blocking sunlight and causing global temperature drops of 15–30°C for months to years. First analysed by Turco et al. (TTAPS, 1983) and Sagan & Turco (1990). Modern climate modelling (Robock et al., 2007) suggests even a regional nuclear exchange (100 warheads) could cause global cooling of ~1°C lasting a decade. Widely regarded as a major deterrence consideration.",
+    category: "History",
+    audience: "beginner",
+    audienceLevel: "beginner",
+    relatedTerms: ["manhattan-project", "trinity-test", "atoms-for-peace"],
+  },
+  {
+    id: "tokaimura",
+    term: "Tokaimura criticality accident (1999)",
+    definition:
+      "A criticality accident at the JCO fuel processing plant in Tōkai, Japan on 30 September 1999. Workers added excessive uranium solution to a precipitation tank, causing an uncontrolled chain reaction lasting ~20 hours. Two workers died from acute radiation syndrome; 119 others received significant doses. The accident occurred due to non-compliance with approved operating procedures and inadequate safety culture. INES Level 4.",
+    category: "History",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "criticality",
+      "ines-scale",
+      "safety-culture",
+      "chain-reaction",
+    ],
+  },
+  // ────────────────────────────────────────────────
+  // NEW TERMS — Applications (Nuclear Medicine expansion)
+  // ────────────────────────────────────────────────
+  {
+    id: "theranostics",
+    term: "Theranostics",
+    definition:
+      "A nuclear medicine paradigm combining diagnosis and therapy using the same molecular target. One targeting vector (peptide, antibody, small molecule) is labelled with a diagnostic radionuclide for imaging to confirm target expression, then with a therapeutic radionuclide to deliver cytotoxic radiation. FDA-approved examples: ⁶⁸Ga-PSMA-11/¹⁷⁷Lu-PSMA-617 (prostate cancer), ⁶⁸Ga-DOTATATE/¹⁷⁷Lu-DOTATATE (neuroendocrine tumours). The paradigm enables personalised precision oncology.",
+    category: "Applications",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "nuclear-medicine",
+      "radiopharmaceutical",
+      "therapeutic-isotope",
+      "pet-scan",
+    ],
+  },
+  {
+    id: "psma-therapy",
+    term: "PSMA-targeted therapy",
+    definition:
+      "Targeted radionuclide therapy using prostate-specific membrane antigen (PSMA) ligands labelled with therapeutic radionuclides. ¹⁷⁷Lu-PSMA-617 (Pluvicto®) was FDA-approved in March 2022 for mCRPC, following the VISION trial showing median OS improvement from 11.3 to 15.3 months. PSMA is overexpressed on prostate cancer cells at 100–1,000× normal levels. ⁶⁸Ga-PSMA PET is used to select patients who will respond to therapy — a theranostic paradigm.",
+    category: "Applications",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "theranostics",
+      "therapeutic-isotope",
+      "nuclear-medicine",
+      "radiopharmaceutical",
+    ],
+  },
+  {
+    id: "absorbed-dose-rate",
+    term: "Dose rate (absorbed)",
+    definition:
+      "The rate of energy deposition by radiation per unit mass per unit time: dD/dt, expressed in Gy/s, μGy/h, or mGy/h. Natural background dose rate at sea level: ~0.27 μSv/h effective. In a nuclear plant control room: typically < 0.1 μSv/h. At the Chernobyl exclusion zone perimeter (2024): ~0.15–0.50 μSv/h. Inverse-square law: Ḋ ∝ 1/r² from a point source (in the absence of shielding and scatter).",
+    category: "Radiation & Biology",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "absorbed-dose",
+      "gray-unit",
+      "shielding",
+      "background-radiation",
+    ],
+    equation: "\\dot{D} = \\frac{dD}{dt} \\; [\\text{Gy/s}]",
+  },
 ];
 
 // Helper: get unique categories

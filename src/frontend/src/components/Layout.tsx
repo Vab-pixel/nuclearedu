@@ -3,7 +3,9 @@ import type { BreadcrumbItem } from "@/components/BreadcrumbNav";
 import { Navbar } from "@/components/Navbar";
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "framer-motion";
 import { Atom, BookOpen, Github } from "lucide-react";
+import OnboardingTour from "./OnboardingTour";
 
 const routeBreadcrumbs: Record<string, BreadcrumbItem[]> = {
   "/basics/atom-structure": [
@@ -87,8 +89,20 @@ export function Layout() {
         </div>
       )}
 
+      <OnboardingTour />
+
       <main id="main-content" className="flex-1" tabIndex={-1}>
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={window.location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <footer className="border-t border-border bg-card/80 py-10 mt-16">

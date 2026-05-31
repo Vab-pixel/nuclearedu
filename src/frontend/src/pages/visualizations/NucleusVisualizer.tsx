@@ -1,11 +1,24 @@
 import { EquationBlock } from "@/components/EquationBlock";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { nuclides } from "@/data/nuclides";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Layers, Minus, Play, Plus, Square, Zap } from "lucide-react";
+import {
+  Activity,
+  Atom,
+  ChevronDown,
+  Grid3x3,
+  Layers,
+  Minus,
+  Play,
+  Plus,
+  RefreshCw,
+  Square,
+  Zap,
+} from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import {
   Component,
@@ -19,7 +32,10 @@ import {
   useState,
 } from "react";
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
+  Cell,
   Legend,
   Line,
   LineChart,
@@ -53,13 +69,16 @@ class WebGLErrorBoundary extends Component<
 }
 
 // ─── Fibonacci sphere ──────────────────────────────────────────────────────────
-function fibonacciSphere(count: number, radius: number): THREE.Vector3[] {
+export function fibonacciSphere(
+  count: number,
+  radius: number,
+): THREE.Vector3[] {
   const points: THREE.Vector3[] = [];
   const goldenRatio = (1 + Math.sqrt(5)) / 2;
   for (let i = 0; i < count; i++) {
     const theta = Math.acos(1 - (2 * (i + 0.5)) / count);
     const phi = (2 * Math.PI * i) / goldenRatio;
-    const r = radius * (0.7 + 0.3 * (i / count));
+    const r = radius * (0.65 + 0.35 * (i / Math.max(count - 1, 1)));
     points.push(
       new THREE.Vector3(
         r * Math.sin(theta) * Math.cos(phi),
@@ -74,7 +93,10 @@ function fibonacciSphere(count: number, radius: number): THREE.Vector3[] {
 // ─── Shell model ───────────────────────────────────────────────────────────────
 const SHELL_MAGIC = [2, 8, 20, 28, 50, 82, 126];
 
-function shellPositions(count: number, baseRadius: number): THREE.Vector3[] {
+export function shellPositions(
+  count: number,
+  baseRadius: number,
+): THREE.Vector3[] {
   const points: THREE.Vector3[] = [];
   let remaining = count;
   let shellIdx = 0;
@@ -82,36 +104,51 @@ function shellPositions(count: number, baseRadius: number): THREE.Vector3[] {
   while (remaining > 0 && shellIdx < SHELL_MAGIC.length) {
     const shellCapacity = SHELL_MAGIC[shellIdx] - prevMagic;
     const inShell = Math.min(remaining, shellCapacity);
-    const r = baseRadius * (0.35 + shellIdx * 0.22);
+    const r = baseRadius * (0.3 + shellIdx * 0.2);
     points.push(...fibonacciSphere(inShell, r));
     remaining -= inShell;
     prevMagic = SHELL_MAGIC[shellIdx];
     shellIdx++;
   }
   if (remaining > 0) {
-    const r = baseRadius * (0.35 + shellIdx * 0.22);
+    const r = baseRadius * (0.3 + shellIdx * 0.2);
     points.push(...fibonacciSphere(remaining, r));
   }
   return points;
 }
 
-function getShellLabels(
+export function getShellLabels(
   total: number,
   baseRadius: number,
-): { label: string; radius: number; count: number }[] {
-  const shells: { label: string; radius: number; count: number }[] = [];
+): { label: string; radius: number; count: number; magic: number }[] {
+  const shells: {
+    label: string;
+    radius: number;
+    count: number;
+    magic: number;
+  }[] = [];
+  const SUBSHELL_LABELS = [
+    "1s",
+    "1p",
+    "1d/2s",
+    "1f/2p",
+    "2d/3s",
+    "1g/2f",
+    "1h/2g",
+  ];
   let remaining = total;
   let shellIdx = 0;
   let prevMagic = 0;
   while (remaining > 0 && shellIdx < SHELL_MAGIC.length) {
     const shellCapacity = SHELL_MAGIC[shellIdx] - prevMagic;
     const inShell = Math.min(remaining, shellCapacity);
-    const r = baseRadius * (0.35 + shellIdx * 0.22);
+    const r = baseRadius * (0.3 + shellIdx * 0.2);
     const magic = SHELL_MAGIC[shellIdx];
     shells.push({
-      label: `Shell ${shellIdx + 1} (N=${magic})`,
+      label: SUBSHELL_LABELS[shellIdx] ?? `Shell ${shellIdx + 1}`,
       radius: r,
       count: inShell,
+      magic,
     });
     remaining -= inShell;
     prevMagic = magic;
@@ -126,90 +163,175 @@ interface AnimParticle {
   type: "alpha" | "electron" | "positron" | "antineutrino";
   pos: THREE.Vector3;
   vel: THREE.Vector3;
-  t: number; // 0..1
+  t: number;
   color: string;
   radius: number;
+  trailPositions: THREE.Vector3[];
 }
 
-// ─── Animated decay particles in scene ────────────────────────────────────────
-function DecayParticles({
-  particles,
-}: {
-  particles: AnimParticle[];
-}) {
+// ─── Animated decay particles ─────────────────────────────────────────────────
+export function DecayParticles({ particles }: { particles: AnimParticle[] }) {
   return (
     <>
-      {particles.map((p) => (
-        <mesh
-          key={`decay-particle-${p.type}-${p.color}`}
-          position={p.pos.clone()}
-          castShadow
-        >
-          <sphereGeometry args={[p.radius, 12, 12]} />
-          <meshStandardMaterial
-            color={p.color}
-            emissive={p.color}
-            emissiveIntensity={1.2 + Math.sin(p.t * Math.PI) * 0.8}
-            roughness={0.1}
-            metalness={0.2}
-            transparent
-            opacity={1 - p.t * 0.6}
-          />
-        </mesh>
+      {particles.map((p, idx) => (
+        <group key={`decay-${idx}-${p.type}`}>
+          {/* Trail segments */}
+          {p.trailPositions.map((trailPos, ti) => {
+            const opacity =
+              (ti / Math.max(p.trailPositions.length - 1, 1)) *
+              0.5 *
+              (1 - p.t * 0.4);
+            const scale =
+              0.3 + (ti / Math.max(p.trailPositions.length - 1, 1)) * 0.7;
+            // Use a stable key based on position in trail, not array index alone
+            const trailKey = `trail-${p.type}-${idx}-pos${ti}`;
+            return (
+              <mesh key={trailKey} position={trailPos.clone()}>
+                <sphereGeometry args={[p.radius * scale * 0.5, 6, 6]} />
+                <meshBasicMaterial
+                  color={p.color}
+                  transparent
+                  opacity={opacity}
+                />
+              </mesh>
+            );
+          })}
+          {/* Main particle */}
+          <mesh position={p.pos.clone()} castShadow>
+            <sphereGeometry args={[p.radius, 16, 16]} />
+            <meshStandardMaterial
+              color={p.color}
+              emissive={p.color}
+              emissiveIntensity={1.8 + Math.sin(p.t * Math.PI * 4) * 0.5}
+              roughness={0.05}
+              metalness={0.1}
+              transparent
+              opacity={Math.max(0.2, 1 - p.t * 0.7)}
+            />
+          </mesh>
+        </group>
       ))}
     </>
   );
 }
 
 // ─── Nucleon component ─────────────────────────────────────────────────────────
-function Nucleon({
+export function Nucleon({
   position,
-  color,
-  emissive,
+  isProton,
   radius = 0.32,
+  jitter = true,
+  jitterSeed = 0,
 }: {
   position: THREE.Vector3;
-  color: string;
-  emissive?: string;
+  isProton: boolean;
   radius?: number;
+  jitter?: boolean;
+  jitterSeed?: number;
 }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const basePos = useMemo(() => position.clone(), [position]);
+
+  useFrame((state) => {
+    if (!meshRef.current || !jitter) return;
+    const t = state.clock.elapsedTime;
+    const freq = 2.5 + (jitterSeed % 7) * 0.3;
+    const amp = 0.028 + (jitterSeed % 5) * 0.006;
+    meshRef.current.position.set(
+      basePos.x + Math.sin(t * freq + jitterSeed) * amp,
+      basePos.y + Math.cos(t * freq * 1.3 + jitterSeed * 1.7) * amp,
+      basePos.z + Math.sin(t * freq * 0.9 + jitterSeed * 2.1) * amp,
+    );
+  });
+
+  const color = isProton ? "#f87171" : "#60a5fa";
+  const emissiveColor = isProton ? "#ef4444" : "#2563eb";
+  const emissiveIntensity = isProton ? 0.85 : 0.65;
+
   return (
-    <mesh position={position} castShadow>
-      <sphereGeometry args={[radius, 16, 16]} />
+    <mesh ref={meshRef} position={basePos} castShadow>
+      <sphereGeometry args={[radius, 20, 20]} />
       <meshStandardMaterial
         color={color}
-        emissive={emissive ?? color}
-        emissiveIntensity={0.35}
-        roughness={0.25}
-        metalness={0.2}
+        emissive={emissiveColor}
+        emissiveIntensity={emissiveIntensity}
+        roughness={0.15}
+        metalness={0.35}
       />
     </mesh>
   );
 }
 
 // ─── Shell rings overlay ───────────────────────────────────────────────────────
-function ShellRings({
+export function ShellRings({
   total,
   baseRadius,
 }: { total: number; baseRadius: number }) {
   const shells = getShellLabels(total, baseRadius);
+  const colors = [
+    "#60a5fa",
+    "#34d399",
+    "#a78bfa",
+    "#f97316",
+    "#f472b6",
+    "#22d3ee",
+    "#fbbf24",
+  ];
   return (
     <>
-      {shells.map((shell) => (
-        <mesh
-          key={`shell-ring-r${shell.radius.toFixed(3)}`}
-          rotation={[Math.PI / 2, 0, 0]}
-        >
-          <torusGeometry args={[shell.radius, 0.015, 8, 64]} />
-          <meshBasicMaterial color="#60a5fa" opacity={0.18} transparent />
-        </mesh>
+      {shells.map((shell, shellIdx) => (
+        <group key={`shell-${shell.label}-r${shell.radius.toFixed(3)}`}>
+          {/* XY plane ring */}
+          <mesh rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[shell.radius, 0.018, 8, 64]} />
+            <meshBasicMaterial
+              color={colors[shellIdx % colors.length]}
+              opacity={0.25}
+              transparent
+            />
+          </mesh>
+          {/* XZ plane ring (perpendicular) */}
+          <mesh rotation={[0, 0, 0]}>
+            <torusGeometry args={[shell.radius, 0.012, 8, 64]} />
+            <meshBasicMaterial
+              color={colors[shellIdx % colors.length]}
+              opacity={0.12}
+              transparent
+            />
+          </mesh>
+        </group>
       ))}
     </>
   );
 }
 
+// ─── Nucleus glow sphere ───────────────────────────────────────────────────────
+function NucleusGlow({ radius, color }: { radius: number; color: string }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  useFrame((state) => {
+    if (!meshRef.current) return;
+    const t = state.clock.elapsedTime;
+    const mat = meshRef.current.material as THREE.MeshStandardMaterial;
+    mat.emissiveIntensity = 0.15 + Math.sin(t * 1.2) * 0.05;
+  });
+  return (
+    <mesh ref={meshRef}>
+      <sphereGeometry args={[radius * 1.25, 24, 24]} />
+      <meshStandardMaterial
+        color={color}
+        emissive={color}
+        emissiveIntensity={0.15}
+        transparent
+        opacity={0.06}
+        depthWrite={false}
+        side={THREE.BackSide}
+      />
+    </mesh>
+  );
+}
+
 // ─── Nucleus scene ─────────────────────────────────────────────────────────────
-function NucleusScene({
+export function NucleusScene({
   Z,
   N,
   autoRotate,
@@ -230,7 +352,7 @@ function NucleusScene({
   const dispZ = decayZOverride ?? Z;
   const dispN = decayNOverride ?? N;
   const total = dispZ + dispN;
-  const baseRadius = Math.max(1.2, 0.8 * Math.cbrt(total) + 0.5);
+  const baseRadius = Math.max(1.2, 0.78 * Math.cbrt(total) + 0.55);
 
   const positions = useMemo(
     () =>
@@ -242,27 +364,36 @@ function NucleusScene({
 
   useFrame((_, delta) => {
     if (autoRotate && groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.4;
-      groupRef.current.rotation.x += delta * 0.1;
+      groupRef.current.rotation.y += delta * 0.35;
+      groupRef.current.rotation.x += delta * 0.08;
     }
   });
 
-  const nucleonRadius = 0.3 + (0.02 * Math.min(total, 20)) / 20;
+  const nucleonRadius = Math.max(0.24, 0.38 - total * 0.0005);
+  const glowColor = dispZ > dispN ? "#ef4444" : "#3b82f6";
 
   return (
     <>
-      <ambientLight intensity={0.45} />
-      <pointLight position={[8, 8, 8]} intensity={1.4} castShadow />
-      <pointLight position={[-8, -4, -4]} intensity={0.5} color="#7dd3fc" />
-      <pointLight position={[0, 0, -10]} intensity={0.3} color="#f472b6" />
+      <ambientLight intensity={0.3} />
+      <pointLight
+        position={[10, 10, 10]}
+        intensity={2.0}
+        castShadow
+        color="#ffffff"
+      />
+      <pointLight position={[-8, -6, -6]} intensity={0.8} color="#7dd3fc" />
+      <pointLight position={[0, 0, -12]} intensity={0.5} color="#f472b6" />
+      <pointLight position={[0, 8, 0]} intensity={0.4} color="#a78bfa" />
       <group ref={groupRef}>
+        <NucleusGlow radius={baseRadius} color={glowColor} />
         {positions.map((pos, i) => (
           <Nucleon
             key={`nucleon-${i}-${dispZ}-${dispN}-${shellModel ? "s" : "f"}`}
             position={pos}
-            color={i < dispZ ? "#f87171" : "#60a5fa"}
-            emissive={i < dispZ ? "#ef4444" : "#3b82f6"}
+            isProton={i < dispZ}
             radius={nucleonRadius}
+            jitter={true}
+            jitterSeed={i}
           />
         ))}
         {shellModel && <ShellRings total={total} baseRadius={baseRadius} />}
@@ -273,7 +404,7 @@ function NucleusScene({
 }
 
 // ─── Camera controller ─────────────────────────────────────────────────────────
-function CameraController({
+export function CameraController({
   total,
   targetDist,
   onDistChange,
@@ -283,21 +414,18 @@ function CameraController({
   onDistChange: (d: number) => void;
 }) {
   const { camera } = useThree();
-  const initialised = useRef(false);
 
   useEffect(() => {
-    const dist = Math.max(6, 2.5 * Math.cbrt(total) + 3);
+    const dist = Math.max(6, 2.4 * Math.cbrt(total) + 3.5);
     camera.position.set(0, 0, dist);
     camera.updateProjectionMatrix();
     onDistChange(dist);
-    initialised.current = false;
   }, [camera, total, onDistChange]);
 
   useFrame(() => {
-    if (!initialised.current) initialised.current = true;
     const current = camera.position.length();
     if (Math.abs(current - targetDist) > 0.01) {
-      const next = THREE.MathUtils.lerp(current, targetDist, 0.12);
+      const next = THREE.MathUtils.lerp(current, targetDist, 0.1);
       camera.position.normalize().multiplyScalar(next);
     }
   });
@@ -329,6 +457,7 @@ const ELEMENT_NAMES: Record<number, { symbol: string; name: string }> = {
   20: { symbol: "Ca", name: "Calcium" },
   26: { symbol: "Fe", name: "Iron" },
   27: { symbol: "Co", name: "Cobalt" },
+  28: { symbol: "Ni", name: "Nickel" },
   36: { symbol: "Kr", name: "Krypton" },
   38: { symbol: "Sr", name: "Strontium" },
   42: { symbol: "Mo", name: "Molybdenum" },
@@ -448,10 +577,7 @@ function getSpinParity(Z: number, N: number): string | null {
 }
 
 // ─── Magic number detection ────────────────────────────────────────────────────
-function getMagicBadge(
-  Z: number,
-  N: number,
-): { magicZ: boolean; magicN: boolean; doubleMagic: boolean } {
+function getMagicBadge(Z: number, N: number) {
   const magicZ = SHELL_MAGIC.includes(Z);
   const magicN = SHELL_MAGIC.includes(N);
   return { magicZ, magicN, doubleMagic: magicZ && magicN };
@@ -463,10 +589,12 @@ const ISOTOPE_PRESETS = [
   { label: "²H", Z: 1, N: 1 },
   { label: "He-4", Z: 2, N: 2 },
   { label: "C-12", Z: 6, N: 6 },
+  { label: "C-14", Z: 6, N: 8 },
   { label: "N-14", Z: 7, N: 7 },
   { label: "O-16", Z: 8, N: 8 },
   { label: "Ca-40", Z: 20, N: 20 },
   { label: "Fe-56", Z: 26, N: 30 },
+  { label: "Kr-84", Z: 36, N: 48 },
   { label: "Pb-208", Z: 82, N: 126 },
   { label: "Bi-209", Z: 83, N: 126 },
   { label: "Ra-226", Z: 88, N: 138 },
@@ -477,7 +605,6 @@ const ISOTOPE_PRESETS = [
 
 // ─── Stability heatmap gradient CSS ───────────────────────────────────────────
 function getStabilityGradient(Z: number, N: number): string {
-  // Valley of stability: N ≈ Z for light, N ≈ 1.5*Z for heavy
   const A = Z + N;
   const valleyN = A < 40 ? Z : Math.round(Z * (1 + 0.4 * (Z / 118)));
   const deviation = Math.abs(N - valleyN);
@@ -485,24 +612,24 @@ function getStabilityGradient(Z: number, N: number): string {
   const strength = Math.min(deviation / 20, 1);
 
   if (deviation < 2) {
-    // Near stability valley — blue-purple glow
-    return `radial-gradient(ellipse at center,
-      oklch(0.15 0.08 260 / 0.95) 0%,
-      oklch(0.12 0.12 250 / 0.85) 40%,
-      oklch(0.10 0.06 240 / 0.7) 100%)`;
+    return `radial-gradient(ellipse 80% 70% at 50% 50%,
+      oklch(0.18 0.10 260 / 0.98) 0%,
+      oklch(0.14 0.14 252 / 0.92) 35%,
+      oklch(0.10 0.07 245 / 0.80) 70%,
+      oklch(0.07 0.03 240 / 0.95) 100%)`;
   }
   if (isNeutronRich) {
-    // Neutron-rich — green tint
-    return `radial-gradient(ellipse at center,
-      oklch(${0.12 + strength * 0.03} ${0.08 + strength * 0.06} ${140 + strength * 20} / 0.95) 0%,
-      oklch(0.11 0.06 150 / 0.85) 40%,
-      oklch(0.09 0.03 160 / 0.7) 100%)`;
+    return `radial-gradient(ellipse 80% 70% at 50% 50%,
+      oklch(${0.16 + strength * 0.04} ${0.1 + strength * 0.08} ${155 + strength * 25} / 0.98) 0%,
+      oklch(0.12 0.07 160 / 0.90) 40%,
+      oklch(0.08 0.04 165 / 0.80) 70%,
+      oklch(0.06 0.02 160 / 0.95) 100%)`;
   }
-  // Proton-rich — orange-red tint
-  return `radial-gradient(ellipse at center,
-    oklch(${0.12 + strength * 0.04} ${0.08 + strength * 0.06} ${30 + strength * 10} / 0.95) 0%,
-    oklch(0.11 0.05 25 / 0.85) 40%,
-    oklch(0.09 0.03 20 / 0.7) 100%)`;
+  return `radial-gradient(ellipse 80% 70% at 50% 50%,
+    oklch(${0.16 + strength * 0.05} ${0.1 + strength * 0.08} ${35 + strength * 12} / 0.98) 0%,
+    oklch(0.12 0.06 28 / 0.90) 40%,
+    oklch(0.08 0.04 22 / 0.80) 70%,
+    oklch(0.06 0.02 18 / 0.95) 100%)`;
 }
 
 // ─── Mini chart of nuclides ────────────────────────────────────────────────────
@@ -517,7 +644,7 @@ function getMiniCellColor(
 ): string {
   if (z === activeZ && n === activeN) return "#ffffff";
   const nd = nuclides.find((nuc) => nuc.Z === z && nuc.N === n);
-  if (!nd) return "#1a1a2e";
+  if (!nd) return "#0d0d1a";
   const mode = nd.decayModes[0];
   if (mode === "stable") return "#14b8a6";
   if (mode === "beta-") return "#84cc16";
@@ -536,7 +663,7 @@ function MiniNuclideChart({
   activeN: number;
   onCellClick: (z: number, n: number) => void;
 }) {
-  const cellSize = 4;
+  const cellSize = 5;
   const width = MINI_MAX_N * cellSize + 1;
   const height = MINI_MAX_Z * cellSize + 1;
 
@@ -552,20 +679,23 @@ function MiniNuclideChart({
 
   return (
     <div
-      className="rounded-lg border border-border bg-card/60 p-3"
+      className="rounded-xl border border-border bg-card/80 p-3"
       data-ocid="nucleus-viz.mini_chart"
     >
-      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-        Mini Chart of Nuclides
-      </p>
+      <div className="flex items-center gap-2 mb-2">
+        <Grid3x3 className="h-3.5 w-3.5 text-muted-foreground" />
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          Chart of Nuclides
+        </p>
+      </div>
       <div className="flex gap-2 items-start">
         <svg
           width={width}
           height={height}
           viewBox={`0 0 ${width} ${height}`}
-          aria-label="Mini Chart of Nuclides showing isotope stability"
+          aria-label="Mini Chart of Nuclides"
           role="img"
-          style={{ cursor: "crosshair" }}
+          style={{ cursor: "crosshair", display: "block" }}
         >
           <title>Mini Chart of Nuclides — click to select isotope</title>
           {cells.map(({ z, n, color }) => {
@@ -580,16 +710,19 @@ function MiniNuclideChart({
                 width={cellSize - 0.5}
                 height={cellSize - 0.5}
                 fill={color}
-                opacity={isActive ? 1 : 0.85}
+                opacity={isActive ? 1 : 0.9}
                 onClick={() => onCellClick(z, n)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") onCellClick(z, n);
                 }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Select Z=${z} N=${n}`}
                 style={{ cursor: "pointer" }}
+                rx="0.5"
               />
             );
           })}
-          {/* Active crosshair */}
           {activeZ <= MINI_MAX_Z && activeN <= MINI_MAX_N && (
             <>
               <line
@@ -597,8 +730,8 @@ function MiniNuclideChart({
                 y1={0}
                 x2={activeN * cellSize + cellSize / 2}
                 y2={height}
-                stroke="rgba(255,255,255,0.6)"
-                strokeWidth="0.5"
+                stroke="rgba(255,255,255,0.5)"
+                strokeWidth="0.6"
                 strokeDasharray="2 2"
               />
               <line
@@ -606,105 +739,188 @@ function MiniNuclideChart({
                 y1={(MINI_MAX_Z - activeZ) * cellSize + cellSize / 2}
                 x2={width}
                 y2={(MINI_MAX_Z - activeZ) * cellSize + cellSize / 2}
-                stroke="rgba(255,255,255,0.6)"
-                strokeWidth="0.5"
+                stroke="rgba(255,255,255,0.5)"
+                strokeWidth="0.6"
                 strokeDasharray="2 2"
               />
               <circle
                 cx={activeN * cellSize + cellSize / 2}
                 cy={(MINI_MAX_Z - activeZ) * cellSize + cellSize / 2}
-                r={3}
-                fill="white"
-                stroke="#000"
-                strokeWidth="0.8"
+                r={4}
+                fill="none"
+                stroke="white"
+                strokeWidth="1.5"
               />
             </>
           )}
-          {/* Axis labels */}
           <text
             x={width - 1}
-            y={height + 0}
-            fontSize="3.5"
+            y={height + 6}
+            fontSize="4"
             fill="#6b7280"
             textAnchor="end"
           >
             N→
           </text>
-          <text x={-1} y={4} fontSize="3.5" fill="#6b7280" textAnchor="start">
+          <text x={0} y={5} fontSize="4" fill="#6b7280" textAnchor="start">
             Z↑
           </text>
         </svg>
-        {/* Legend */}
-        <div className="flex flex-col gap-1 text-xs text-muted-foreground min-w-0">
+        <div className="flex flex-col gap-1.5 text-xs text-muted-foreground min-w-0">
           {[
             { color: "#14b8a6", label: "Stable" },
             { color: "#84cc16", label: "β⁻" },
             { color: "#f97316", label: "β⁺" },
             { color: "#ef4444", label: "α" },
             { color: "#a78bfa", label: "IT/γ" },
-            { color: "#1a1a2e", label: "Unknown" },
-          ].map(({ color, label }) => (
-            <div key={label} className="flex items-center gap-1">
+            { color: "#0d0d1a", label: "None", border: "#2d2d4a" },
+          ].map(({ color, label, border }) => (
+            <div key={label} className="flex items-center gap-1.5">
               <span
-                className="inline-block w-2 h-2 rounded-sm flex-shrink-0"
-                style={{ background: color }}
+                className="inline-block w-2.5 h-2.5 rounded-sm flex-shrink-0 border"
+                style={{ background: color, borderColor: border ?? color }}
               />
-              <span className="text-[10px]">{label}</span>
+              <span className="text-[10px] whitespace-nowrap">{label}</span>
             </div>
           ))}
         </div>
       </div>
-      <p className="text-[10px] text-muted-foreground mt-1">
-        Click cell to jump sliders
+      <p className="text-[10px] text-muted-foreground mt-1.5">
+        Click cell to navigate
       </p>
     </div>
   );
 }
 
-// ─── Binding energy chart data ─────────────────────────────────────────────────
-function buildBEChartData(currentZ: number, currentN: number) {
-  // Theoretical B-W curve every 2 mass units
-  const theoreticalPoints: {
-    A: number;
-    bePerNucleon: number;
-    totalBE: number;
-  }[] = [];
-  for (let A = 2; A <= 238; A += 2) {
-    const Z = Math.round(A / (1 + (BW_AC * A ** (2 / 3)) / (4 * BW_AA)));
-    const N = A - Z;
-    if (Z < 1 || N < 0) continue;
-    const be = calcBindingEnergy(Z, N);
-    theoreticalPoints.push({
-      A,
-      bePerNucleon: +be.perNucleon.toFixed(3),
-      totalBE: +be.total.toFixed(1),
-    });
+// ─── BW Terms grouped bar chart ────────────────────────────────────────────────
+const BW_BAR_COLORS = {
+  Volume: "#60a5fa",
+  Surface: "#f97316",
+  Coulomb: "#f87171",
+  Asymmetry: "#a78bfa",
+  Pairing: "#34d399",
+};
+
+const BW_FORMULAS: Record<string, string> = {
+  Volume: `+aV·A = +${BW_AV}·A`,
+  Surface: `−aS·A^(2/3) = −${BW_AS}·A^0.667`,
+  Coulomb: `−aC·Z(Z−1)/A^(1/3) = −${BW_AC}·Z(Z−1)/A^0.333`,
+  Asymmetry: `−aA·(A−2Z)²/A = −${BW_AA}·(A−2Z)²/A`,
+  Pairing: `δ(A,Z) = ±${BW_AP}/√A`,
+};
+
+function BWTermsBarChart({ Z, N }: { Z: number; N: number }) {
+  const be = calcBindingEnergy(Z, N);
+  const data = [
+    {
+      name: "Terms",
+      Volume: +be.volume.toFixed(2),
+      Surface: +be.surface.toFixed(2),
+      Coulomb: +be.coulomb.toFixed(2),
+      Asymmetry: +be.asymmetry.toFixed(2),
+      Pairing: +be.pairing.toFixed(2),
+    },
+  ];
+
+  interface TooltipPayload {
+    name: string;
+    value: number;
+    color: string;
   }
 
-  // Experimental from nuclides dataset
-  const experimentalMap = new Map<
-    number,
-    { bePerNucleon: number; totalBE: number }
-  >();
+  interface CustomTooltipProps {
+    active?: boolean;
+    payload?: TooltipPayload[];
+  }
+
+  const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
+    if (!active || !payload?.length) return null;
+    return (
+      <div className="bg-card border border-border rounded-lg p-3 shadow-lg text-xs max-w-[220px]">
+        {payload.map((entry) => (
+          <div key={entry.name} className="mb-2 last:mb-0">
+            <div className="flex items-center justify-between gap-3 mb-0.5">
+              <span className="font-semibold" style={{ color: entry.color }}>
+                {entry.name}
+              </span>
+              <span
+                className={`font-mono font-bold ${entry.value >= 0 ? "text-emerald-400" : "text-red-400"}`}
+              >
+                {entry.value >= 0 ? "+" : ""}
+                {entry.value.toFixed(2)} MeV
+              </span>
+            </div>
+            <p className="text-muted-foreground font-mono text-[10px]">
+              {BW_FORMULAS[entry.name]}
+            </p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div>
+      <ResponsiveContainer width="100%" height={220}>
+        <BarChart
+          data={data}
+          margin={{ top: 10, right: 10, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="rgba(255,255,255,0.05)"
+          />
+          <XAxis dataKey="name" tick={{ fill: "#6b7280", fontSize: 11 }} />
+          <YAxis
+            tick={{ fill: "#9ca3af", fontSize: 10 }}
+            label={{
+              value: "MeV",
+              angle: -90,
+              position: "insideLeft",
+              fill: "#6b7280",
+              fontSize: 10,
+            }}
+          />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend wrapperStyle={{ fontSize: 10, color: "#9ca3af" }} />
+          {(Object.keys(BW_BAR_COLORS) as (keyof typeof BW_BAR_COLORS)[]).map(
+            (term) => (
+              <Bar key={term} dataKey={term} name={term} stackId={undefined}>
+                <Cell fill={BW_BAR_COLORS[term]} opacity={0.85} />
+              </Bar>
+            ),
+          )}
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+// ─── Binding energy curve chart ────────────────────────────────────────────────
+function buildBEChartData(currentZ: number, currentN: number) {
+  const theoreticalPoints: { A: number; bePerNucleon: number }[] = [];
+  for (let A = 2; A <= 238; A += 2) {
+    const Zt = Math.round(A / (1 + (BW_AC * A ** (2 / 3)) / (4 * BW_AA)));
+    const Nt = A - Zt;
+    if (Zt < 1 || Nt < 0) continue;
+    const be = calcBindingEnergy(Zt, Nt);
+    theoreticalPoints.push({ A, bePerNucleon: +be.perNucleon.toFixed(3) });
+  }
+  const experimentalMap = new Map<number, number>();
   for (const nuc of nuclides) {
     if (nuc.bindingEnergyPerNucleon_MeV && nuc.A > 1) {
       const prev = experimentalMap.get(nuc.A);
-      if (!prev || nuc.bindingEnergyPerNucleon_MeV > prev.bePerNucleon) {
-        experimentalMap.set(nuc.A, {
-          bePerNucleon: nuc.bindingEnergyPerNucleon_MeV,
-          totalBE: nuc.bindingEnergyPerNucleon_MeV * nuc.A,
-        });
+      if (!prev || nuc.bindingEnergyPerNucleon_MeV > prev) {
+        experimentalMap.set(nuc.A, nuc.bindingEnergyPerNucleon_MeV);
       }
     }
   }
-
   const currentBE = calcBindingEnergy(currentZ, currentN);
   const currentA = currentZ + currentN;
-
   return { theoreticalPoints, experimentalMap, currentA, currentBE };
 }
 
-// ─── Static SVG fallback ───────────────────────────────────────────────────────
+// ─── Static fallback ───────────────────────────────────────────────────────────
 function StaticNucleusDiagram({ Z, N }: { Z: number; N: number }) {
   const el = getElement(Z);
   const A = Z + N;
@@ -714,10 +930,10 @@ function StaticNucleusDiagram({ Z, N }: { Z: number; N: number }) {
         width="200"
         height="200"
         viewBox="-100 -100 200 200"
-        aria-label={`Static diagram of ${el.name}-${A} nucleus`}
+        aria-label={`${el.name}-${A}`}
         role="img"
       >
-        <title>{`${el.name}-${A} nucleus diagram`}</title>
+        <title>{`${el.name}-${A} nucleus`}</title>
         <circle
           cx="0"
           cy="0"
@@ -756,20 +972,8 @@ function StaticNucleusDiagram({ Z, N }: { Z: number; N: number }) {
             />
           );
         })}
-        <text
-          x="-38"
-          y="80"
-          fontSize="10"
-          fill="#f87171"
-          fontFamily="monospace"
-        >
-          ● Proton (Z={Z})
-        </text>
-        <text x="0" y="80" fontSize="10" fill="#60a5fa" fontFamily="monospace">
-          ● Neutron (N={N})
-        </text>
       </svg>
-      <p className="text-sm text-muted-foreground text-center">
+      <p className="text-sm text-muted-foreground">
         Static fallback — WebGL not available
       </p>
     </div>
@@ -787,15 +991,19 @@ export function NucleusVisualizer() {
   const [interacting, setInteracting] = useState(false);
   const [cameraTarget, setCameraTarget] = useState(10);
   const [shellModel, setShellModel] = useState(false);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
   const prefersReduced = useReducedMotion();
-  const [activeTab, setActiveTab] = useState<"formula" | "nuclear_chart">(
-    "formula",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "bw_terms" | "be_curve" | "formula"
+  >("bw_terms");
 
   // Decay animation state
   const [animating, setAnimating] = useState(false);
   const [animType, setAnimType] = useState<DecayType | null>(null);
-  const [animProgress, setAnimProgress] = useState(0); // 0..1
+  const [animProgress, setAnimProgress] = useState(0);
   const [animParticles, setAnimParticles] = useState<AnimParticle[]>([]);
   const [decayDisplayZ, setDecayDisplayZ] = useState<number | undefined>();
   const [decayDisplayN, setDecayDisplayN] = useState<number | undefined>();
@@ -808,32 +1016,31 @@ export function NucleusVisualizer() {
   const found = nuclides.find((n) => n.Z === Z && n.N === N);
   const magic = getMagicBadge(Z, N);
   const spinParity = getSpinParity(Z, N);
+  const be = calcBindingEnergy(Z, N);
 
   const ariaLabel = `3D nucleus of ${el.name}-${A}: ${Z} protons (red), ${N} neutrons (blue). Stability: ${stability}.`;
-
   const handleDistChange = useCallback((d: number) => setCameraTarget(d), []);
   const zoomIn = () =>
     setCameraTarget((d) => Math.max(ZOOM_MIN, d - ZOOM_STEP_CAM));
   const zoomOut = () =>
     setCameraTarget((d) => Math.min(ZOOM_MAX, d + ZOOM_STEP_CAM));
 
-  const be = calcBindingEnergy(Z, N);
   const shellLabels = useMemo(
-    () => getShellLabels(Z + N, Math.max(1.2, 0.8 * Math.cbrt(Z + N) + 0.5)),
+    () => getShellLabels(Z + N, Math.max(1.2, 0.78 * Math.cbrt(Z + N) + 0.55)),
     [Z, N],
   );
-
   const stabilityGradient = useMemo(() => getStabilityGradient(Z, N), [Z, N]);
 
   // ─── Decay animation logic ──────────────────────────────────────────────────
   const ANIM_DURATION: Record<DecayType, number> = {
-    alpha: 2500,
-    "beta-": 2000,
-    "beta+": 2000,
+    alpha: 2800,
+    "beta-": 2200,
+    "beta+": 2200,
   };
+  const TRAIL_STEPS = 8;
 
   function buildInitialParticles(type: DecayType): AnimParticle[] {
-    const baseRadius = Math.max(1.2, 0.8 * Math.cbrt(Z + N) + 0.5);
+    const baseRadius = Math.max(1.2, 0.78 * Math.cbrt(Z + N) + 0.55);
     if (type === "alpha") {
       const dirs = [
         new THREE.Vector3(1, 0.3, 0.2).normalize(),
@@ -844,10 +1051,13 @@ export function NucleusVisualizer() {
       return dirs.map((dir) => ({
         type: "alpha" as const,
         pos: dir.clone().multiplyScalar(baseRadius * 0.9),
-        vel: dir.clone().multiplyScalar(0.12),
+        vel: dir.clone().multiplyScalar(0.14),
         t: 0,
         color: "#fbbf24",
-        radius: 0.45,
+        radius: 0.48,
+        trailPositions: Array.from({ length: TRAIL_STEPS }, (_, i) =>
+          dir.clone().multiplyScalar(baseRadius * 0.9 - i * 0.2),
+        ),
       }));
     }
     if (type === "beta-") {
@@ -857,18 +1067,24 @@ export function NucleusVisualizer() {
         {
           type: "electron" as const,
           pos: dir1.clone().multiplyScalar(baseRadius * 0.8),
-          vel: dir1.clone().multiplyScalar(0.18),
+          vel: dir1.clone().multiplyScalar(0.22),
           t: 0,
           color: "#38bdf8",
-          radius: 0.18,
+          radius: 0.2,
+          trailPositions: Array.from({ length: TRAIL_STEPS }, (_, i) =>
+            dir1.clone().multiplyScalar(baseRadius * 0.8 - i * 0.15),
+          ),
         },
         {
           type: "antineutrino" as const,
           pos: dir2.clone().multiplyScalar(baseRadius * 0.8),
-          vel: dir2.clone().multiplyScalar(0.22),
+          vel: dir2.clone().multiplyScalar(0.28),
           t: 0,
           color: "#e879f9",
-          radius: 0.12,
+          radius: 0.14,
+          trailPositions: Array.from({ length: TRAIL_STEPS }, (_, i) =>
+            dir2.clone().multiplyScalar(baseRadius * 0.8 - i * 0.15),
+          ),
         },
       ];
     }
@@ -878,18 +1094,24 @@ export function NucleusVisualizer() {
       {
         type: "positron" as const,
         pos: dir1.clone().multiplyScalar(baseRadius * 0.8),
-        vel: dir1.clone().multiplyScalar(0.18),
+        vel: dir1.clone().multiplyScalar(0.22),
         t: 0,
-        color: "#f87171",
-        radius: 0.18,
+        color: "#fb923c",
+        radius: 0.2,
+        trailPositions: Array.from({ length: TRAIL_STEPS }, (_, i) =>
+          dir1.clone().multiplyScalar(baseRadius * 0.8 - i * 0.15),
+        ),
       },
       {
         type: "antineutrino" as const,
         pos: dir2.clone().multiplyScalar(baseRadius * 0.8),
-        vel: dir2.clone().multiplyScalar(0.22),
+        vel: dir2.clone().multiplyScalar(0.28),
         t: 0,
         color: "#e879f9",
-        radius: 0.12,
+        radius: 0.14,
+        trailPositions: Array.from({ length: TRAIL_STEPS }, (_, i) =>
+          dir2.clone().multiplyScalar(baseRadius * 0.8 - i * 0.15),
+        ),
       },
     ];
   }
@@ -901,7 +1123,6 @@ export function NucleusVisualizer() {
     setAnimProgress(0);
     const initial = buildInitialParticles(type);
     setAnimParticles(initial);
-    // Set partial decay display immediately
     if (type === "alpha") {
       setDecayDisplayZ(Z - 2);
       setDecayDisplayN(N - 2);
@@ -913,23 +1134,26 @@ export function NucleusVisualizer() {
       setDecayDisplayN(N + 1);
     }
     animStartRef.current = performance.now();
-
     const duration = ANIM_DURATION[type];
     function tick() {
       const elapsed = performance.now() - animStartRef.current;
       const progress = Math.min(elapsed / duration, 1);
       setAnimProgress(progress);
       setAnimParticles((prev) =>
-        prev.map((p) => ({
-          ...p,
-          t: progress,
-          pos: p.pos.clone().add(p.vel.clone().multiplyScalar(progress * 18)),
-        })),
+        prev.map((p) => {
+          const newPos = p.pos
+            .clone()
+            .add(p.vel.clone().multiplyScalar(progress * 20));
+          const trailPositions = Array.from({ length: TRAIL_STEPS }, (_, i) => {
+            const t = Math.max(0, progress - i * 0.015);
+            return p.pos.clone().add(p.vel.clone().multiplyScalar(t * 20));
+          });
+          return { ...p, t: progress, pos: newPos, trailPositions };
+        }),
       );
       if (progress < 1) {
         animFrameRef.current = requestAnimationFrame(tick);
       } else {
-        // Commit decay
         if (type === "alpha") {
           setZ((z) => Math.max(1, z - 2));
           setN((n) => Math.max(0, n - 2));
@@ -974,13 +1198,24 @@ export function NucleusVisualizer() {
   const canBetaMinus = N >= 1;
   const canBetaPlus = Z >= 2;
 
-  // ─── Binding energy chart data ──────────────────────────────────────────────
-  const beChartData = useMemo(() => buildBEChartData(Z, N), [Z, N]);
+  // Search handler
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    const match = ISOTOPE_PRESETS.find(
+      (p) => p.label.toLowerCase() === query.toLowerCase(),
+    );
+    if (match) {
+      setZ(match.Z);
+      setN(match.N);
+    }
+  };
 
+  // BW curve data
+  const beChartData = useMemo(() => buildBEChartData(Z, N), [Z, N]);
   const theoreticalChartData = beChartData.theoreticalPoints.map((pt) => ({
     A: pt.A,
     theoretical: pt.bePerNucleon,
-    experimental: beChartData.experimentalMap.get(pt.A)?.bePerNucleon ?? null,
+    experimental: beChartData.experimentalMap.get(pt.A) ?? null,
   }));
 
   return (
@@ -990,7 +1225,7 @@ export function NucleusVisualizer() {
     >
       {/* Header */}
       <div className="border-b border-border bg-card px-4 py-5">
-        <div className="container mx-auto max-w-6xl">
+        <div className="container mx-auto max-w-7xl">
           <div className="flex flex-wrap items-center gap-2 mb-1">
             <Badge className="audience-badge audience-intermediate">
               Intermediate
@@ -1003,40 +1238,43 @@ export function NucleusVisualizer() {
             Advanced Nucleus Visualizer
           </h1>
           <p className="text-muted-foreground mt-1 text-sm max-w-2xl">
-            High-fidelity 3D nucleus with decay mode animations, stability
-            heatmap, mini Chart of Nuclides, and Bethe-Weizsäcker binding energy
-            analysis. Adjust Z/N sliders, select presets, or play decay
-            animations.
+            High-fidelity 3D nucleus with dynamic nucleon physics, glowing
+            emissive materials, decay mode animations, stability heatmap,
+            Bethe-Weizsäcker binding energy analysis, and mini Chart of
+            Nuclides.
           </p>
         </div>
       </div>
 
-      <div className="container mx-auto max-w-6xl px-4 py-8">
-        {/* Split-pane layout: canvas left, profile right */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mb-8">
-          {/* ─── Left: 3D Canvas ─────────────────────────────────────────────── */}
+      <div className="container mx-auto max-w-7xl px-4 py-6">
+        {/* Main two-panel layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-5 mb-6">
+          {/* ─── Left: Canvas + Controls ───────────────────────────────────── */}
           <div className="flex flex-col gap-4">
-            {/* Canvas wrapper with stability gradient background */}
+            {/* Canvas */}
             <div
               className="relative rounded-2xl overflow-hidden border border-border"
-              style={{ height: 440, background: stabilityGradient }}
+              style={{
+                height: 460,
+                background: showHeatmap ? stabilityGradient : "oklch(0.08 0 0)",
+              }}
               data-ocid="nucleus-viz.canvas_target"
               aria-label={ariaLabel}
             >
-              {/* Glow overlay */}
+              {/* Inner vignette */}
               <div
                 className="absolute inset-0 pointer-events-none z-10"
                 style={{
                   background:
-                    "radial-gradient(ellipse 60% 50% at 50% 50%, transparent 40%, rgba(0,0,0,0.5) 100%)",
+                    "radial-gradient(ellipse 75% 65% at 50% 50%, transparent 30%, rgba(0,0,0,0.55) 100%)",
                 }}
               />
-              {/* CSS glow filter on canvas wrapper */}
+              {/* Canvas glow filter */}
               <div
                 className="w-full h-full"
                 style={{
                   filter:
-                    "drop-shadow(0 0 16px rgba(96,165,250,0.25)) drop-shadow(0 0 32px rgba(248,113,113,0.15))",
+                    "drop-shadow(0 0 20px rgba(96,165,250,0.3)) drop-shadow(0 0 40px rgba(248,113,113,0.18))",
                 }}
               >
                 {prefersReduced ? (
@@ -1052,8 +1290,12 @@ export function NucleusVisualizer() {
                     >
                       <Canvas
                         shadows
-                        camera={{ position: [0, 0, 10], fov: 45 }}
-                        gl={{ antialias: true }}
+                        camera={{ position: [0, 0, 10], fov: 42 }}
+                        gl={{
+                          antialias: true,
+                          powerPreference: "high-performance",
+                          toneMapping: THREE.ACESFilmicToneMapping,
+                        }}
                         onPointerDown={() => setInteracting(true)}
                         onPointerUp={() => setInteracting(false)}
                       >
@@ -1067,7 +1309,10 @@ export function NucleusVisualizer() {
                             Z={Z}
                             N={N}
                             autoRotate={
-                              !interacting && !prefersReduced && !animating
+                              !interacting &&
+                              !prefersReduced &&
+                              autoRotate &&
+                              !animating
                             }
                             shellModel={shellModel}
                             animParticles={animParticles}
@@ -1089,16 +1334,21 @@ export function NucleusVisualizer() {
               </div>
 
               {/* Nucleus label */}
-              <div className="absolute top-3 left-3 z-20 pointer-events-none">
-                <span className="rounded-lg bg-card/90 backdrop-blur-sm border border-border px-3 py-1.5 text-sm font-mono font-bold text-foreground shadow-lg">
+              <div className="absolute top-3 left-3 z-20 pointer-events-none flex items-center gap-2">
+                <span className="rounded-lg bg-card/90 backdrop-blur-md border border-border px-3 py-1.5 text-sm font-mono font-bold text-foreground shadow-lg">
                   {el.symbol}-{A}
                 </span>
+                {magic.doubleMagic && (
+                  <span className="rounded-lg bg-amber-400/25 border border-amber-400/50 px-2.5 py-1.5 text-xs font-bold text-amber-300 backdrop-blur-sm">
+                    ✦ Double Magic
+                  </span>
+                )}
               </div>
 
               {/* Shell model badge */}
               {shellModel && (
-                <div className="absolute top-3 left-28 z-20 pointer-events-none">
-                  <span className="rounded-lg bg-blue-500/20 border border-blue-400/40 px-2.5 py-1.5 text-xs font-semibold text-blue-300 backdrop-blur-sm">
+                <div className="absolute top-3 left-[8.5rem] z-20 pointer-events-none">
+                  <span className="rounded-lg bg-blue-500/25 border border-blue-400/45 px-2.5 py-1.5 text-xs font-semibold text-blue-300 backdrop-blur-sm">
                     Shell Model
                   </span>
                 </div>
@@ -1107,23 +1357,27 @@ export function NucleusVisualizer() {
               {/* Stability badge */}
               <div className="absolute top-3 right-3 z-20 pointer-events-none">
                 <span
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold border backdrop-blur-sm ${stability === "stable" ? "bg-emerald-400/20 text-emerald-300 border-emerald-400/30" : "bg-amber-400/20 text-amber-300 border-amber-400/30"}`}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold border backdrop-blur-sm ${
+                    stability === "stable"
+                      ? "bg-emerald-400/20 text-emerald-300 border-emerald-400/30"
+                      : "bg-amber-400/20 text-amber-300 border-amber-400/30"
+                  }`}
                 >
-                  {stability === "stable" ? "Stable" : "Unstable"}
+                  {stability === "stable" ? "⬤ Stable" : "⬤ Unstable"}
                 </span>
               </div>
 
-              {/* Animation progress bar */}
+              {/* Animation progress */}
               {animating && (
-                <div className="absolute bottom-12 left-3 right-3 z-20">
-                  <div className="rounded-full bg-card/70 backdrop-blur-sm border border-border px-3 py-2">
-                    <div className="flex items-center justify-between mb-1">
+                <div className="absolute bottom-14 left-3 right-3 z-20">
+                  <div className="rounded-xl bg-card/85 backdrop-blur-md border border-border px-4 py-2.5">
+                    <div className="flex items-center justify-between mb-1.5">
                       <span className="text-xs font-semibold text-foreground">
                         {animType === "alpha"
-                          ? "α Decay in progress…"
+                          ? "⚛ α Decay in progress…"
                           : animType === "beta-"
-                            ? "β⁻ Decay in progress…"
-                            : "β⁺ Decay in progress…"}
+                            ? "⚡ β⁻ Decay in progress…"
+                            : "⚡ β⁺ Decay in progress…"}
                       </span>
                       <span className="text-xs font-mono text-muted-foreground">
                         {Math.round(animProgress * 100)}%
@@ -1131,7 +1385,7 @@ export function NucleusVisualizer() {
                     </div>
                     <div className="w-full bg-muted rounded-full h-1.5">
                       <div
-                        className={`h-1.5 rounded-full transition-all ${animType === "alpha" ? "bg-amber-400" : animType === "beta-" ? "bg-blue-400" : "bg-red-400"}`}
+                        className={`h-1.5 rounded-full transition-all ${animType === "alpha" ? "bg-amber-400" : animType === "beta-" ? "bg-blue-400" : "bg-orange-400"}`}
                         style={{ width: `${animProgress * 100}%` }}
                       />
                     </div>
@@ -1173,20 +1427,83 @@ export function NucleusVisualizer() {
                   </Button>
                 </div>
               )}
+
+              {/* Legend overlay */}
+              <div className="absolute bottom-3 left-3 z-20 flex items-center gap-3 pointer-events-none">
+                <div className="flex items-center gap-1.5 rounded-full bg-card/75 backdrop-blur-sm border border-border px-2.5 py-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-400 inline-block" />
+                  <span className="text-[10px] text-muted-foreground">
+                    Proton
+                  </span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-400 inline-block ml-1" />
+                  <span className="text-[10px] text-muted-foreground">
+                    Neutron
+                  </span>
+                </div>
+              </div>
             </div>
 
-            {/* Decay animation buttons */}
+            {/* ─── Bottom controls bar ──────────────────────────────────────── */}
             <div
               className="rounded-xl border border-border bg-card p-4"
-              data-ocid="nucleus-viz.decay_controls"
+              data-ocid="nucleus-viz.bottom_controls"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <Zap className="h-4 w-4 text-amber-400" />
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Decay Mode Animations
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Stability Heatmap toggle */}
+                <Button
+                  size="sm"
+                  variant={showHeatmap ? "secondary" : "outline"}
+                  className="gap-1.5 text-xs"
+                  onClick={() => setShowHeatmap((v) => !v)}
+                  data-ocid="nucleus-viz.heatmap_toggle"
+                  aria-pressed={showHeatmap}
+                >
+                  <Activity className="h-3.5 w-3.5" />
+                  {showHeatmap ? "Heatmap ON" : "Heatmap OFF"}
+                </Button>
+
+                {/* Shell Model toggle */}
+                <Button
+                  size="sm"
+                  variant={shellModel ? "secondary" : "outline"}
+                  className="gap-1.5 text-xs"
+                  onClick={() => setShellModel((v) => !v)}
+                  data-ocid="nucleus-viz.shell_model_toggle"
+                  aria-pressed={shellModel}
+                >
+                  <Layers className="h-3.5 w-3.5" />
+                  {shellModel ? "Shell Model ON" : "Shell Model OFF"}
+                </Button>
+
+                {/* Auto-rotate toggle */}
+                <Button
+                  size="sm"
+                  variant={autoRotate ? "secondary" : "outline"}
+                  className="gap-1.5 text-xs"
+                  onClick={() => setAutoRotate((v) => !v)}
+                  data-ocid="nucleus-viz.autorotate_toggle"
+                  aria-pressed={autoRotate}
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  {autoRotate ? "Auto-Rotate ON" : "Auto-Rotate OFF"}
+                </Button>
+
+                {/* Search toggle */}
+                <Button
+                  size="sm"
+                  variant={showSearch ? "secondary" : "outline"}
+                  className="gap-1.5 text-xs"
+                  onClick={() => setShowSearch((v) => !v)}
+                  data-ocid="nucleus-viz.search_toggle"
+                >
+                  <Atom className="h-3.5 w-3.5" />
+                  Search
+                  <ChevronDown className="h-3 w-3 opacity-50" />
+                </Button>
+
+                <div className="h-6 w-px bg-border mx-1" />
+
+                {/* Decay triggers */}
                 <Button
                   size="sm"
                   variant={animType === "alpha" ? "secondary" : "outline"}
@@ -1210,9 +1527,6 @@ export function NucleusVisualizer() {
                   disabled={!canBetaMinus || animating}
                   onClick={() => startDecayAnim("beta-")}
                   data-ocid="nucleus-viz.play_betaminus_button"
-                  title={
-                    !canBetaMinus ? "Requires N≥1" : "Play β⁻ decay animation"
-                  }
                 >
                   <Play className="h-3 w-3" />
                   Play β⁻ Decay
@@ -1220,13 +1534,10 @@ export function NucleusVisualizer() {
                 <Button
                   size="sm"
                   variant={animType === "beta+" ? "secondary" : "outline"}
-                  className="gap-1.5 text-xs border-red-500/40 text-red-300 hover:bg-red-500/10 hover:border-red-500/70"
+                  className="gap-1.5 text-xs border-orange-500/40 text-orange-300 hover:bg-orange-500/10 hover:border-orange-500/70"
                   disabled={!canBetaPlus || animating}
                   onClick={() => startDecayAnim("beta+")}
                   data-ocid="nucleus-viz.play_betaplus_button"
-                  title={
-                    !canBetaPlus ? "Requires Z≥2" : "Play β⁺ decay animation"
-                  }
                 >
                   <Play className="h-3 w-3" />
                   Play β⁺ Decay
@@ -1244,64 +1555,92 @@ export function NucleusVisualizer() {
                   </Button>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                Animation shows emitted particles. Nucleus updates to daughter
-                isotope after animation completes.
-              </p>
-            </div>
 
-            {/* Shell model toggle */}
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 rounded-full border border-border bg-card/80 backdrop-blur-sm px-1.5 py-1 shadow-sm">
-                <Button
-                  size="sm"
-                  variant={shellModel ? "secondary" : "ghost"}
-                  className="h-7 rounded-full px-3 text-xs gap-1.5"
-                  onClick={() => setShellModel((v) => !v)}
-                  data-ocid="nucleus-viz.shell_model_toggle"
-                  aria-pressed={shellModel}
-                >
-                  <Layers className="h-3 w-3" />
-                  {shellModel ? "Shell Model ON" : "Shell Model OFF"}
-                </Button>
-              </div>
-              <span className="text-xs text-muted-foreground">
-                {shellModel
-                  ? "Nucleons arranged in concentric shells by magic numbers (2, 8, 20, 28, 50, 82, 126)"
-                  : "Toggle to see shell model arrangement"}
-              </span>
-            </div>
-
-            {shellModel && (
-              <div
-                className="rounded-xl border border-border bg-card/60 p-4"
-                data-ocid="nucleus-viz.shell_labels"
-              >
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                  Shell Occupancy
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {shellLabels.map((shell) => (
-                    <span
-                      key={shell.label}
-                      className="rounded-full bg-blue-500/10 border border-blue-400/25 px-3 py-0.5 text-xs font-mono text-blue-300"
-                    >
-                      {shell.label}: {shell.count} nucleons
-                    </span>
-                  ))}
+              {/* Search row */}
+              {showSearch && (
+                <div className="mt-3 pt-3 border-t border-border flex items-center gap-2">
+                  <Input
+                    placeholder="Search isotope (e.g. Fe-56, U-238…)"
+                    value={searchQuery}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="h-8 text-xs max-w-xs"
+                    data-ocid="nucleus-viz.search_input"
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    Type exact label to jump
+                  </span>
                 </div>
+              )}
+
+              {/* Shell occupancy row */}
+              {shellModel && (
+                <div className="mt-3 pt-3 border-t border-border">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                    Shell Occupancy (magic numbers: {SHELL_MAGIC.join(", ")})
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {shellLabels.map((shell, idx) => (
+                      <span
+                        key={shell.label}
+                        className="rounded-full px-2.5 py-0.5 text-xs font-mono"
+                        style={{
+                          background: `oklch(${0.2 + idx * 0.04} 0.12 ${200 + idx * 15} / 0.4)`,
+                          border: `1px solid oklch(${0.5 + idx * 0.04} 0.18 ${200 + idx * 15} / 0.4)`,
+                          color: `oklch(${0.75 + idx * 0.02} 0.2 ${200 + idx * 15})`,
+                        }}
+                      >
+                        {shell.label}: {shell.count}/
+                        {shell.magic - (idx > 0 ? SHELL_MAGIC[idx - 1] : 0)}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Isotope presets */}
+            <div
+              className="rounded-xl border border-border bg-card p-4"
+              data-ocid="nucleus-viz.presets"
+            >
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Quick Select Isotope
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {ISOTOPE_PRESETS.map((preset) => {
+                  const isActive = Z === preset.Z && N === preset.N;
+                  return (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      onClick={() => {
+                        setZ(preset.Z);
+                        setN(preset.N);
+                      }}
+                      data-ocid={`nucleus-viz.preset.${preset.label.replace(/[^a-z0-9]/gi, "_").toLowerCase()}`}
+                      aria-pressed={isActive}
+                      className={`rounded-full border px-3 py-1 text-xs font-mono font-semibold transition-colors ${
+                        isActive
+                          ? "border-primary bg-primary/15 text-primary"
+                          : "border-border bg-muted/30 text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  );
+                })}
               </div>
-            )}
+            </div>
           </div>
 
-          {/* ─── Right: Profile + Mini chart ────────────────────────────────── */}
+          {/* ─── Right: Sidebar stats + mini chart + sliders ──────────────── */}
           <div className="flex flex-col gap-4">
-            {/* Nuclide profile */}
+            {/* Nuclide profile card */}
             <div
               className="rounded-xl border border-border bg-card p-5"
               data-ocid="nucleus-viz.info_panel"
             >
-              <h2 className="font-display font-bold text-foreground mb-3 text-lg flex items-center gap-2">
+              <h2 className="font-display font-bold text-foreground mb-1 text-lg flex items-center gap-2 flex-wrap">
                 <span>
                   {el.name}-{A}
                 </span>
@@ -1311,7 +1650,6 @@ export function NucleusVisualizer() {
                   </span>
                 )}
               </h2>
-              {/* Magic number badges */}
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {magic.magicZ && !magic.doubleMagic && (
                   <span className="rounded-full bg-violet-500/15 border border-violet-400/40 px-2 py-0.5 text-xs font-semibold text-violet-300">
@@ -1325,38 +1663,77 @@ export function NucleusVisualizer() {
                 )}
               </div>
 
-              <dl className="grid grid-cols-2 gap-3">
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
                 {[
-                  { label: "Protons (Z)", value: Z, mono: true },
-                  { label: "Neutrons (N)", value: N, mono: true },
-                  { label: "Mass number (A)", value: A, mono: true },
                   {
-                    label: "N/Z ratio",
+                    label: "Protons (Z)",
+                    value: Z,
+                    mono: true,
+                    tooltip: "Defines the element",
+                  },
+                  {
+                    label: "Neutrons (N)",
+                    value: N,
+                    mono: true,
+                    tooltip: "Defines the isotope",
+                  },
+                  {
+                    label: "Mass Number A",
+                    value: A,
+                    mono: true,
+                    tooltip: "Z + N = total nucleons",
+                  },
+                  {
+                    label: "N/Z Ratio",
                     value: (N / Math.max(Z, 1)).toFixed(3),
                     mono: true,
+                    tooltip:
+                      "Stability indicator; ~1 for light nuclei, ~1.5 for heavy",
                   },
                   {
                     label: "Stability",
-                    value: stability === "stable" ? "Stable" : "Unstable",
+                    value: stability === "stable" ? "✓ Stable" : "⚠ Unstable",
+                    mono: false,
                   },
-                  { label: "Half-life", value: found?.halfLifeStr ?? "—" },
+                  {
+                    label: "Half-life",
+                    value: found?.halfLifeStr ?? "—",
+                    mono: false,
+                    tooltip: "Time for half of a sample to decay",
+                  },
+                  {
+                    label: "Primary Decay",
+                    value: found?.decayModes[0] ?? "—",
+                    mono: false,
+                  },
                   {
                     label: "B/A (data)",
                     value: found?.bindingEnergyPerNucleon_MeV
-                      ? `${found.bindingEnergyPerNucleon_MeV} MeV`
+                      ? `${found.bindingEnergyPerNucleon_MeV.toFixed(3)} MeV`
                       : "—",
+                    mono: true,
+                    tooltip:
+                      "Binding energy per nucleon from experimental data",
                   },
                   {
-                    label: "B/A (BW)",
+                    label: "B/A (BW calc)",
                     value: `${be.perNucleon.toFixed(3)} MeV`,
+                    mono: true,
+                    tooltip: "Bethe-Weizsäcker semi-empirical calculation",
+                  },
+                  {
+                    label: "Total B.E.",
+                    value: `${be.total.toFixed(1)} MeV`,
+                    mono: true,
+                    tooltip: "Total nuclear binding energy",
                   },
                 ].map(({ label, value, mono }) => (
                   <div key={label} className="flex flex-col gap-0.5">
-                    <dt className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                    <dt className="text-[10px] text-muted-foreground uppercase tracking-wider leading-tight">
                       {label}
                     </dt>
                     <dd
-                      className={`text-sm font-semibold text-foreground ${mono ? "font-mono" : ""}`}
+                      className={`text-sm font-semibold text-foreground leading-snug ${mono ? "font-mono" : ""}`}
                     >
                       {String(value)}
                     </dd>
@@ -1364,8 +1741,8 @@ export function NucleusVisualizer() {
                 ))}
               </dl>
 
-              {/* Spin & parity + decay modes */}
-              <div className="mt-3 pt-3 border-t border-border flex flex-wrap gap-2">
+              {/* Spin, parity, decay modes */}
+              <div className="mt-3 pt-3 border-t border-border flex flex-wrap gap-1.5">
                 {spinParity && (
                   <span className="rounded-full bg-muted border border-border px-2.5 py-0.5 text-xs font-semibold text-foreground font-mono">
                     Jᵖ = {spinParity}
@@ -1380,9 +1757,23 @@ export function NucleusVisualizer() {
                   </span>
                 ))}
               </div>
+
+              {/* Educational note */}
+              <div className="mt-3 rounded-lg bg-muted/40 border border-border p-2.5">
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  <strong className="text-foreground">
+                    N/Z ≈ {(N / Math.max(Z, 1)).toFixed(2)}.
+                  </strong>{" "}
+                  {N / Math.max(Z, 1) < 1.05
+                    ? "Near equal proton/neutron count — typical of light stable nuclei where nuclear force and Coulomb repulsion are balanced."
+                    : N / Math.max(Z, 1) > 1.6
+                      ? "High neutron excess — common in heavy nuclei where extra neutrons provide additional nuclear binding without Coulomb repulsion."
+                      : "Moderate neutron excess — necessary to counteract Coulomb repulsion as Z increases."}
+                </p>
+              </div>
             </div>
 
-            {/* Z/N sliders */}
+            {/* Z/N Sliders */}
             <div
               className="flex flex-col gap-3"
               data-ocid="nucleus-viz.controls"
@@ -1407,9 +1798,6 @@ export function NucleusVisualizer() {
                   value={[Z]}
                   onValueChange={([v]) => setZ(v)}
                   aria-label="Number of protons"
-                  aria-valuenow={Z}
-                  aria-valuemin={1}
-                  aria-valuemax={118}
                   data-ocid="nucleus-viz.z_slider"
                   className="[&_[role=slider]]:bg-red-400"
                 />
@@ -1437,9 +1825,6 @@ export function NucleusVisualizer() {
                   value={[N]}
                   onValueChange={([v]) => setN(v)}
                   aria-label="Number of neutrons"
-                  aria-valuenow={N}
-                  aria-valuemin={0}
-                  aria-valuemax={180}
                   data-ocid="nucleus-viz.n_slider"
                   className="[&_[role=slider]]:bg-blue-400"
                 />
@@ -1461,37 +1846,7 @@ export function NucleusVisualizer() {
           </div>
         </div>
 
-        {/* Isotope preset buttons */}
-        <div
-          className="rounded-xl border border-border bg-card p-4 mb-6"
-          data-ocid="nucleus-viz.presets"
-        >
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            Quick Select Isotope
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {ISOTOPE_PRESETS.map((preset) => {
-              const isActive = Z === preset.Z && N === preset.N;
-              return (
-                <button
-                  key={preset.label}
-                  type="button"
-                  onClick={() => {
-                    setZ(preset.Z);
-                    setN(preset.N);
-                  }}
-                  data-ocid={`nucleus-viz.preset.${preset.label.replace(/[^a-z0-9]/gi, "_").toLowerCase()}`}
-                  aria-pressed={isActive}
-                  className={`rounded-full border px-3 py-1 text-xs font-mono font-semibold transition-colors ${isActive ? "border-primary bg-primary/15 text-primary" : "border-border bg-muted/30 text-muted-foreground hover:border-primary/50 hover:text-foreground"}`}
-                >
-                  {preset.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Binding energy panel with tabs */}
+        {/* ─── Binding Energy Panel ─────────────────────────────────────────── */}
         <div
           className="rounded-xl border border-border bg-card p-6 mb-6"
           data-ocid="nucleus-viz.binding_energy"
@@ -1502,7 +1857,9 @@ export function NucleusVisualizer() {
                 Binding Energy Analysis
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Bethe-Weizsäcker formula for {el.name}-{A}
+                Bethe-Weizsäcker SEMF for {el.name}-{A} · Total B ={" "}
+                {be.total.toFixed(1)} MeV · B/A = {be.perNucleon.toFixed(3)}{" "}
+                MeV/nucleon
               </p>
             </div>
             {/* Tab switcher */}
@@ -1510,124 +1867,100 @@ export function NucleusVisualizer() {
               className="flex rounded-lg border border-border overflow-hidden"
               role="tablist"
             >
-              <button
-                role="tab"
-                type="button"
-                aria-selected={activeTab === "formula"}
-                className={`px-3 py-1.5 text-xs font-semibold transition-colors ${activeTab === "formula" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground bg-muted/30"}`}
-                onClick={() => setActiveTab("formula")}
-                data-ocid="nucleus-viz.tab.formula"
-              >
-                BW Formula
-              </button>
-              <button
-                role="tab"
-                type="button"
-                aria-selected={activeTab === "nuclear_chart"}
-                className={`px-3 py-1.5 text-xs font-semibold transition-colors ${activeTab === "nuclear_chart" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground bg-muted/30"}`}
-                onClick={() => setActiveTab("nuclear_chart")}
-                data-ocid="nucleus-viz.tab.nuclear_chart"
-              >
-                Nuclear Chart
-              </button>
+              {(["bw_terms", "be_curve", "formula"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  role="tab"
+                  type="button"
+                  aria-selected={activeTab === tab}
+                  className={`px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                    activeTab === tab
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground bg-muted/30"
+                  }`}
+                  onClick={() => setActiveTab(tab)}
+                  data-ocid={`nucleus-viz.tab.${tab}`}
+                >
+                  {tab === "bw_terms"
+                    ? "BW Terms"
+                    : tab === "be_curve"
+                      ? "B/A Curve"
+                      : "Formula"}
+                </button>
+              ))}
             </div>
           </div>
 
-          {activeTab === "formula" && (
-            <>
-              <EquationBlock
-                latex={
-                  "B = a_V A - a_S A^{2/3} - a_C \\frac{Z(Z-1)}{A^{1/3}} - a_A \\frac{(A-2Z)^2}{A} + \\delta(A,Z)"
-                }
-                annotation="Bethe-Weizsäcker formula: Volume, Surface, Coulomb, Asymmetry, and Pairing terms"
-                label="Semi-Empirical Mass Formula"
-              />
-              <dl className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-2">
-                {[
-                  {
-                    label: "Volume term",
-                    value: be.volume,
-                    note: `+aV·A = +${BW_AV}·${A}`,
-                  },
-                  {
-                    label: "Surface term",
-                    value: be.surface,
-                    note: "−aS·A^(2/3)",
-                  },
-                  {
-                    label: "Coulomb term",
-                    value: be.coulomb,
-                    note: "−aC·Z(Z−1)/A^(1/3)",
-                  },
-                  {
-                    label: "Asymmetry term",
-                    value: be.asymmetry,
-                    note: "−aA·(A−2Z)²/A",
-                  },
-                  {
-                    label: "Pairing term δ",
-                    value: be.pairing,
-                    note:
-                      A % 2 === 0
-                        ? Z % 2 === 0
-                          ? "even-even: +"
-                          : "odd-odd: −"
-                        : "odd-A: 0",
-                  },
-                ].map(({ label, value, note }) => (
-                  <div key={label} className="flex flex-col gap-0.5">
-                    <dt className="text-xs text-muted-foreground uppercase tracking-wider">
-                      {label}
-                    </dt>
-                    <dd
-                      className={`font-mono text-sm font-semibold ${value >= 0 ? "text-emerald-400" : "text-red-400"}`}
+          {activeTab === "bw_terms" && (
+            <div data-ocid="nucleus-viz.bw_terms_chart">
+              <p className="text-xs text-muted-foreground mb-4">
+                All five Bethe-Weizsäcker terms for {el.name}-{A}. Hover each
+                bar for the formula and MeV contribution. Volume term dominates;
+                Coulomb and Surface terms reduce binding; Pairing favors
+                even-even nuclei.
+              </p>
+              <BWTermsBarChart Z={Z} N={N} />
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-3">
+                {(
+                  [
+                    "Volume",
+                    "Surface",
+                    "Coulomb",
+                    "Asymmetry",
+                    "Pairing",
+                  ] as const
+                ).map((term) => {
+                  const values = {
+                    Volume: be.volume,
+                    Surface: be.surface,
+                    Coulomb: be.coulomb,
+                    Asymmetry: be.asymmetry,
+                    Pairing: be.pairing,
+                  };
+                  const val = values[term];
+                  return (
+                    <div
+                      key={term}
+                      className="rounded-lg bg-muted/30 border border-border p-2.5"
                     >
-                      {value >= 0 ? "+" : ""}
-                      {value.toFixed(2)} MeV
-                    </dd>
-                    <span className="text-xs text-muted-foreground/60 font-mono">
-                      {note}
-                    </span>
-                  </div>
-                ))}
-                <div className="flex flex-col gap-0.5 border-t border-border pt-3 sm:col-span-1 col-span-2">
-                  <dt className="text-xs text-muted-foreground uppercase tracking-wider font-bold">
-                    Total B
-                  </dt>
-                  <dd className="font-mono text-base font-bold text-primary">
-                    {be.total.toFixed(2)} MeV
-                  </dd>
-                  <span className="text-xs text-muted-foreground/60 font-mono">
-                    B/A = {be.perNucleon.toFixed(3)} MeV/nucleon
-                  </span>
-                </div>
-              </dl>
-              <div className="mt-4 pt-4 border-t border-border">
-                <p className="text-xs text-muted-foreground">
-                  <strong>Parameters:</strong> aV = {BW_AV}, aS = {BW_AS}, aC ={" "}
-                  {BW_AC}, aA = {BW_AA}, aP = {BW_AP} MeV. Iron-56 has the
-                  highest binding energy per nucleon (~8.79 MeV) — the peak of
-                  the binding energy curve.
-                </p>
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span
+                          className="w-2.5 h-2.5 rounded-sm"
+                          style={{ background: BW_BAR_COLORS[term] }}
+                        />
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                          {term}
+                        </span>
+                      </div>
+                      <p
+                        className={`font-mono text-sm font-bold ${val >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                      >
+                        {val >= 0 ? "+" : ""}
+                        {val.toFixed(1)} MeV
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
-            </>
+            </div>
           )}
 
-          {activeTab === "nuclear_chart" && (
+          {activeTab === "be_curve" && (
             <div data-ocid="nucleus-viz.be_chart">
               <p className="text-xs text-muted-foreground mb-4">
-                B/A vs. mass number A. Theoretical Bethe-Weizsäcker curve (line)
-                vs. experimental data from dataset (dots). Current isotope{" "}
-                {el.symbol}-{A} marked with reference dot.
+                B/A vs. mass number A. Bethe-Weizsäcker theoretical curve (blue
+                line) vs. experimental data (green dots). Current isotope{" "}
+                {el.symbol}-{A} marked with amber dot. Iron-56 peak ~8.79
+                MeV/nucleon.
               </p>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={280}>
                 <LineChart
                   data={theoreticalChartData}
-                  margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+                  margin={{ top: 5, right: 30, left: 10, bottom: 20 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="rgba(255,255,255,0.06)"
+                    stroke="rgba(255,255,255,0.05)"
                   />
                   <XAxis
                     dataKey="A"
@@ -1636,7 +1969,7 @@ export function NucleusVisualizer() {
                     label={{
                       value: "Mass Number A",
                       position: "insideBottom",
-                      offset: -2,
+                      offset: -8,
                       fill: "#9ca3af",
                       fontSize: 11,
                     }}
@@ -1662,7 +1995,6 @@ export function NucleusVisualizer() {
                       fontSize: 12,
                     }}
                     labelStyle={{ color: "#e5e7eb" }}
-                    itemStyle={{ color: "#9ca3af" }}
                     formatter={(value: number, name: string) => [
                       `${value?.toFixed(3)} MeV/nucleon`,
                       name === "theoretical"
@@ -1688,7 +2020,6 @@ export function NucleusVisualizer() {
                     connectNulls={false}
                     name="Experimental"
                   />
-                  {/* Current isotope marker */}
                   {beChartData.currentA >= 2 && (
                     <ReferenceDot
                       x={beChartData.currentA}
@@ -1707,63 +2038,108 @@ export function NucleusVisualizer() {
                   )}
                 </LineChart>
               </ResponsiveContainer>
-              <p className="text-xs text-muted-foreground mt-2">
-                Source: Bethe-Weizsäcker SEMF (theoretical); experimental data
-                from NNDC/BNL ENSDF. The curve peaks near Fe-56, explaining why
-                nuclear fusion powers stars up to iron and fission works for
-                heavy nuclei.
-              </p>
             </div>
+          )}
+
+          {activeTab === "formula" && (
+            <>
+              <EquationBlock
+                latex={
+                  "B = a_V A - a_S A^{2/3} - a_C \\frac{Z(Z-1)}{A^{1/3}} - a_A \\frac{(A-2Z)^2}{A} + \\delta(A,Z)"
+                }
+                annotation="Bethe-Weizsäcker formula: Volume, Surface, Coulomb, Asymmetry, and Pairing terms"
+                label="Semi-Empirical Mass Formula"
+              />
+              <dl className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+                {[
+                  {
+                    label: "Volume",
+                    value: be.volume,
+                    note: `+aV·A = +${BW_AV}·${A}`,
+                  },
+                  { label: "Surface", value: be.surface, note: "−aS·A^(2/3)" },
+                  {
+                    label: "Coulomb",
+                    value: be.coulomb,
+                    note: "−aC·Z(Z−1)/A^(1/3)",
+                  },
+                  {
+                    label: "Asymmetry",
+                    value: be.asymmetry,
+                    note: "−aA·(A−2Z)²/A",
+                  },
+                  {
+                    label: "Pairing δ",
+                    value: be.pairing,
+                    note:
+                      A % 2 === 0
+                        ? Z % 2 === 0
+                          ? "even-even: +"
+                          : "odd-odd: −"
+                        : "odd-A: 0",
+                  },
+                ].map(({ label, value, note }) => (
+                  <div key={label} className="flex flex-col gap-0.5">
+                    <dt className="text-xs text-muted-foreground uppercase tracking-wider">
+                      {label}
+                    </dt>
+                    <dd
+                      className={`font-mono text-sm font-semibold ${value >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                    >
+                      {value >= 0 ? "+" : ""}
+                      {value.toFixed(2)} MeV
+                    </dd>
+                    <span className="text-xs text-muted-foreground/60 font-mono">
+                      {note}
+                    </span>
+                  </div>
+                ))}
+                <div className="flex flex-col gap-0.5 border-t border-border pt-3 col-span-2 sm:col-span-1">
+                  <dt className="text-xs text-muted-foreground uppercase tracking-wider font-bold">
+                    Total B
+                  </dt>
+                  <dd className="font-mono text-base font-bold text-primary">
+                    {be.total.toFixed(2)} MeV
+                  </dd>
+                  <span className="text-xs text-muted-foreground/60 font-mono">
+                    B/A = {be.perNucleon.toFixed(3)} MeV/nucleon
+                  </span>
+                </div>
+              </dl>
+              <p className="text-xs text-muted-foreground mt-4 pt-3 border-t border-border">
+                <strong>Constants:</strong> aV = {BW_AV}, aS = {BW_AS}, aC ={" "}
+                {BW_AC}, aA = {BW_AA}, aP = {BW_AP} MeV. Iron-56 (~8.79
+                MeV/nucleon) peaks the curve — fusion releases energy up to Fe;
+                fission releases it beyond Fe.
+              </p>
+            </>
           )}
         </div>
 
-        {/* Legend */}
-        <div
-          className="flex flex-wrap gap-4 text-sm text-muted-foreground"
-          aria-label="Color legend"
-        >
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-block h-3 w-3 rounded-full bg-red-400"
-              aria-hidden="true"
-            />
-            Proton (positively charged)
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-block h-3 w-3 rounded-full bg-blue-400"
-              aria-hidden="true"
-            />
-            Neutron (no charge)
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-block h-3 w-3 rounded-full bg-amber-400"
-              aria-hidden="true"
-            />
-            α particle (He-4 nucleus)
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-block h-3 w-3 rounded-full bg-sky-400"
-              aria-hidden="true"
-            />
-            Electron (β⁻)
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-block h-3 w-3 rounded-full bg-pink-400"
-              aria-hidden="true"
-            />
-            Anti-neutrino / neutrino indicator
-          </div>
-          <p className="w-full text-xs mt-1">
-            Background color indicates proximity to valley of beta stability
-            (blue-purple = near valley, green = neutron-rich, orange =
-            proton-rich).
-            <br />
-            Tip: Click and drag to rotate · Scroll or ±buttons to zoom · Click
-            mini chart cells to jump to that isotope
+        {/* Decay key */}
+        <div className="rounded-xl border border-border bg-card/50 p-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
+          {[
+            { color: "#f87171", label: "Proton (Z, positive charge)" },
+            { color: "#60a5fa", label: "Neutron (N, no charge)" },
+            { color: "#fbbf24", label: "α particle (He-4, 2p + 2n)" },
+            { color: "#38bdf8", label: "β⁻ electron" },
+            { color: "#fb923c", label: "β⁺ positron" },
+            { color: "#e879f9", label: "Anti/neutrino" },
+          ].map(({ color, label }) => (
+            <div key={label} className="flex items-center gap-2">
+              <span
+                className="inline-block h-3 w-3 rounded-full flex-shrink-0"
+                style={{ background: color }}
+                aria-hidden="true"
+              />
+              <span className="text-xs">{label}</span>
+            </div>
+          ))}
+          <p className="w-full text-xs mt-1 text-muted-foreground/70">
+            Background gradient: blue-purple = near valley of stability · green
+            = neutron-rich · orange-red = proton-rich. Drag to rotate ·
+            Scroll/±buttons to zoom · Click mini chart cells to navigate
+            isotopes.
           </p>
         </div>
       </div>

@@ -25,6 +25,7 @@ import {
   Clock,
   Download,
   Factory,
+  Flame,
   FlaskConical,
   HeartPulse,
   History,
@@ -38,7 +39,7 @@ import {
   Zap,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Atom,
@@ -53,7 +54,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-function relativeTime(isoOrMs: string | number): string {
+export function relativeTime(isoOrMs: string | number): string {
   const ms =
     typeof isoOrMs === "number" ? isoOrMs : new Date(isoOrMs).getTime();
   const diffSec = Math.floor((Date.now() - ms) / 1000);
@@ -69,23 +70,38 @@ function relativeTime(isoOrMs: string | number): string {
   return `${diffMo} month${diffMo !== 1 ? "s" : ""} ago`;
 }
 
-function formatDuration(seconds: number): string {
+export function formatDuration(seconds: number): string {
   if (seconds < 60) return `${seconds}s`;
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return s > 0 ? `${m}m ${s}s` : `${m}m`;
 }
 
-function scoreColor(score: number): string {
+export function scoreColor(score: number): string {
   if (score >= 80) return "text-emerald-400";
   if (score >= 50) return "text-amber-400";
   return "text-rose-400";
 }
 
-function ringColor(score: number): string {
-  if (score >= 80) return "text-emerald-400";
-  if (score >= 50) return "text-amber-400";
-  return "text-rose-400";
+/** Calculate streak days: consecutive days with at least one quiz attempt */
+function calcStreakDays(quizHistory: Array<{ completedAt: number }>): number {
+  if (quizHistory.length === 0) return 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dayMs = 86400000;
+  // Collect unique day timestamps (floored to midnight)
+  const days = new Set(
+    quizHistory.map((h) => Math.floor(h.completedAt / dayMs) * dayMs),
+  );
+  let streak = 0;
+  let cursor = today.getTime();
+  // Check today and yesterday both as starting points
+  if (!days.has(cursor)) cursor -= dayMs;
+  while (days.has(cursor)) {
+    streak++;
+    cursor -= dayMs;
+  }
+  return streak;
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
@@ -104,7 +120,15 @@ function ProgressRing({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percent / 100) * circumference;
-  const color = bestScore > 0 ? ringColor(bestScore) : "text-primary";
+  const color =
+    bestScore >= 80
+      ? "text-emerald-400"
+      : bestScore >= 50
+        ? "text-amber-400"
+        : bestScore > 0
+          ? "text-rose-400"
+          : "text-primary";
+
   return (
     <svg width={size} height={size} aria-hidden="true" role="img">
       <circle
@@ -136,9 +160,7 @@ function ProgressRing({
 
 function TopicStatusBadge({
   status,
-}: {
-  status: "not-started" | "in-progress" | "completed";
-}) {
+}: { status: "not-started" | "in-progress" | "completed" }) {
   if (status === "completed")
     return (
       <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs">
@@ -185,7 +207,7 @@ function SyncStatusBadge({
         aria-live="polite"
       >
         <Save className="h-3 w-3" aria-hidden="true" />
-        Progress saved · {relativeTime(lastSyncTimestamp)}
+        Saved · {relativeTime(lastSyncTimestamp)}
       </span>
     );
   }
@@ -222,6 +244,7 @@ export default function LearningLab() {
       : 0;
   const topicsCompleted = allProgress.filter((p) => p.bestScore >= 80).length;
   const totalTopics = quizTopics.length;
+  const streakDays = useMemo(() => calcStreakDays(quizHistory), [quizHistory]);
 
   function getTopicStatus(
     topicId: string,
@@ -252,15 +275,23 @@ export default function LearningLab() {
         "Attempts",
         "Questions Attempted",
         "Last Attempt (ISO)",
+        "Status",
       ],
       ...quizTopics.map((t) => {
         const p = topicProgress[t.id];
+        const prog = topicProgress[t.id];
+        const st = !prog
+          ? "not-started"
+          : prog.bestScore >= 80
+            ? "completed"
+            : "in-progress";
         return [
           t.title,
           p ? String(p.bestScore) : "0",
           p ? String(p.attempts) : "0",
           p ? String(p.questionsAttempted) : "0",
           p ? p.lastAttempt : "",
+          st,
         ];
       }),
     ];
@@ -302,7 +333,7 @@ export default function LearningLab() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+        className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8"
         data-ocid="learning-lab.stats.section"
       >
         {[
@@ -314,13 +345,13 @@ export default function LearningLab() {
           },
           {
             label: "Questions Answered",
-            value: totalQuestionsAnswered,
+            value: totalQuestionsAnswered.toLocaleString(),
             icon: Target,
             color: "text-cyan-400",
           },
           {
             label: "Quiz Attempts",
-            value: totalAttempts,
+            value: totalAttempts.toLocaleString(),
             icon: BarChart3,
             color: "text-purple-400",
           },
@@ -329,6 +360,12 @@ export default function LearningLab() {
             value: avgAccuracy > 0 ? `${avgAccuracy}%` : "—",
             icon: CheckCircle2,
             color: "text-emerald-400",
+          },
+          {
+            label: "Day Streak",
+            value: streakDays > 0 ? `${streakDays}d 🔥` : "—",
+            icon: Flame,
+            color: "text-orange-400",
           },
         ].map((stat) => {
           const Icon = stat.icon;
@@ -578,7 +615,6 @@ export default function LearningLab() {
                     </Button>
                   )}
 
-                  {/* Per-topic reset (only shown if there's progress) */}
                   {attempts > 0 && (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>

@@ -4,8 +4,10 @@ import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
 import Fuse from "fuse.js";
 import {
+  AtomIcon,
   Calendar,
   ExternalLink,
+  Filter,
   Newspaper,
   Search,
   Tag,
@@ -72,6 +74,35 @@ const SORT_OPTIONS = [
 
 type SortOption = (typeof SORT_OPTIONS)[number]["value"];
 
+// Source badge colors keyed by source prefix
+const SOURCE_CONFIG: Record<string, { color: string; bg: string }> = {
+  IAEA: { color: "text-sky-300", bg: "bg-sky-950/50 border-sky-700/40" },
+  Nature: {
+    color: "text-emerald-300",
+    bg: "bg-emerald-950/50 border-emerald-700/40",
+  },
+  Science: {
+    color: "text-purple-300",
+    bg: "bg-purple-950/50 border-purple-700/40",
+  },
+  DOE: { color: "text-amber-300", bg: "bg-amber-950/50 border-amber-700/40" },
+  NRC: { color: "text-blue-300", bg: "bg-blue-950/50 border-blue-700/40" },
+  WNA: { color: "text-cyan-300", bg: "bg-cyan-950/50 border-cyan-700/40" },
+  FDA: { color: "text-rose-300", bg: "bg-rose-950/50 border-rose-700/40" },
+  NEJM: { color: "text-red-300", bg: "bg-red-950/50 border-red-700/40" },
+  MIT: {
+    color: "text-violet-300",
+    bg: "bg-violet-950/50 border-violet-700/40",
+  },
+};
+
+function getSourceBadgeStyle(source: string): { color: string; bg: string } {
+  for (const [prefix, style] of Object.entries(SOURCE_CONFIG)) {
+    if (source.includes(prefix)) return style;
+  }
+  return { color: "text-muted-foreground", bg: "bg-muted/40 border-border" };
+}
+
 // ── Fuse.js config ───────────────────────────────────────────────────────────
 const fuse = new Fuse(newsItems, {
   keys: [
@@ -101,6 +132,21 @@ function CategoryBadge({ category }: { category: NewsCategory }) {
   );
 }
 
+function SourceBadge({ source }: { source: string }) {
+  const style = getSourceBadgeStyle(source);
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold border",
+        style.bg,
+        style.color,
+      )}
+    >
+      {source}
+    </span>
+  );
+}
+
 function AudienceChip({ audience }: { audience: NewsItem["audience"] }) {
   const labels: Record<string, string> = {
     public: "General",
@@ -124,13 +170,7 @@ function AudienceChip({ audience }: { audience: NewsItem["audience"] }) {
   );
 }
 
-function NewsCard({
-  item,
-  index,
-}: {
-  item: NewsItem;
-  index: number;
-}) {
+function NewsCard({ item, index }: { item: NewsItem; index: number }) {
   return (
     <motion.article
       data-ocid={`news.item.${index + 1}`}
@@ -163,7 +203,7 @@ function NewsCard({
       {/* Tags */}
       {item.tags.length > 0 && (
         <div className="flex flex-wrap gap-1">
-          {item.tags.slice(0, 5).map((tag) => (
+          {item.tags.slice(0, 4).map((tag) => (
             <span
               key={tag}
               className="inline-flex items-center gap-0.5 rounded-md bg-muted px-1.5 py-0.5 text-xs text-muted-foreground"
@@ -176,17 +216,15 @@ function NewsCard({
       )}
 
       {/* Source + link */}
-      <div className="flex items-center justify-between pt-1 border-t border-border">
-        <span className="text-xs font-medium text-muted-foreground">
-          {item.source}
-        </span>
+      <div className="flex items-center justify-between pt-2 border-t border-border">
+        <SourceBadge source={item.source} />
         {item.url && (
           <a
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
             data-ocid={`news.source_link.${index + 1}`}
-            className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors font-medium"
             aria-label={`Open source for ${item.title} (opens in new tab)`}
           >
             View Source
@@ -261,9 +299,7 @@ function HeroCard({ item }: { item: NewsItem }) {
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-border">
-          <span className="text-xs font-medium text-muted-foreground">
-            {item.source}
-          </span>
+          <SourceBadge source={item.source} />
           {item.url && (
             <a
               href={item.url}
@@ -296,11 +332,9 @@ export default function NuclearNewsFeed() {
     "all" | "public" | "student" | "researcher"
   >("all");
 
-  // Derive stats
   const latestDate = newsItems.reduce((a, b) => (a.date > b.date ? a : b)).date;
   const categoryCount = new Set(newsItems.map((n) => n.category)).size;
 
-  // Filter + search + sort
   const filteredItems = useMemo(() => {
     let base: NewsItem[] =
       search.trim().length > 1
@@ -315,7 +349,6 @@ export default function NuclearNewsFeed() {
       base = base.filter((n) => n.audience === audienceFilter);
     }
 
-    // Apply audience store preference as soft suggestion (not hard filter)
     const audiencePriority: Record<string, number> = {
       public: 0,
       student: 1,
@@ -331,7 +364,6 @@ export default function NuclearNewsFeed() {
         if (catCmp !== 0) return catCmp;
         return b.date.localeCompare(a.date);
       }
-      // default tiebreak by audience relevance
       const aPrio = Math.abs(audiencePriority[a.audience] - preferredLevel);
       const bPrio = Math.abs(audiencePriority[b.audience] - preferredLevel);
       return aPrio - bPrio;
@@ -351,6 +383,15 @@ export default function NuclearNewsFeed() {
     "policy",
     "history",
   ];
+
+  const resetFilters = () => {
+    setSearch("");
+    setActiveCategory("all");
+    setAudienceFilter("all");
+  };
+
+  const hasActiveFilters =
+    search !== "" || activeCategory !== "all" || audienceFilter !== "all";
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 md:py-12" data-ocid="news.page">
@@ -374,15 +415,24 @@ export default function NuclearNewsFeed() {
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Calendar className="h-4 w-4 text-accent" aria-hidden="true" />
-          <span className="text-muted-foreground">Latest:</span>
-          <span className="font-semibold text-foreground">{latestDate}</span>
+          <span className="text-muted-foreground">Coverage:</span>
+          <span className="font-semibold text-foreground">2022–2024</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <Tag className="h-4 w-4 text-secondary" aria-hidden="true" />
+          <AtomIcon className="h-4 w-4 text-secondary" aria-hidden="true" />
           <span className="font-semibold text-foreground">{categoryCount}</span>
           <span className="text-muted-foreground">topic categories</span>
         </div>
+        <div className="flex items-center gap-2 text-sm">
+          <Filter
+            className="h-4 w-4 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <span className="text-muted-foreground">Latest:</span>
+          <span className="font-semibold text-foreground">{latestDate}</span>
+        </div>
       </section>
+
       <div className="mb-6 flex flex-col gap-4" data-ocid="news.controls">
         {/* Search */}
         <div className="relative">
@@ -440,9 +490,8 @@ export default function NuclearNewsFeed() {
           })}
         </fieldset>
 
-        {/* Second row: audience + sort */}
+        {/* Second row: audience + sort + reset */}
         <div className="flex flex-wrap items-center gap-3">
-          {/* Audience filter */}
           <fieldset className="flex items-center gap-1 rounded-lg border border-border bg-muted/30 p-1">
             <legend className="sr-only">Filter by audience</legend>
             {(["all", "public", "student", "researcher"] as const).map(
@@ -468,8 +517,18 @@ export default function NuclearNewsFeed() {
             )}
           </fieldset>
 
-          {/* Sort */}
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-3">
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                data-ocid="news.reset_filters_button"
+                className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+              >
+                <X className="h-3 w-3" />
+                Clear filters
+              </button>
+            )}
             <label
               htmlFor="news-sort"
               className="text-xs text-muted-foreground whitespace-nowrap"
@@ -547,11 +606,7 @@ export default function NuclearNewsFeed() {
             </div>
             <button
               type="button"
-              onClick={() => {
-                setSearch("");
-                setActiveCategory("all");
-                setAudienceFilter("all");
-              }}
+              onClick={resetFilters}
               data-ocid="news.reset_filters_button"
               className="rounded-lg border border-border bg-card px-4 py-2 text-sm text-foreground hover:border-primary/40 hover:text-primary transition-colors"
             >
@@ -589,3 +644,5 @@ export default function NuclearNewsFeed() {
     </div>
   );
 }
+
+export { CATEGORY_CONFIG, SORT_OPTIONS, newsItems };

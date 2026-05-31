@@ -52,52 +52,231 @@
     --sidebar-accent-foreground: 0.25 0 0;
     --sidebar-border: 0.88 0 0;
     --sidebar-ring: 0.6 0.05 240;
+
+    --element-actinide: 0.62 0.22 18;
+    --element-alkali-metal: 0.72 0.22 48;
+    --element-alkaline-earth: 0.68 0.16 48;
+    --element-halogen: 0.68 0.24 22;
+    --element-lanthanide: 0.68 0.2 326;
+    --element-metalloid: 0.62 0.16 192;
+    --element-noble-gas: 0.65 0.18 286;
+    --element-nonmetal: 0.72 0.18 192;
+    --element-post-transition: 0.65 0.12 240;
+    --element-transition-metal: 0.58 0.18 240;
+    --element-unknown: 0.45 0 0;
+    --heatmap-cividis-cold: 0.12 0.02 276;
+    --heatmap-cividis-hot: 0.96 0.08 110;
+    --heatmap-cividis-mid: 0.52 0.15 192;
+    --heatmap-inferno-cold: 0.08 0.01 0;
+    --heatmap-inferno-hot: 0.98 0.11 82;
+    --heatmap-inferno-mid: 0.45 0.22 18;
+    --heatmap-magma-cold: 0.06 0.01 0;
+    --heatmap-magma-hot: 0.9 0.2 22;
+    --heatmap-magma-mid: 0.5 0.26 276;
+    --heatmap-plasma-cold: 0.13 0.08 276;
+    --heatmap-plasma-hot: 0.96 0.13 89;
+    --heatmap-plasma-mid: 0.55 0.28 18;
+    --heatmap-turbo-cold: 0.35 0.15 240;
+    --heatmap-turbo-hot: 0.85 0.22 22;
+    --heatmap-turbo-mid: 0.65 0.2 120;
+    --heatmap-viridis-cold: 0.27 0.04 273;
+    --heatmap-viridis-hot: 0.92 0.14 96;
+    --heatmap-viridis-mid: 0.5 0.15 192;
+    --phase-gas: 0.72 0.2 48;
+    --phase-liquid: 0.65 0.18 192;
+    --phase-plasma: 0.68 0.24 326;
+    --phase-solid: 0.55 0.12 240;
+
+    --element-actinide-glow: 0.72 0.28 18;
+    --element-alkali-metal-glow: 0.86 0.28 48;
+    --element-alkaline-earth-glow: 0.78 0.22 48;
+    --element-halogen-glow: 0.78 0.32 22;
+    --element-lanthanide-glow: 0.78 0.26 326;
+    --element-metalloid-glow: 0.72 0.22 192;
+    --element-noble-gas-glow: 0.75 0.24 286;
+    --element-nonmetal-glow: 0.82 0.24 192;
+    --element-post-transition-glow: 0.75 0.18 240;
+    --element-transition-metal-glow: 0.68 0.24 240;
+    --heatmap-density-cold: 0.2 0.08 256;
+    --heatmap-density-hot: 0.88 0.26 18;
+    --heatmap-density-mid: 0.54 0.18 120;
+    --heatmap-abundance-cold: 0.25 0.06 200;
+    --heatmap-abundance-hot: 0.9 0.2 48;
+    --heatmap-abundance-mid: 0.58 0.16 120;
+    --heatmap-reactivity-cold: 0.3 0.1 240;
+    --heatmap-reactivity-hot: 0.85 0.28 22;
+    --heatmap-reactivity-mid: 0.6 0.22 45;
+    --heatmap-stability-cold: 0.18 0.04 276;
+    --heatmap-stability-hot: 0.92 0.18 96;
+    --heatmap-stability-mid: 0.55 0.12 192;
+    --heatmap-protanopia-cold: 0.25 0.12 256;
+    --heatmap-protanopia-hot: 0.92 0.16 96;
+    --heatmap-protanopia-mid: 0.6 0.14 120;
+    --heatmap-deuteranopia-cold: 0.2 0.08 300;
+    --heatmap-deuteranopia-hot: 0.88 0.18 50;
+    --heatmap-deuteranopia-mid: 0.55 0.12 180;
+    --periodic-tile-size: 3.5rem;
+    --periodic-tile-gap: 0.25rem;
+    --periodic-grid-padding: 1.5rem;
+    --periodic-hover-glow: 0 0 24px oklch(var(--primary) / 0.5), inset 0 0 12px
+      oklch(var(--primary) / 0.15);
+    --periodic-selection-ring: 0 0 32px oklch(var(--accent) / 0.6), inset 0 0
+      16px oklch(var(--accent) / 0.2);
+    --periodic-tile-transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --comparison-column-gap: 1rem;
+    --comparison-panel-inset: inset 0 0 16px oklch(var(--primary) / 0.15), inset
+      0 0 32px oklch(var(--primary) / 0.05);
+
+    --color-map-ocean: 0.08 0.02 260;
+    --color-reactor-active: 0.72 0.28 120;
+    --color-reactor-offline: 0.25 0 0;
+    --color-reactor-construction: 0.78 0.18 48;
+    --color-flux-low: 0.32 0.12 256;
+    --color-flux-mid: 0.58 0.2 192;
+    --color-flux-high: 0.85 0.24 22;
+    --color-critical: 0.68 0.26 18;
+    --color-fuel-cycle-step1: 0.55 0.14 48;
+    --color-fuel-cycle-step2: 0.62 0.16 120;
+    --color-fuel-cycle-step3: 0.68 0.18 240;
+    --color-fuel-cycle-step4: 0.72 0.2 276;
+    --color-history-marker: 0.82 0.16 48;
+    --transition-page: all 0.3s ease;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
-    --background: 0.09 0 0;
+    --background: 0.06 0 0;
     --foreground: 0.96 0 0;
-    --card: 0.12 0 0;
+    --card: 0.11 0 0;
     --card-foreground: 0.96 0 0;
-    --popover: 0.16 0 0;
+    --popover: 0.15 0 0;
     --popover-foreground: 0.96 0 0;
 
-    --primary: 0.75 0.2 256;
-    --primary-foreground: 0.09 0 0;
+    --primary: 0.75 0.22 256;
+    --primary-foreground: 0.06 0 0;
 
-    --secondary: 0.85 0.15 48;
-    --secondary-foreground: 0.09 0 0;
-    --muted: 0.18 0 0;
-    --muted-foreground: 0.58 0 0;
+    --secondary: 0.86 0.18 48;
+    --secondary-foreground: 0.06 0 0;
+    --muted: 0.17 0 0;
+    --muted-foreground: 0.6 0 0;
 
-    --accent: 0.72 0.25 286;
-    --accent-foreground: 0.09 0 0;
+    --accent: 0.74 0.28 286;
+    --accent-foreground: 0.06 0 0;
 
-    --destructive: 0.68 0.25 22;
-    --destructive-foreground: 0.09 0 0;
+    --destructive: 0.7 0.28 22;
+    --destructive-foreground: 0.06 0 0;
 
-    --border: 0.2 0 0;
-    --input: 0.18 0 0;
-    --ring: 0.75 0.2 256;
+    --border: 0.18 0 0;
+    --input: 0.16 0 0;
+    --ring: 0.75 0.22 256;
 
-    --chart-1: 0.72 0.25 22;
-    --chart-2: 0.68 0.22 120;
-    --chart-3: 0.75 0.18 90;
-    --chart-4: 0.72 0.25 286;
-    --chart-5: 0.68 0.22 48;
+    --chart-1: 0.74 0.28 22;
+    --chart-2: 0.7 0.24 120;
+    --chart-3: 0.76 0.2 90;
+    --chart-4: 0.74 0.28 286;
+    --chart-5: 0.7 0.24 48;
 
-    --status-live: 0.78 0.28 145;
-    --status-synced: 0.72 0.22 120;
-    --status-pending: 0.85 0.15 48;
+    --status-live: 0.8 0.32 145;
+    --status-synced: 0.74 0.25 120;
+    --status-pending: 0.86 0.18 48;
 
-    --sidebar: 0.12 0 0;
+    --sidebar: 0.11 0 0;
     --sidebar-foreground: 0.96 0 0;
-    --sidebar-primary: 0.75 0.2 256;
-    --sidebar-primary-foreground: 0.09 0 0;
-    --sidebar-accent: 0.18 0 0;
-    --sidebar-accent-foreground: 0.85 0 0;
-    --sidebar-border: 0.2 0 0;
-    --sidebar-ring: 0.75 0.2 256;
+    --sidebar-primary: 0.75 0.22 256;
+    --sidebar-primary-foreground: 0.06 0 0;
+    --sidebar-accent: 0.16 0 0;
+    --sidebar-accent-foreground: 0.86 0 0;
+    --sidebar-border: 0.18 0 0;
+    --sidebar-ring: 0.75 0.22 256;
+
+    --element-actinide: 0.72 0.28 18;
+    --element-actinide-glow: 0.82 0.35 18;
+    --element-alkali-metal: 0.82 0.28 48;
+    --element-alkali-metal-glow: 0.92 0.35 48;
+    --element-alkaline-earth: 0.78 0.22 48;
+    --element-alkaline-earth-glow: 0.88 0.28 48;
+    --element-halogen: 0.78 0.32 22;
+    --element-halogen-glow: 0.88 0.38 22;
+    --element-lanthanide: 0.78 0.26 326;
+    --element-lanthanide-glow: 0.88 0.32 326;
+    --element-metalloid: 0.72 0.22 192;
+    --element-metalloid-glow: 0.82 0.28 192;
+    --element-noble-gas: 0.75 0.24 286;
+    --element-noble-gas-glow: 0.85 0.3 286;
+    --element-nonmetal: 0.82 0.24 192;
+    --element-nonmetal-glow: 0.92 0.3 192;
+    --element-post-transition: 0.75 0.18 240;
+    --element-post-transition-glow: 0.85 0.24 240;
+    --element-transition-metal: 0.68 0.24 240;
+    --element-transition-metal-glow: 0.78 0.3 240;
+    --element-unknown: 0.5 0 0;
+    --heatmap-cividis-cold: 0.15 0.03 276;
+    --heatmap-cividis-hot: 0.98 0.1 110;
+    --heatmap-cividis-mid: 0.55 0.18 192;
+    --heatmap-inferno-cold: 0.1 0.02 0;
+    --heatmap-inferno-hot: 0.96 0.12 82;
+    --heatmap-inferno-mid: 0.5 0.25 18;
+    --heatmap-magma-cold: 0.08 0.02 0;
+    --heatmap-magma-hot: 0.88 0.22 22;
+    --heatmap-magma-mid: 0.55 0.28 276;
+    --heatmap-plasma-cold: 0.15 0.1 276;
+    --heatmap-plasma-hot: 0.94 0.15 89;
+    --heatmap-plasma-mid: 0.6 0.3 18;
+    --heatmap-turbo-cold: 0.4 0.18 240;
+    --heatmap-turbo-hot: 0.83 0.25 22;
+    --heatmap-turbo-mid: 0.68 0.22 120;
+    --heatmap-viridis-cold: 0.3 0.05 273;
+    --heatmap-viridis-hot: 0.9 0.16 96;
+    --heatmap-viridis-mid: 0.55 0.18 192;
+    --heatmap-density-cold: 0.25 0.1 256;
+    --heatmap-density-hot: 0.86 0.28 18;
+    --heatmap-density-mid: 0.58 0.2 120;
+    --heatmap-abundance-cold: 0.3 0.08 200;
+    --heatmap-abundance-hot: 0.88 0.22 48;
+    --heatmap-abundance-mid: 0.62 0.18 120;
+    --heatmap-reactivity-cold: 0.35 0.12 240;
+    --heatmap-reactivity-hot: 0.83 0.3 22;
+    --heatmap-reactivity-mid: 0.64 0.24 45;
+    --heatmap-stability-cold: 0.22 0.06 276;
+    --heatmap-stability-hot: 0.9 0.2 96;
+    --heatmap-stability-mid: 0.58 0.14 192;
+    --heatmap-protanopia-cold: 0.3 0.14 256;
+    --heatmap-protanopia-hot: 0.9 0.18 96;
+    --heatmap-protanopia-mid: 0.64 0.16 120;
+    --heatmap-deuteranopia-cold: 0.25 0.1 300;
+    --heatmap-deuteranopia-hot: 0.86 0.2 50;
+    --heatmap-deuteranopia-mid: 0.58 0.14 180;
+    --periodic-tile-size: 3.5rem;
+    --periodic-tile-gap: 0.25rem;
+    --periodic-grid-padding: 1.5rem;
+    --periodic-hover-glow: 0 0 24px oklch(var(--primary) / 0.5), inset 0 0 12px
+      oklch(var(--primary) / 0.15);
+    --periodic-selection-ring: 0 0 32px oklch(var(--accent) / 0.6), inset 0 0
+      16px oklch(var(--accent) / 0.2);
+    --periodic-tile-transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --comparison-column-gap: 1rem;
+    --comparison-panel-inset: inset 0 0 16px oklch(var(--primary) / 0.15), inset
+      0 0 32px oklch(var(--primary) / 0.05);
+    --phase-solid: 0.62 0.14 240;
+    --phase-liquid: 0.72 0.2 192;
+    --phase-gas: 0.8 0.24 48;
+    --phase-plasma: 0.76 0.3 326;
+
+    --color-map-ocean: 0.08 0.02 260;
+    --color-reactor-active: 0.82 0.32 120;
+    --color-reactor-offline: 0.3 0 0;
+    --color-reactor-construction: 0.86 0.22 48;
+    --color-flux-low: 0.42 0.15 256;
+    --color-flux-mid: 0.65 0.24 192;
+    --color-flux-high: 0.92 0.28 22;
+    --color-critical: 0.76 0.3 18;
+    --color-fuel-cycle-step1: 0.65 0.18 48;
+    --color-fuel-cycle-step2: 0.72 0.2 120;
+    --color-fuel-cycle-step3: 0.78 0.22 240;
+    --color-fuel-cycle-step4: 0.82 0.24 276;
+    --color-history-marker: 0.88 0.2 48;
+    --transition-page: all 0.3s ease;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   * {
@@ -111,7 +290,6 @@
 @font-face {
   font-family: "Space Grotesk";
   src: url("/assets/fonts/SpaceGrotesk.woff2") format("woff2");
-  font-weight: 400 700;
   font-display: swap;
 }
 
@@ -126,6 +304,18 @@
   font-family: "Geist Mono";
   src: url("/assets/fonts/GeistMono.woff2") format("woff2");
   font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "General Sans";
+  src: url("/assets/fonts/GeneralSans.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/assets/fonts/JetBrainsMono.woff2") format("woff2");
   font-display: swap;
 }
 
@@ -234,21 +424,23 @@
   /* 3D Reactor Visualization Enhanced Glows */
   .reactor-core-glow {
     @apply relative;
-    box-shadow: 0 0 32px oklch(var(--primary) / 0.5), inset 0 0 48px
-      oklch(var(--primary) / 0.15), 0 0 64px oklch(var(--secondary) / 0.2);
+    box-shadow: 0 0 48px oklch(var(--primary) / 0.6), inset 0 0 64px
+      oklch(var(--primary) / 0.2), inset 0 0 96px oklch(var(--primary) / 0.08),
+      0 0 96px oklch(var(--secondary) / 0.25);
   }
 
   .holo-text {
     @apply text-accent font-display font-bold tracking-wide;
-    text-shadow: 0 0 8px oklch(var(--accent) / 0.6), 0 0 16px
-      oklch(var(--accent) / 0.3);
+    text-shadow: 0 0 12px oklch(var(--accent) / 0.7), 0 0 24px
+      oklch(var(--accent) / 0.4), 0 0 36px oklch(var(--accent) / 0.15);
   }
 
   .holo-panel {
-    @apply backdrop-blur-sm border border-primary/30;
-    background-color: oklch(from var(--card) l c h / 0.85);
-    box-shadow: inset 0 0 12px oklch(var(--primary) / 0.1), 0 0 24px
-      oklch(var(--primary) / 0.2);
+    @apply backdrop-blur-md border border-primary/35;
+    background-color: oklch(from var(--card) l c h / 0.8);
+    box-shadow: inset 0 0 16px oklch(var(--primary) / 0.15), inset 0 0 32px
+      oklch(var(--primary) / 0.05), 0 0 32px oklch(var(--primary) / 0.25), 0 2px
+      8px rgba(0, 0, 0, 0.4);
   }
 
   .heatmap-cold {
@@ -274,12 +466,191 @@
 
   .timeline-handle {
     @apply absolute top-1/2 w-4 h-4 -translate-y-1/2 bg-accent rounded-full cursor-grab active:cursor-grabbing;
-    box-shadow: 0 0 12px oklch(var(--accent) / 0.5), 0 2px 8px
-      rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 16px oklch(var(--accent) / 0.65), 0 0 32px
+      oklch(var(--accent) / 0.3), 0 2px 12px rgba(0, 0, 0, 0.4);
   }
 
   .data-overlay-grid {
     @apply text-xs font-mono;
     color: oklch(from var(--foreground) l c h / 0.6);
+  }
+
+  .heatmap-tile {
+    @apply relative rounded-md p-3 text-center cursor-pointer transition-all duration-500;
+    border: 1px solid oklch(var(--primary) / 0.2);
+  }
+  .heatmap-tile:hover {
+    @apply shadow-lg;
+    box-shadow: 0 0 24px oklch(var(--primary) / 0.5), inset 0 0 12px
+      oklch(var(--primary) / 0.15);
+  }
+  .category-alkali-metal {
+    background-color: oklch(var(--element-alkali-metal));
+  }
+  .category-alkaline-earth {
+    background-color: oklch(var(--element-alkaline-earth));
+  }
+  .category-transition-metal {
+    background-color: oklch(var(--element-transition-metal));
+  }
+  .category-post-transition {
+    background-color: oklch(var(--element-post-transition));
+  }
+  .category-metalloid {
+    background-color: oklch(var(--element-metalloid));
+  }
+  .category-nonmetal {
+    background-color: oklch(var(--element-nonmetal));
+  }
+  .category-halogen {
+    background-color: oklch(var(--element-halogen));
+  }
+  .category-noble-gas {
+    background-color: oklch(var(--element-noble-gas));
+  }
+  .category-lanthanide {
+    background-color: oklch(var(--element-lanthanide));
+  }
+  .category-actinide {
+    background-color: oklch(var(--element-actinide));
+  }
+  .category-unknown {
+    background-color: oklch(var(--element-unknown));
+  }
+  .heatmap-transition {
+    @apply transition-colors duration-500 ease-out;
+  }
+  .phase-solid {
+    @apply relative inline-block px-2 py-0.5 rounded text-xs font-medium bg-cyan-900/40 text-cyan-200;
+  }
+  .phase-liquid {
+    @apply relative inline-block px-2 py-0.5 rounded text-xs font-medium bg-teal-900/40 text-teal-200;
+  }
+  .phase-gas {
+    @apply relative inline-block px-2 py-0.5 rounded text-xs font-medium bg-amber-900/40 text-amber-200;
+  }
+  .phase-plasma {
+    @apply relative inline-block px-2 py-0.5 rounded text-xs font-medium bg-pink-900/40 text-pink-200;
+  }
+  .heatmap-legend {
+    @apply relative h-8 rounded-full flex items-center shadow-card;
+    background: linear-gradient(
+      to right,
+      oklch(var(--heatmap-viridis-cold)),
+      oklch(var(--heatmap-viridis-mid)),
+      oklch(var(--heatmap-viridis-hot))
+    );
+  }
+}
+
+.periodic-grid {
+  @apply grid grid-cols-18 gap-1 p-6 bg-background overflow-auto;
+}
+
+.periodic-tile {
+  @apply relative flex flex-col items-center justify-center rounded-md p-3 text-center cursor-pointer transition-all duration-500 border border-primary/20 hover:shadow-lg;
+  width: var(--periodic-tile-size);
+  height: var(--periodic-tile-size);
+  box-shadow: var(--periodic-hover-glow) on hover;
+}
+
+.periodic-tile.selected {
+  @apply ring-2 ring-accent;
+  box-shadow: var(--periodic-selection-ring);
+}
+
+.periodic-tile-atomic {
+  @apply text-xs font-mono font-semibold opacity-70;
+}
+
+.periodic-tile-symbol {
+  @apply text-lg font-display font-bold;
+}
+
+.periodic-tile-name {
+  @apply text-xs opacity-60 truncate max-w-full;
+}
+
+.comparison-panel {
+  @apply fixed bottom-4 right-4 z-50 rounded-lg border border-primary/30 bg-card backdrop-blur-md max-w-2xl max-h-96 overflow-hidden shadow-elevated;
+  gap: var(--comparison-column-gap);
+  box-shadow: var(--comparison-panel-inset), 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.comparison-column {
+  @apply flex-1 flex flex-col gap-2 p-4 border-r border-primary/20 last:border-r-0;
+}
+
+.comparison-header {
+  @apply text-sm font-display font-bold mb-2 flex items-center gap-2;
+}
+
+.comparison-row {
+  @apply flex justify-between text-xs gap-2 py-1.5 px-1;
+  color: oklch(from var(--foreground) l c h / 0.7);
+}
+
+.heatmap-legend-enhanced {
+  @apply relative h-10 rounded-lg flex items-center shadow-card border border-primary/20 overflow-hidden;
+  background: linear-gradient(
+    to right,
+    oklch(var(--heatmap-viridis-cold)),
+    oklch(var(--heatmap-viridis-mid)),
+    oklch(var(--heatmap-viridis-hot))
+  );
+}
+
+.heatmap-mode-button {
+  @apply px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 border border-primary/30 hover:border-primary/60 hover:bg-primary/10;
+}
+
+.heatmap-mode-button.active {
+  @apply bg-primary text-primary-foreground border-primary shadow-lg;
+}
+
+.phase-badge-enhanced {
+  @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium;
+}
+
+@media print {
+  .no-print,
+  nav,
+  header,
+  footer,
+  .navbar,
+  [data-sidebar],
+  button:not(.print-visible),
+  .fixed,
+  .sticky {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  main,
+  article,
+  .content {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75rem;
+  }
+  .page-break-before {
+    page-break-before: always;
+  }
+  .page-break-after {
+    page-break-after: always;
+  }
+  canvas {
+    display: block !important;
+    max-width: 100% !important;
+  }
+  @page {
+    size: landscape;
+    margin: 1cm;
   }
 }

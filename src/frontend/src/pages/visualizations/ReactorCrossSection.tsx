@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { OrbitControls } from "@react-three/drei";
+import { Environment, Html, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Activity,
@@ -17,7 +17,7 @@ import {
   Thermometer,
   Zap,
 } from "lucide-react";
-import { useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import {
   Component,
   type ErrorInfo,
@@ -32,6 +32,11 @@ import {
   useState,
 } from "react";
 import * as THREE from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import InteractiveSimMode from "./InteractiveSimMode";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -49,15 +54,6 @@ interface ReactorSimState {
   neutronFluxDensity: number;
   coreAvgTemp: number;
   moderatorVoided: boolean;
-}
-
-interface HolographicLabel {
-  id: string;
-  text: string;
-  subtext?: string;
-  screenX: number;
-  screenY: number;
-  visible: boolean;
 }
 
 interface ParticleData {
@@ -170,9 +166,11 @@ const ROD_SPACING = 0.2;
 const FuelRodAssembly = memo(function FuelRodAssembly({
   neutronFlux,
   coreTemp,
+  powerLevel = 1800,
 }: {
   neutronFlux: number;
   coreTemp: number;
+  powerLevel?: number;
 }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const glowRef = useRef<THREE.InstancedMesh>(null);
@@ -204,9 +202,33 @@ const FuelRodAssembly = memo(function FuelRodAssembly({
     const t = clock.getElapsedTime();
     const glowIntensity = 0.5 + 0.5 * Math.sin(t * 2.5) * neutronFlux;
     const mat = glowRef.current.material as THREE.MeshStandardMaterial;
-    mat.emissiveIntensity = glowIntensity * 4 * neutronFlux + 0.5;
+
+    // Drive emissive color and intensity based on powerLevel (requirement #7)
+    const maxPower = 3400;
+    const powerT = Math.min(1, powerLevel / maxPower);
+    if (powerT < 0.5) {
+      // 0% → 50%: interpolate from #331100 (dim) to #ff6600 (orange)
+      const t2 = powerT * 2;
+      mat.emissive.setRGB(
+        0.2 + t2 * (1.0 - 0.2),
+        0.067 + t2 * (0.4 - 0.067),
+        0,
+      );
+      mat.emissiveIntensity = 0.3 + t2 * (0.8 - 0.3) + glowIntensity * 0.5;
+    } else {
+      // 50% → 100%: interpolate from #ff6600 to #ffaa00 (hot yellow-orange)
+      const t2 = (powerT - 0.5) * 2;
+      mat.emissive.setRGB(1.0, 0.4 + t2 * (0.667 - 0.4), 0);
+      mat.emissiveIntensity = 0.8 + t2 * (1.5 - 0.8) + glowIntensity * 0.8;
+    }
+
+    // Also factor in core temperature for fine-grain variation
     const tempT = Math.min(1, (coreTemp - 280) / 300);
-    mat.emissive = getTempColor(tempT);
+    mat.emissive = getTempColor(tempT * powerT);
+    mat.emissiveIntensity = Math.max(
+      mat.emissiveIntensity,
+      glowIntensity * 4 * neutronFlux + 0.5,
+    );
   });
 
   const fuelMat = useMemo(
@@ -476,6 +498,167 @@ const NeutronParticles = memo(function NeutronParticles({
   return <instancedMesh ref={meshRef} args={[geo, mat, NEUTRON_COUNT]} />;
 });
 
+// ─── Lissajous Orbit Neutron Flux Particles (600+) ───────────────────────────
+
+interface OrbitParam {
+  r: number;
+  freq: number;
+  phaseX: number;
+  phaseY: number;
+  phaseZ: number;
+}
+
+const LISSAJOUS_COUNT = 650;
+
+const LissajousOrbitParticles = memo(function LissajousOrbitParticles({
+  active,
+  flux,
+}: { active: boolean; flux: number }) {
+  const pointsRef = useRef<THREE.Points>(null);
+  const orbitParams = useRef<OrbitParam[]>([]);
+  const posArray = useRef<Float32Array | null>(null);
+
+  const geo = useMemo(() => {
+    const g = new THREE.BufferGeometry();
+    const positions = new Float32Array(LISSAJOUS_COUNT * 3);
+    posArray.current = positions;
+    g.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    return g;
+  }, []);
+
+  const mat = useMemo(
+    () =>
+      new THREE.PointsMaterial({
+        color: new THREE.Color(0xaaddff),
+        size: 0.05,
+        transparent: true,
+        opacity: 0.82,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        sizeAttenuation: true,
+      }),
+    [],
+  );
+
+  useEffect(() => {
+    orbitParams.current = Array.from({ length: LISSAJOUS_COUNT }, () => ({
+      r: 0.6 + Math.random() * 1.6,
+      freq: 0.4 + Math.random() * 1.2,
+      phaseX: Math.random() * Math.PI * 2,
+      phaseY: Math.random() * Math.PI * 2,
+      phaseZ: Math.random() * Math.PI * 2,
+    }));
+  }, []);
+
+  useFrame(({ clock }) => {
+    if (!pointsRef.current || !posArray.current) return;
+    if (!active || flux < 0.02) return;
+    const t = clock.getElapsedTime();
+    const params = orbitParams.current;
+    const pos = posArray.current;
+    for (let i = 0; i < LISSAJOUS_COUNT; i++) {
+      const p = params[i];
+      const idx = i * 3;
+      pos[idx] = p.r * Math.sin(t * p.freq + p.phaseX);
+      pos[idx + 1] = p.r * 0.55 * Math.cos(t * p.freq * 0.7 + p.phaseY);
+      pos[idx + 2] = p.r * Math.sin(t * p.freq * 1.3 + p.phaseZ);
+    }
+    (
+      pointsRef.current.geometry.attributes.position as THREE.BufferAttribute
+    ).needsUpdate = true;
+    mat.opacity = 0.5 + flux * 0.45;
+  });
+
+  return <points ref={pointsRef} geometry={geo} material={mat} />;
+});
+
+// ─── Cherenkov Sphere Glow (concentric spheres for core center) ───────────────
+
+const CherenkovSpherePulse = memo(function CherenkovSpherePulse({
+  flux,
+}: { flux: number }) {
+  const innerRef = useRef<THREE.Mesh>(null);
+  const midRef = useRef<THREE.Mesh>(null);
+  const outerRef = useRef<THREE.Mesh>(null);
+  const pointLightRef = useRef<THREE.PointLight>(null);
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    const pulse = 1.0 + Math.sin(t * 2) * 0.05;
+    if (innerRef.current) innerRef.current.scale.setScalar(pulse);
+    if (pointLightRef.current) {
+      pointLightRef.current.intensity =
+        3.0 + flux * 5.0 + Math.sin(t * 2) * 0.8;
+    }
+    const alpha = 0.08 + flux * 0.08;
+    if (innerRef.current)
+      (innerRef.current.material as THREE.MeshBasicMaterial).opacity =
+        alpha * 1.5;
+    if (midRef.current)
+      (midRef.current.material as THREE.MeshBasicMaterial).opacity =
+        alpha * 0.75;
+    if (outerRef.current)
+      (outerRef.current.material as THREE.MeshBasicMaterial).opacity =
+        alpha * 0.35;
+  });
+
+  const innerGeo = useMemo(() => new THREE.SphereGeometry(1.8, 32, 32), []);
+  const midGeo = useMemo(() => new THREE.SphereGeometry(2.8, 32, 32), []);
+  const outerGeo = useMemo(() => new THREE.SphereGeometry(4.0, 32, 32), []);
+
+  const innerMat = useMemo(
+    () =>
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(0x0066ff),
+        transparent: true,
+        opacity: 0.12,
+        side: THREE.BackSide,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }),
+    [],
+  );
+  const midMat = useMemo(
+    () =>
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(0x0066ff),
+        transparent: true,
+        opacity: 0.06,
+        side: THREE.BackSide,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }),
+    [],
+  );
+  const outerMat = useMemo(
+    () =>
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(0x0066ff),
+        transparent: true,
+        opacity: 0.025,
+        side: THREE.BackSide,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }),
+    [],
+  );
+
+  return (
+    <group position={[0, 0, 0]}>
+      <mesh ref={innerRef} geometry={innerGeo} material={innerMat} />
+      <mesh ref={midRef} geometry={midGeo} material={midMat} />
+      <mesh ref={outerRef} geometry={outerGeo} material={outerMat} />
+      <pointLight
+        ref={pointLightRef}
+        color={0x0066ff}
+        intensity={3.0}
+        distance={8}
+        decay={1.5}
+      />
+    </group>
+  );
+});
+
 // ─── Steam Particles ──────────────────────────────────────────────────────────
 
 const STEAM_COUNT = 35;
@@ -647,7 +830,13 @@ const PressureVessel = memo(function PressureVessel() {
 
 // ─── Coolant Pipes ────────────────────────────────────────────────────────────
 
-const CoolantPipes = memo(function CoolantPipes() {
+const CoolantPipes = memo(function CoolantPipes({
+  flux = 0.5,
+  active = true,
+}: {
+  flux?: number;
+  active?: boolean;
+}) {
   const pipeMat = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
@@ -659,6 +848,27 @@ const CoolantPipes = memo(function CoolantPipes() {
       }),
     [],
   );
+
+  const fluxRef = useRef(flux);
+  const activeRef = useRef(active);
+  useEffect(() => {
+    fluxRef.current = flux;
+  }, [flux]);
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
+
+  useFrame(({ clock }) => {
+    if (!activeRef.current) return;
+    const t = clock.getElapsedTime();
+    const f = fluxRef.current;
+    // "Flow pulse" traveling through pipes — emissive intensity oscillates
+    pipeMat.emissiveIntensity = 0.4 + f * (0.6 + 0.5 * Math.sin(t * 3.0));
+    // Color pulses between deep blue and bright cyan
+    const pulse = 0.5 + 0.5 * Math.sin(t * 2.5);
+    pipeMat.emissive.setRGB(0, pulse * 0.4 * f, 0.2 + pulse * 0.6 * f);
+  });
+
   const pipeGeo = useMemo(
     () => new THREE.TorusGeometry(1.4, 0.045, 8, 32, Math.PI * 0.6),
     [],
@@ -692,62 +902,111 @@ const CoolantPipes = memo(function CoolantPipes() {
 // ─── Cherenkov Glow Pool ──────────────────────────────────────────────────────
 
 const CherenkovGlow = memo(function CherenkovGlow({ flux }: { flux: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const diskRef = useRef<THREE.Mesh>(null);
+  const innerRef = useRef<THREE.Mesh>(null);
+  const midRef = useRef<THREE.Mesh>(null);
   const outerRef = useRef<THREE.Mesh>(null);
+  const diskRef = useRef<THREE.Mesh>(null);
+  const coneRef = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock }) => {
-    if (!meshRef.current || !diskRef.current || !outerRef.current) return;
+    if (
+      !innerRef.current ||
+      !midRef.current ||
+      !outerRef.current ||
+      !diskRef.current ||
+      !coneRef.current
+    )
+      return;
     const t = clock.getElapsedTime();
-    const intensity = (0.5 + 0.5 * Math.sin(t * 2.5)) * flux;
+    const pulse = 0.5 + 0.5 * Math.sin(t * 2.8);
+    const intensity = pulse * flux;
 
-    const mat = meshRef.current.material as THREE.MeshStandardMaterial;
-    mat.emissiveIntensity = intensity * 3.5 + 0.5;
-    mat.opacity = 0.35 + intensity * 0.4;
+    (
+      innerRef.current.material as THREE.MeshStandardMaterial
+    ).emissiveIntensity = 4.0 + intensity * 6.0;
+    (innerRef.current.material as THREE.MeshStandardMaterial).opacity =
+      0.55 + intensity * 0.3;
 
-    const dMat = diskRef.current.material as THREE.MeshStandardMaterial;
-    dMat.emissiveIntensity = intensity * 2.0;
-    dMat.opacity = 0.2 + intensity * 0.3;
+    (midRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity =
+      2.5 + intensity * 3.5;
+    (midRef.current.material as THREE.MeshStandardMaterial).opacity =
+      0.3 + intensity * 0.2;
 
-    const oMat = outerRef.current.material as THREE.MeshStandardMaterial;
-    oMat.emissiveIntensity = intensity * 1.5 + 0.2;
-    oMat.opacity = 0.1 + intensity * 0.15;
+    (
+      outerRef.current.material as THREE.MeshStandardMaterial
+    ).emissiveIntensity = 1.0 + intensity * 1.5;
+    (outerRef.current.material as THREE.MeshStandardMaterial).opacity =
+      0.1 + intensity * 0.12;
+
+    (diskRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity =
+      3.0 + intensity * 4.0;
+    (diskRef.current.material as THREE.MeshStandardMaterial).opacity =
+      0.35 + intensity * 0.25;
+
+    (coneRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity =
+      2.0 + intensity * 3.0;
+    coneRef.current.rotation.y = t * 0.3;
   });
 
-  const cylinderGeo = useMemo(
-    () => new THREE.CylinderGeometry(0.9, 0.9, 2.8, 32, 1, true),
+  const innerGeo = useMemo(
+    () => new THREE.CylinderGeometry(0.85, 0.85, 2.8, 48, 1, true),
     [],
   );
-  const outerCylGeo = useMemo(
-    () => new THREE.CylinderGeometry(1.2, 1.2, 3.0, 32, 1, true),
+  const midGeo = useMemo(
+    () => new THREE.CylinderGeometry(1.1, 1.1, 3.1, 48, 1, true),
     [],
   );
-  const diskGeo = useMemo(() => new THREE.CircleGeometry(0.9, 32), []);
+  const outerGeo = useMemo(
+    () => new THREE.CylinderGeometry(1.45, 1.45, 3.4, 48, 1, true),
+    [],
+  );
+  const diskGeo = useMemo(() => new THREE.CircleGeometry(0.85, 48), []);
+  const coneGeo = useMemo(
+    () => new THREE.ConeGeometry(0.9, 1.2, 32, 1, true),
+    [],
+  );
 
-  const glowMat = useMemo(
+  const innerMat = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: new THREE.Color(0x001133),
-        emissive: new THREE.Color(0x00c8ff),
-        emissiveIntensity: 2.0,
+        color: new THREE.Color(0x001020),
+        emissive: new THREE.Color(0x00e8ff),
+        emissiveIntensity: 5.0,
         transparent: true,
-        opacity: 0.45,
+        opacity: 0.55,
         side: THREE.DoubleSide,
         depthWrite: false,
+        blending: THREE.AdditiveBlending,
       }),
     [],
   );
 
-  const outerGlowMat = useMemo(
+  const midMat = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: new THREE.Color(0x000820),
-        emissive: new THREE.Color(0x0055ff),
-        emissiveIntensity: 1.0,
+        color: new THREE.Color(0x000810),
+        emissive: new THREE.Color(0x0066ff),
+        emissiveIntensity: 2.5,
         transparent: true,
-        opacity: 0.15,
+        opacity: 0.3,
         side: THREE.DoubleSide,
         depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }),
+    [],
+  );
+
+  const outerMat = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: new THREE.Color(0x000510),
+        emissive: new THREE.Color(0x0033cc),
+        emissiveIntensity: 1.0,
+        transparent: true,
+        opacity: 0.1,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
       }),
     [],
   );
@@ -756,25 +1015,48 @@ const CherenkovGlow = memo(function CherenkovGlow({ flux }: { flux: number }) {
     () =>
       new THREE.MeshStandardMaterial({
         color: new THREE.Color(0x000820),
-        emissive: new THREE.Color(0x0080ff),
-        emissiveIntensity: 1.5,
+        emissive: new THREE.Color(0x00aaff),
+        emissiveIntensity: 3.0,
         transparent: true,
-        opacity: 0.25,
+        opacity: 0.35,
         depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }),
+    [],
+  );
+
+  const coneMat = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: new THREE.Color(0x000510),
+        emissive: new THREE.Color(0x00ccff),
+        emissiveIntensity: 2.0,
+        transparent: true,
+        opacity: 0.2,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        wireframe: true,
       }),
     [],
   );
 
   return (
     <group>
-      <mesh ref={meshRef} geometry={cylinderGeo} material={glowMat} />
-      <mesh ref={outerRef} geometry={outerCylGeo} material={outerGlowMat} />
+      <mesh ref={innerRef} geometry={innerGeo} material={innerMat} />
+      <mesh ref={midRef} geometry={midGeo} material={midMat} />
+      <mesh ref={outerRef} geometry={outerGeo} material={outerMat} />
       <mesh
         ref={diskRef}
         geometry={diskGeo}
         material={diskMat}
         position={[0, 1.4, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
+      />
+      <mesh
+        ref={coneRef}
+        geometry={coneGeo}
+        material={coneMat}
+        position={[0, 1.8, 0]}
       />
     </group>
   );
@@ -791,22 +1073,25 @@ const CoreLighting = memo(function CoreLighting({
 }) {
   const coreRef = useRef<THREE.PointLight>(null);
   const hotRef = useRef<THREE.PointLight>(null);
+  const rimRef = useRef<THREE.PointLight>(null);
 
   useFrame(({ clock }) => {
-    if (!coreRef.current || !hotRef.current) return;
+    if (!coreRef.current || !hotRef.current || !rimRef.current) return;
     const t = clock.getElapsedTime();
     const pulse = 0.5 + 0.5 * Math.sin(t * 2.5);
-    const baseIntensity = (0.8 + pulse * 0.8) * flux * (powerLevel / 3000) * 6;
-    coreRef.current.intensity = baseIntensity;
-    hotRef.current.intensity = baseIntensity * 0.8;
+    const baseIntensity = (0.8 + pulse * 0.8) * flux * (powerLevel / 3000) * 8;
+    coreRef.current.intensity = baseIntensity + 1.5;
+    hotRef.current.intensity = baseIntensity * 0.6 + 0.8;
+    rimRef.current.intensity = 0.6 + flux * 0.8;
   });
 
   return (
     <>
+      {/* Key light — warm top */}
       <directionalLight
-        position={[5, 8, 4]}
-        intensity={2.8}
-        color={0xfff5e0}
+        position={[6, 10, 5]}
+        intensity={3.2}
+        color={0xfff0e0}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-far={30}
@@ -815,37 +1100,48 @@ const CoreLighting = memo(function CoreLighting({
         shadow-camera-top={8}
         shadow-camera-bottom={-8}
       />
+      {/* Fill light — cool blue */}
       <directionalLight
-        position={[-4, 2, -3]}
-        intensity={0.7}
-        color={0x6090ff}
+        position={[-5, 2, -4]}
+        intensity={0.9}
+        color={0x4488cc}
       />
+      {/* Back rim light — teal for metallic edge highlights */}
       <directionalLight
-        position={[0, -3, 5]}
-        intensity={0.35}
-        color={0x0088cc}
+        position={[0, -4, -6]}
+        intensity={0.5}
+        color={0x00aadd}
       />
-      {/* Cherenkov blue core light */}
+      {/* Cherenkov core light — pulsing blue */}
       <pointLight
         ref={coreRef}
         position={[0, 0, 0]}
         color={0x00c8ff}
-        intensity={3}
-        distance={8}
-        decay={2}
+        intensity={4}
+        distance={9}
+        decay={1.8}
         castShadow
       />
-      {/* Hot orange center */}
+      {/* Hot fuel glow — orange */}
       <pointLight
         ref={hotRef}
-        position={[0, 0.5, 0]}
-        color={0xff8800}
-        intensity={2}
-        distance={5}
+        position={[0, 0.3, 0]}
+        color={0xff7000}
+        intensity={2.5}
+        distance={6}
         decay={2}
       />
-      {/* Ambient */}
-      <ambientLight intensity={0.06} color={0x0a1a2a} />
+      {/* Rim accent — teal */}
+      <pointLight
+        ref={rimRef}
+        position={[-3, 1, -3]}
+        color={0x00ffcc}
+        intensity={1.0}
+        distance={8}
+        decay={2}
+      />
+      {/* Soft ambient */}
+      <ambientLight intensity={0.04} color={0x050f18} />
     </>
   );
 });
@@ -859,9 +1155,145 @@ function SceneSetup() {
     gl.shadowMap.type = THREE.PCFSoftShadowMap;
     gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     gl.toneMapping = THREE.ACESFilmicToneMapping;
-    gl.toneMappingExposure = 1.2;
+    gl.toneMappingExposure = 1.4;
   }, [gl]);
   return null;
+}
+
+// ─── Unreal Bloom Post-Processing ─────────────────────────────────────────────
+
+function BloomComposer({ strength }: { strength: number }) {
+  const { gl, scene, camera, size } = useThree();
+  const composerRef = useRef<EffectComposer | null>(null);
+
+  useEffect(() => {
+    const composer = new EffectComposer(gl);
+    composer.setSize(size.width, size.height);
+    const renderPass = new RenderPass(scene, camera);
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(size.width, size.height),
+      strength, // intensity — boosted to 2.0+
+      0.8, // radius — wider bloom halo
+      0.15, // luminance threshold — picks up more glow sources
+    );
+    const outputPass = new OutputPass();
+    composer.addPass(renderPass);
+    composer.addPass(bloomPass);
+    composer.addPass(outputPass);
+    composerRef.current = composer;
+    return () => {
+      composer.dispose();
+      composerRef.current = null;
+    };
+  }, [gl, scene, camera, size, strength]);
+
+  useEffect(() => {
+    if (!composerRef.current) return;
+    const bloomPass = composerRef.current.passes[1] as UnrealBloomPass;
+    if (bloomPass && "strength" in bloomPass) {
+      bloomPass.strength = strength;
+    }
+  }, [strength]);
+
+  useFrame(() => {
+    if (composerRef.current) {
+      gl.autoClear = false;
+      composerRef.current.render();
+    }
+  }, 1);
+
+  return null;
+}
+
+// ─── Floating HUD Label (3D-space) ────────────────────────────────────────────
+
+function HudLabel3D({
+  position,
+  label,
+  sub,
+  value,
+  color = "#00d4ff",
+}: {
+  position: [number, number, number];
+  label: string;
+  sub?: string;
+  value?: string;
+  color?: string;
+}) {
+  return (
+    <Html
+      position={position}
+      distanceFactor={8}
+      zIndexRange={[10, 0]}
+      style={{ pointerEvents: "none" }}
+    >
+      <div
+        style={{
+          background: "rgba(0,8,20,0.88)",
+          border: `1px solid ${color}55`,
+          borderLeft: `2px solid ${color}`,
+          borderRadius: "4px",
+          padding: "4px 8px",
+          minWidth: "100px",
+          backdropFilter: "blur(4px)",
+          boxShadow: `0 0 12px ${color}22`,
+          whiteSpace: "nowrap",
+        }}
+      >
+        <div
+          style={{
+            color,
+            fontSize: "9px",
+            fontFamily: "monospace",
+            fontWeight: 700,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            lineHeight: 1.3,
+            textShadow: `0 0 8px ${color}`,
+          }}
+        >
+          {label}
+          {value && (
+            <span
+              style={{
+                color: "#ffffff",
+                marginLeft: "6px",
+                fontSize: "10px",
+              }}
+            >
+              {value}
+            </span>
+          )}
+        </div>
+        {sub && (
+          <div
+            style={{
+              color: "rgba(180,200,220,0.65)",
+              fontSize: "8px",
+              fontFamily: "monospace",
+              marginTop: "1px",
+              lineHeight: 1.2,
+            }}
+          >
+            {sub}
+          </div>
+        )}
+        <div
+          style={{
+            position: "absolute",
+            left: "-6px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: "4px",
+            height: "4px",
+            borderRadius: "50%",
+            background: color,
+            boxShadow: `0 0 6px ${color}`,
+          }}
+        />
+      </div>
+    </Html>
+  );
 }
 
 // ─── Main 3D Scene ────────────────────────────────────────────────────────────
@@ -869,35 +1301,93 @@ function SceneSetup() {
 const ReactorScene = memo(function ReactorScene({
   sim,
   reducedMotion,
+  showLabels,
 }: {
   sim: ReactorSimState;
   reducedMotion: boolean;
+  showLabels: boolean;
 }) {
   const active = sim.isPlaying && !reducedMotion;
+  // Boost bloom to 2.0+ for cinematic UE5 feel
+  const bloomStrength = 2.0 + sim.neutronFluxDensity * 0.8;
 
   return (
     <>
       <SceneSetup />
-      <fog attach="fog" args={[0x030810, 10, 28]} />
+      <BloomComposer strength={bloomStrength} />
+      <fog attach="fog" args={[0x020609, 12, 30]} />
+      <Environment preset="night" />
       <CoreLighting flux={sim.neutronFluxDensity} powerLevel={sim.powerLevel} />
       <PressureVessel />
-      <CoolantPipes />
+      <CoolantPipes flux={sim.neutronFluxDensity} active={active} />
       <FuelRodAssembly
         neutronFlux={sim.neutronFluxDensity}
         coreTemp={sim.coreAvgTemp}
+        powerLevel={sim.powerLevel}
       />
       <ControlRods insertion={sim.controlRodInsertion} />
+      {/* Volumetric Cherenkov cylinder layers */}
       <CherenkovGlow flux={sim.neutronFluxDensity} />
+      {/* Concentric sphere Cherenkov halos at core center */}
+      <CherenkovSpherePulse flux={sim.neutronFluxDensity} />
       <CoolantParticles flux={sim.neutronFluxDensity} active={active} />
       <NeutronParticles flux={sim.neutronFluxDensity} active={active} />
+      {/* 650 Lissajous-orbit neutron flux particles */}
+      <LissajousOrbitParticles active={active} flux={sim.neutronFluxDensity} />
       <SteamParticles active={active && sim.coolantTempOut > 320} />
+
+      {/* 3D HUD labels anchored in world space */}
+      {showLabels && (
+        <>
+          <HudLabel3D
+            position={[1.2, 0.2, 0.8]}
+            label="FUEL ROD ARRAY"
+            sub="UO₂ Zircaloy-4 Clad"
+            color="#ffa040"
+          />
+          <HudLabel3D
+            position={[0.4, 2.1, 0.4]}
+            label="CONTROL RODS"
+            sub="B₄C Neutron Absorber"
+            value={`${sim.controlRodInsertion}%`}
+            color="#cc88ff"
+          />
+          <HudLabel3D
+            position={[-1.8, -0.5, 0.8]}
+            label="PRIMARY COOLANT"
+            sub="H₂O @ 15.5 MPa"
+            value={`${sim.coolantTempOut.toFixed(0)}°C`}
+            color="#00d4ff"
+          />
+          <HudLabel3D
+            position={[1.8, -0.2, -0.5]}
+            label="CHERENKOV GLOW"
+            sub="β⁻ → Čerenkov Radiation"
+            color="#0088ff"
+          />
+          <HudLabel3D
+            position={[-1.2, 0.8, -1.0]}
+            label="CORE SHROUD"
+            sub="316L Stainless Steel"
+            color="#44aacc"
+          />
+          <HudLabel3D
+            position={[0, -2.0, 1.5]}
+            label="THERMAL POWER"
+            sub="Fission Heat Output"
+            value={`${(sim.thermalPower / 1000).toFixed(2)} GWth`}
+            color="#ff6600"
+          />
+        </>
+      )}
+
       <OrbitControls
         enableDamping
         dampingFactor={0.05}
-        minPolarAngle={0.3}
-        maxPolarAngle={1.8}
+        minPolarAngle={0.2}
+        maxPolarAngle={1.9}
         minDistance={4}
-        maxDistance={18}
+        maxDistance={20}
         autoRotate={false}
         makeDefault
       />
@@ -906,143 +1396,6 @@ const ReactorScene = memo(function ReactorScene({
 });
 
 // ─── Holographic Labels ───────────────────────────────────────────────────────
-
-const HOLO_LABELS: HolographicLabel[] = [
-  {
-    id: "fuel",
-    text: "FUEL ROD ARRAY",
-    subtext: "UO₂ Zircaloy-4 Clad",
-    screenX: 55,
-    screenY: 42,
-    visible: true,
-  },
-  {
-    id: "control",
-    text: "CONTROL RODS",
-    subtext: "B₄C Neutron Absorber",
-    screenX: 52,
-    screenY: 22,
-    visible: true,
-  },
-  {
-    id: "coolant",
-    text: "PRIMARY COOLANT",
-    subtext: "H₂O @ 15.5 MPa",
-    screenX: 20,
-    screenY: 55,
-    visible: true,
-  },
-  {
-    id: "cherenkov",
-    text: "CHERENKOV GLOW",
-    subtext: "β⁻ → Čerenkov Radiation",
-    screenX: 72,
-    screenY: 35,
-    visible: true,
-  },
-  {
-    id: "shroud",
-    text: "CORE SHROUD",
-    subtext: "316L Stainless Steel",
-    screenX: 18,
-    screenY: 38,
-    visible: true,
-  },
-];
-
-function HoloLabels({ visible }: { visible: boolean }) {
-  if (!visible) return null;
-  return (
-    <div
-      className="absolute inset-0 pointer-events-none"
-      style={{ zIndex: 10 }}
-    >
-      {HOLO_LABELS.map((lbl) => (
-        <div
-          key={lbl.id}
-          className="absolute flex items-center gap-1.5"
-          style={{ left: `${lbl.screenX}%`, top: `${lbl.screenY}%` }}
-        >
-          <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-          <div
-            className="holo-panel px-2 py-1 rounded"
-            style={{ borderLeft: "1px solid oklch(0.72 0.25 286 / 0.6)" }}
-          >
-            <div className="holo-text text-[10px] leading-tight">
-              {lbl.text}
-            </div>
-            {lbl.subtext && (
-              <div className="text-[9px] text-muted-foreground font-mono opacity-70">
-                {lbl.subtext}
-              </div>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ─── Gauge Bar ────────────────────────────────────────────────────────────────
-
-function GaugeBar({
-  label,
-  value,
-  min,
-  max,
-  unit,
-  warnAbove,
-  dangerAbove,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  unit: string;
-  warnAbove?: number;
-  dangerAbove?: number;
-}) {
-  const pct = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
-  const isDanger = dangerAbove !== undefined && value > dangerAbove;
-  const isWarn = !isDanger && warnAbove !== undefined && value > warnAbove;
-  const barColor = isDanger ? "#ef4444" : isWarn ? "#f59e0b" : "#00d4ff";
-  const glowColor = isDanger
-    ? "rgba(239,68,68,0.5)"
-    : isWarn
-      ? "rgba(245,158,11,0.5)"
-      : "rgba(0,212,255,0.5)";
-
-  return (
-    <div className="mb-3">
-      <div className="flex justify-between items-center mb-1">
-        <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">
-          {label}
-        </span>
-        <span
-          className={`text-xs font-mono font-bold ${isDanger ? "text-red-400" : isWarn ? "text-amber-400" : "text-foreground"}`}
-        >
-          {typeof value === "number"
-            ? value.toFixed(value < 10 ? 3 : 0)
-            : value}{" "}
-          {unit}
-        </span>
-      </div>
-      <div
-        className="h-2 bg-muted/30 rounded-full overflow-hidden"
-        style={{ boxShadow: "inset 0 0 4px rgba(0,0,0,0.5)" }}
-      >
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{
-            width: `${pct}%`,
-            background: barColor,
-            boxShadow: `0 0 8px ${glowColor}`,
-          }}
-        />
-      </div>
-    </div>
-  );
-}
 
 // ─── Simulation Timeline ──────────────────────────────────────────────────────
 
@@ -2811,7 +3164,7 @@ export default function ReactorCrossSection() {
   const [showCompare, setShowCompare] = useState(false);
   const [showLabels, setShowLabels] = useState(true);
   const [activeTab, setActiveTab] = useState("technical");
-  const [viewMode, setViewMode] = useState<"classic" | "3d">("classic");
+  const [viewMode, setViewMode] = useState<"classic" | "3d" | "sim">("classic");
   const simTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [sim, setSim] = useState<ReactorSimState>(() => {
@@ -2869,13 +3222,6 @@ export default function ReactorCrossSection() {
     };
     setSim({ ...base, ...computeSimState(base) });
   }, []);
-
-  const keffColor =
-    sim.keff > 1.05
-      ? "text-red-400"
-      : sim.keff > 1.0
-        ? "text-amber-400"
-        : "text-primary";
 
   const fallback = (
     <div className="flex items-center justify-center h-full bg-card rounded-xl border border-border">
@@ -2958,6 +3304,19 @@ export default function ReactorCrossSection() {
         >
           🔷 3D Cinematic View
         </button>
+        <button
+          type="button"
+          onClick={() => setViewMode("sim")}
+          aria-pressed={viewMode === "sim"}
+          className={`px-5 py-2 rounded-lg text-sm font-mono font-bold transition-all duration-200 ${
+            viewMode === "sim"
+              ? "bg-primary text-primary-foreground shadow-md"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+          data-ocid="reactor.tab_sim_view"
+        >
+          🔬 Interactive Sim
+        </button>
       </div>
 
       {/* ── CLASSIC VIEW ── */}
@@ -2972,11 +3331,13 @@ export default function ReactorCrossSection() {
       {/* ── 3D CINEMATIC VIEW ── */}
       {viewMode === "3d" && (
         <div
-          className="relative rounded-xl overflow-hidden border border-border reactor-core-glow"
+          className="relative rounded-xl overflow-hidden border reactor-core-glow"
           style={{
-            minHeight: 600,
-            maxHeight: "80vh",
-            filter: "brightness(1.1) saturate(1.2)",
+            minHeight: 640,
+            maxHeight: "82vh",
+            borderColor: "rgba(0, 180, 255, 0.25)",
+            boxShadow:
+              "0 0 60px rgba(0, 100, 200, 0.2), 0 0 120px rgba(0, 50, 150, 0.1), inset 0 0 40px rgba(0, 30, 60, 0.3)",
           }}
           data-ocid="reactor.viewport_3d"
         >
@@ -2984,46 +3345,113 @@ export default function ReactorCrossSection() {
             <Suspense
               fallback={
                 <div className="absolute inset-0 flex items-center justify-center bg-card">
-                  <div className="text-center space-y-2">
-                    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-                    <p className="text-xs text-muted-foreground">
-                      Initializing Reactor Core…
+                  <div className="text-center space-y-3">
+                    <div className="relative mx-auto w-12 h-12">
+                      <div className="absolute inset-0 border-2 border-cyan-500/30 rounded-full animate-ping" />
+                      <div className="w-12 h-12 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                    <p className="text-xs text-muted-foreground font-mono tracking-widest">
+                      INITIALIZING REACTOR CORE…
+                    </p>
+                    <p className="text-[10px] text-muted-foreground/50 font-mono">
+                      Loading 3D engine & PBR materials
                     </p>
                   </div>
                 </div>
               }
             >
               <Canvas
-                camera={{ position: [5, 3.5, 7], fov: 42 }}
+                camera={{ position: [6, 4, 8], fov: 40 }}
+                gl={{ antialias: true, alpha: false }}
                 style={{
-                  height: "62vh",
-                  minHeight: 560,
-                  background: "#030810",
+                  height: "64vh",
+                  minHeight: 580,
+                  background:
+                    "radial-gradient(ellipse at 50% 60%, #020f1e 0%, #010608 60%, #000304 100%)",
                   display: "block",
                   width: "100%",
                 }}
                 shadows
               >
-                <ReactorScene sim={sim} reducedMotion={reducedMotion} />
+                <ReactorScene
+                  sim={sim}
+                  reducedMotion={reducedMotion}
+                  showLabels={showLabels}
+                />
               </Canvas>
             </Suspense>
           </WebGLErrorBoundary>
 
+          {/* Scan-line overlay for UE5 feel */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px)",
+              zIndex: 5,
+            }}
+            aria-hidden="true"
+          />
+
+          {/* Corner brackets — cinematic frame */}
+          {(
+            [
+              "top-2 left-2",
+              "top-2 right-2",
+              "bottom-2 left-2",
+              "bottom-2 right-2",
+            ] as const
+          ).map((pos, i) => (
+            <div
+              key={pos}
+              className={`absolute ${pos} w-8 h-8 pointer-events-none`}
+              style={{
+                borderTop: i < 2 ? "2px solid rgba(0,200,255,0.4)" : "none",
+                borderBottom: i >= 2 ? "2px solid rgba(0,200,255,0.4)" : "none",
+                borderLeft:
+                  i % 2 === 0 ? "2px solid rgba(0,200,255,0.4)" : "none",
+                borderRight:
+                  i % 2 === 1 ? "2px solid rgba(0,200,255,0.4)" : "none",
+                zIndex: 15,
+              }}
+              aria-hidden="true"
+            />
+          ))}
+
           {/* TOP-LEFT: Digital Twin Title */}
-          <div className="absolute top-3 left-3 z-20">
-            <div className="holo-panel rounded-lg px-3 py-2 flex items-center gap-2">
+          <div className="absolute top-4 left-4 z-20">
+            <div
+              className="rounded-lg px-3 py-2 flex items-center gap-2"
+              style={{
+                background: "rgba(0,8,20,0.85)",
+                border: "1px solid rgba(0,200,255,0.3)",
+                backdropFilter: "blur(8px)",
+                boxShadow: "0 0 20px rgba(0,100,200,0.2)",
+              }}
+            >
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <div>
-                <div className="holo-text text-xs font-mono tracking-widest">
+                <div
+                  className="text-xs font-mono tracking-widest"
+                  style={{
+                    color: "#00d4ff",
+                    textShadow: "0 0 10px rgba(0,212,255,0.8)",
+                    letterSpacing: "0.18em",
+                  }}
+                >
                   3D REACTOR DIGITAL TWIN
                 </div>
-                <div className="text-[9px] text-muted-foreground font-mono">
+                <div className="text-[9px] text-muted-foreground font-mono opacity-70">
                   {REACTOR_TYPE_DATA[sim.reactorType].full}
                 </div>
               </div>
               <Badge
                 variant="outline"
-                className="text-[9px] border-emerald-500/40 text-emerald-400 ml-2"
+                className="text-[9px] ml-2"
+                style={{
+                  borderColor: "rgba(52,211,153,0.5)",
+                  color: "#34d399",
+                }}
               >
                 ONLINE
               </Badge>
@@ -3032,28 +3460,55 @@ export default function ReactorCrossSection() {
 
           {/* TOP-RIGHT: Command Center Panel */}
           <div
-            className="absolute top-3 right-3 z-20 w-52"
+            className="absolute top-4 right-4 z-20 w-56"
             data-ocid="reactor.command_panel"
           >
-            <div className="holo-panel rounded-lg p-3 space-y-1.5">
-              <div className="holo-text text-[9px] font-mono tracking-widest mb-2">
-                COMMAND CENTER
+            <div
+              className="rounded-lg p-3 space-y-1.5"
+              style={{
+                background: "rgba(0,8,20,0.88)",
+                border: "1px solid rgba(0,200,255,0.25)",
+                backdropFilter: "blur(8px)",
+                boxShadow: "0 0 24px rgba(0,80,160,0.2)",
+              }}
+            >
+              <div
+                className="text-[9px] font-mono tracking-widest mb-2 pb-1.5"
+                style={{
+                  color: "#00d4ff",
+                  borderBottom: "1px solid rgba(0,200,255,0.15)",
+                  textShadow: "0 0 8px rgba(0,212,255,0.6)",
+                }}
+              >
+                ▸ COMMAND CENTER
               </div>
-              <div className="data-overlay-grid space-y-1.5">
+              <div className="space-y-1.5">
                 {[
                   {
                     label: "CORE TEMP:",
                     val: `${sim.coreAvgTemp.toFixed(0)}°C`,
+                    color: "#ff8040",
                   },
                   {
                     label: "POWER OUTPUT:",
                     val: `${(sim.thermalPower / 1000).toFixed(2)} GWth`,
+                    color: "#ffdd00",
                   },
                   {
                     label: "COOLANT FLOW:",
                     val: `${(sim.coolantFlow / 1000).toFixed(1)}k kg/s`,
+                    color: "#00d4ff",
                   },
-                  { label: "keff:", val: sim.keff.toFixed(4), highlight: true },
+                  {
+                    label: "keff:",
+                    val: sim.keff.toFixed(4),
+                    color:
+                      sim.keff > 1.05
+                        ? "#ef4444"
+                        : sim.keff > 0.99
+                          ? "#f59e0b"
+                          : "#00d4ff",
+                  },
                   {
                     label: "STATUS:",
                     val:
@@ -3062,12 +3517,32 @@ export default function ReactorCrossSection() {
                         : sim.keff > 0.99
                           ? "OPERATIONAL"
                           : "SUBCRITICAL",
+                    color:
+                      sim.keff > 1.05
+                        ? "#ef4444"
+                        : sim.keff > 0.99
+                          ? "#34d399"
+                          : "#94a3b8",
                   },
-                ].map(({ label, val, highlight }) => (
-                  <div key={label} className="flex justify-between">
-                    <span className="text-muted-foreground">{label}</span>
+                  {
+                    label: "NEUTRON FLUX:",
+                    val: `${(sim.neutronFluxDensity * 3e13).toExponential(1)}`,
+                    color: "#88eeff",
+                  },
+                ].map(({ label, val, color }) => (
+                  <div
+                    key={label}
+                    className="flex justify-between items-center"
+                  >
                     <span
-                      className={`font-bold ${highlight ? keffColor : "text-foreground"}`}
+                      className="text-[9px] font-mono"
+                      style={{ color: "rgba(150,190,220,0.7)" }}
+                    >
+                      {label}
+                    </span>
+                    <span
+                      className="text-[10px] font-mono font-bold"
+                      style={{ color, textShadow: `0 0 6px ${color}66` }}
                     >
                       {val}
                     </span>
@@ -3077,53 +3552,233 @@ export default function ReactorCrossSection() {
             </div>
           </div>
 
-          {/* RIGHT: Core Physics Gauges */}
+          {/* RIGHT: Core Physics Gauges — circular SVG arc gauges */}
           <div
-            className="absolute top-1/2 -translate-y-1/2 right-3 z-20 w-48"
+            className="absolute top-1/2 -translate-y-1/2 right-4 z-20 w-48"
             data-ocid="reactor.gauges_panel"
           >
-            <div className="holo-panel rounded-lg p-3">
-              <div className="holo-text text-[9px] font-mono tracking-widest mb-2">
-                CORE PHYSICS
+            <div
+              className="rounded-lg p-3"
+              style={{
+                background: "rgba(0,8,20,0.85)",
+                border: "1px solid rgba(0,200,255,0.2)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              <div
+                className="text-[9px] font-mono tracking-widest mb-3 pb-1.5"
+                style={{
+                  color: "#00d4ff",
+                  borderBottom: "1px solid rgba(0,200,255,0.12)",
+                }}
+              >
+                ▸ CORE PHYSICS
               </div>
-              <GaugeBar
-                label="keff"
-                value={sim.keff}
-                min={0.8}
-                max={1.2}
-                unit=""
-                warnAbove={1.0}
-                dangerAbove={1.05}
-              />
-              <GaugeBar
-                label="Thermal Power"
-                value={sim.thermalPower}
-                min={0}
-                max={3600}
-                unit="MWth"
-                warnAbove={3200}
-              />
-              <GaugeBar
-                label="Coolant Flow"
-                value={sim.coolantFlow}
-                min={0}
-                max={20000}
-                unit="kg/s"
-              />
-              <GaugeBar
-                label="Core Avg Temp"
-                value={sim.coreAvgTemp}
-                min={280}
-                max={580}
-                unit="°C"
-                warnAbove={500}
-                dangerAbove={550}
-              />
+              {/* 2×2 SVG arc gauge grid */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  {
+                    label: "REACTIVITY",
+                    pct: Math.min(
+                      100,
+                      Math.max(0, ((sim.keff - 0.8) / 0.4) * 100),
+                    ),
+                    display: sim.keff.toFixed(3),
+                    color:
+                      sim.keff > 1.05
+                        ? "#ef4444"
+                        : sim.keff > 0.99
+                          ? "#f59e0b"
+                          : "#00d4ff",
+                  },
+                  {
+                    label: "THERMAL PWR",
+                    pct: Math.min(100, (sim.thermalPower / 3600) * 100),
+                    display: `${(sim.thermalPower / 1000).toFixed(1)}GW`,
+                    color: "#ff8800",
+                  },
+                  {
+                    label: "CORE TEMP",
+                    pct: Math.min(
+                      100,
+                      Math.max(0, ((sim.coreAvgTemp - 280) / 300) * 100),
+                    ),
+                    display: `${sim.coreAvgTemp.toFixed(0)}°`,
+                    color: sim.coreAvgTemp > 500 ? "#ef4444" : "#ff6622",
+                  },
+                  {
+                    label: "COOLANT",
+                    pct: Math.min(100, (sim.coolantFlow / 20000) * 100),
+                    display: `${(sim.coolantFlow / 1000).toFixed(0)}k`,
+                    color: "#00aaff",
+                  },
+                ].map(({ label, pct, display, color }) => {
+                  // SVG arc gauge: 270° sweep, starts at -225°
+                  const R = 28;
+                  const cx = 40;
+                  const cy = 40;
+                  const startAngle = -225 * (Math.PI / 180);
+                  const totalAngle = 270 * (Math.PI / 180);
+                  const endAngle = startAngle + (pct / 100) * totalAngle;
+                  const bgEnd = startAngle + totalAngle;
+                  const bgX = cx + R * Math.cos(bgEnd);
+                  const bgY = cy + R * Math.sin(bgEnd);
+                  const fgX = cx + R * Math.cos(endAngle);
+                  const fgY = cy + R * Math.sin(endAngle);
+                  const startX = cx + R * Math.cos(startAngle);
+                  const startY = cy + R * Math.sin(startAngle);
+                  const fgLargeArc = (pct / 100) * 270 > 180 ? 1 : 0;
+                  return (
+                    <div key={label} className="flex flex-col items-center">
+                      <svg width="80" height="80" viewBox="0 0 80 80">
+                        <title>{label} gauge</title>
+                        {/* Background arc */}
+                        <path
+                          d={`M ${startX.toFixed(2)},${startY.toFixed(2)} A ${R},${R} 0 1 1 ${bgX.toFixed(2)},${bgY.toFixed(2)}`}
+                          fill="none"
+                          stroke="rgba(255,255,255,0.1)"
+                          strokeWidth="5"
+                          strokeLinecap="round"
+                        />
+                        {/* Foreground arc */}
+                        {pct > 0 && (
+                          <path
+                            d={`M ${startX.toFixed(2)},${startY.toFixed(2)} A ${R},${R} 0 ${fgLargeArc} 1 ${fgX.toFixed(2)},${fgY.toFixed(2)}`}
+                            fill="none"
+                            stroke={color}
+                            strokeWidth="5"
+                            strokeLinecap="round"
+                            style={{ filter: `drop-shadow(0 0 4px ${color})` }}
+                          />
+                        )}
+                        {/* Center value text */}
+                        <text
+                          x={cx}
+                          y={cy + 4}
+                          textAnchor="middle"
+                          fontSize="10"
+                          fontFamily="monospace"
+                          fontWeight="bold"
+                          fill={color}
+                        >
+                          {display}
+                        </text>
+                      </svg>
+                      <span
+                        className="text-[8px] font-mono text-center leading-tight"
+                        style={{ color: "rgba(150,190,220,0.7)" }}
+                      >
+                        {label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
-          {/* Holographic Labels */}
-          <HoloLabels visible={showLabels} />
+          {/* HOLOGRAPHIC HUD OVERLAY — Framer Motion pulsing labels */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              pointerEvents: "none",
+              zIndex: 10,
+            }}
+            aria-hidden="true"
+          >
+            {[
+              {
+                label: "CORE TEMP",
+                value: `${(320 + sim.powerLevel / 60).toFixed(0)}°C`,
+                style: { top: "20%", left: "5%" },
+                color: "#ff8040",
+              },
+              {
+                label: "NEUTRON FLUX",
+                value: `${(sim.neutronFluxDensity * 3.2e13).toExponential(1)} n/cm²s`,
+                style: { top: "15%", right: "22%" },
+                color: "#88eeff",
+              },
+              {
+                label: "COOLANT FLOW",
+                value: `${(60 + sim.powerLevel / 5).toFixed(0)} m³/s`,
+                style: { bottom: "28%", left: "5%" },
+                color: "#00d4ff",
+              },
+              {
+                label: "THERMAL POWER",
+                value: `${Math.round((sim.powerLevel / 3400) * 3200)} MWth`,
+                style: { bottom: "22%", right: "22%" },
+                color: "#ffaa00",
+              },
+            ].map(({ label, value, style, color }) => (
+              <motion.div
+                key={label}
+                className="absolute font-mono"
+                style={{
+                  ...style,
+                  background: "rgba(0,0,0,0.6)",
+                  border: `1px solid ${color}55`,
+                  borderLeft: `2px solid ${color}`,
+                  borderRadius: "4px",
+                  padding: "6px 10px",
+                  backdropFilter: "blur(4px)",
+                  boxShadow: `0 0 16px ${color}22`,
+                }}
+                animate={{ opacity: [0.7, 1.0, 0.7] }}
+                transition={{
+                  duration: 2,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                }}
+              >
+                <div
+                  style={{
+                    color: color,
+                    fontSize: "9px",
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase" as const,
+                  }}
+                >
+                  {label}
+                </div>
+                <div
+                  style={{
+                    color: "#ffffff",
+                    fontWeight: 700,
+                    fontSize: "11px",
+                    textShadow: `0 0 8px ${color}`,
+                  }}
+                >
+                  {value}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* BOTTOM-LEFT: labels toggle */}
+          <div className="absolute bottom-16 left-4 z-20">
+            <button
+              type="button"
+              onClick={() => setShowLabels((v) => !v)}
+              className="text-[9px] font-mono px-2.5 py-1.5 rounded"
+              style={{
+                background: showLabels
+                  ? "rgba(0,200,255,0.15)"
+                  : "rgba(0,8,20,0.7)",
+                border: "1px solid rgba(0,200,255,0.25)",
+                color: showLabels ? "#00d4ff" : "rgba(0,200,255,0.4)",
+                backdropFilter: "blur(4px)",
+              }}
+              data-ocid="reactor.toggle_labels_3d"
+            >
+              {showLabels ? "◉ LABELS ON" : "○ LABELS OFF"}
+            </button>
+          </div>
 
           {/* BOTTOM: Timeline */}
           <div className="absolute bottom-0 left-0 right-0 z-20 p-3">
@@ -3428,6 +4083,11 @@ export default function ReactorCrossSection() {
           </div>
         </div>
       </div>
+
+      {/* ── INTERACTIVE SIM VIEW ── */}
+      {viewMode === "sim" && (
+        <InteractiveSimMode reactorType={sim.reactorType} />
+      )}
 
       {/* ── Info Tabs ── */}
       <Tabs

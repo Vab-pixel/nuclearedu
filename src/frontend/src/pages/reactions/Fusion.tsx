@@ -2216,6 +2216,97 @@ export default function FusionPage() {
           </p>
         </CollapsibleSection>
 
+        {/* ── Coulomb Barrier & Plasma Physics ── */}
+        <CollapsibleSection
+          title="The Coulomb Barrier: Why Fusion Is So Hard"
+          badge="advanced"
+          ocid="fusion.coulomb_section"
+        >
+          <p className="text-muted-foreground text-sm leading-relaxed mb-5">
+            The fundamental challenge of fusion is simple: two positively
+            charged nuclei must approach each other close enough for the strong
+            nuclear force to bind them. But the electromagnetic (Coulomb)
+            repulsion between them creates an enormous energy barrier that must
+            be overcome or tunneled through.
+          </p>
+
+          <EquationBlock
+            latex="V_C = \frac{Z_1 Z_2 e^2}{4\pi\varepsilon_0 r} \approx \frac{1.44\,Z_1 Z_2}{r\,[\text{fm}]} \; \text{MeV}"
+            annotation="Coulomb potential between two nuclei of charges Z₁ and Z₂ separated by distance r. For D-T fusion at nuclear contact (r ≈ 5 fm, Z₁=Z₂=1): V_C ≈ 1.44/5 ≈ 0.29 MeV = 290 keV. Yet fusion occurs at plasma temperatures of ~65 keV — far below the classical barrier! This is made possible by quantum tunneling (Gamow factor)."
+            label="Coulomb Barrier Energy"
+          />
+
+          <EquationBlock
+            latex="G = \exp\!\left(-2\pi\eta\right), \quad \eta = \frac{Z_1 Z_2 e^2}{4\pi\varepsilon_0 \hbar v} = \frac{Z_1 Z_2}{137} \sqrt{\frac{\mu c^2}{2E}}"
+            annotation="The Gamow factor G is the quantum tunneling probability through the Coulomb barrier. η is the Sommerfeld parameter (v = relative velocity, μ = reduced mass). For D-T at E = 65 keV (optimal thermal fusion temperature): η ≈ 0.66, G ≈ 0.015. Only 1.5% of collisions at this energy produce fusion — but there are ~10²⁰ collisions per second in ITER's plasma volume, giving ~5×10²⁰ fusions/s and 500 MW."
+            label="Gamow Tunneling Factor (fusion reaction probability)"
+          />
+
+          <h3 className="font-semibold text-foreground text-base mb-3 mt-5">
+            Why Stars Can Fuse at Lower Temperatures
+          </h3>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+            The Sun's core temperature is only ~15 million °C (1.3 keV) — far
+            below the optimal D-T fusion temperature. Stars use the
+            proton-proton chain, which has an extremely low cross-section
+            compensated by the Sun's enormous density (~150 g/cm³), huge volume,
+            and the weak nuclear force mediating the p+p → D reaction. The Sun
+            produces only ~276 W/m³ of power — less than a compost pile.
+            Terrestrial fusion must achieve much higher power density, requiring
+            much higher plasma temperature.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+            {[
+              {
+                label: "Sun core temperature",
+                value: "1.3 keV",
+                sub: "~15 million °C",
+              },
+              {
+                label: "D-T optimal temperature",
+                value: "65 keV",
+                sub: "~750 million °C",
+              },
+              {
+                label: "ITER plasma temperature",
+                value: "8–10 keV",
+                sub: "~100–120 million °C",
+              },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="rounded-lg bg-muted/30 border border-border p-4 text-center"
+              >
+                <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                  {s.label}
+                </div>
+                <div className="font-mono text-lg font-bold text-primary">
+                  {s.value}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {s.sub}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <h3 className="font-semibold text-foreground text-base mb-3">
+            Thermally Averaged Reaction Rate
+          </h3>
+          <EquationBlock
+            latex="\langle\sigma v\rangle = \int_0^\infty \sigma(v)\,v\,f(v)\,dv \quad [\text{m}^3/\text{s}]"
+            annotation="The thermally-averaged reaction rate coefficient ⟨σv⟩ integrates the fusion cross-section σ over the Maxwell-Boltzmann velocity distribution f(v) of the plasma ions. For D-T: ⟨σv⟩ peaks at ~65 keV with a value of ~3.7×10⁻²² m³/s. At ITER's operating temperature of 8–10 keV: ⟨σv⟩ ≈ 1–3×10⁻²² m³/s — still high enough for Q≥10 at ITER density. The fusion power density P = (n_D n_T / 4) × ⟨σv⟩ × Q_DT where Q_DT = 17.6 MeV."
+            label="Thermally-Averaged Fusion Reaction Rate Coefficient"
+          />
+          <p className="text-xs text-muted-foreground mt-3">
+            Sources: Atzeni & Meyer-ter-Vehn,{" "}
+            <em>The Physics of Inertial Fusion</em> (2004); Glasstone & Lovberg,{" "}
+            <em>Controlled Thermonuclear Reactions</em> (1960); Bosch & Hale,{" "}
+            <em>Nucl. Fusion</em> 32 (1992) 611.
+          </p>
+        </CollapsibleSection>
+
         {/* ── Future of Fusion ── */}
         <CollapsibleSection
           title="Materials, Waste, and the Long-Term Future"

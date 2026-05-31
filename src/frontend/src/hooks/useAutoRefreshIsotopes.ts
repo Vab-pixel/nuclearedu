@@ -12,7 +12,6 @@ async function fetchAllPages(): Promise<IsotopeRecord[]> {
   // Dynamic import — the backend module may not expose methods in stub mode
   const backendModule = await import("@/backend");
 
-  // biome-ignore lint/suspicious/noExplicitAny: dynamic actor access
   const mod = backendModule as Record<string, unknown>;
   if (typeof mod.fetchAllIsotopesPage !== "function") {
     throw new Error("fetchAllIsotopesPage not available on backend module");

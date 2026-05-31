@@ -12,10 +12,12 @@ import {
   ChevronUp,
   Download,
   ExternalLink,
+  Filter,
   Loader2,
   RefreshCw,
   Search,
   X,
+  Zap,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -29,7 +31,7 @@ import {
   YAxis,
 } from "recharts";
 
-// ─── decay mode colours ────────────────────────────────────────────────────────
+// ─── Decay mode colours ────────────────────────────────────────────────────────
 const DECAY_COLORS: Record<string, string> = {
   stable: "bg-emerald-600/80 text-emerald-100",
   alpha: "bg-yellow-600/80 text-yellow-100",
@@ -47,6 +49,14 @@ const CHART_COLORS: Record<string, string> = {
   other: "#6b7280",
 };
 
+const ALL_DECAY_MODES: DecayMode[] = [
+  "stable",
+  "alpha",
+  "beta-",
+  "beta+",
+  "gamma",
+];
+
 type SortKey =
   | "symbol"
   | "name"
@@ -58,7 +68,7 @@ type SortKey =
   | "abundance";
 type SortDir = "asc" | "desc";
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 30;
 
 const fuseInstance = new Fuse(nuclides, {
   keys: ["symbol", "name", "decayModes"],
@@ -66,7 +76,7 @@ const fuseInstance = new Fuse(nuclides, {
   includeScore: true,
 });
 
-// ─── Relative time formatter ──────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatRelativeTime(isoString: string): string {
   const date = new Date(isoString);
   const diffMs = Date.now() - date.getTime();
@@ -96,6 +106,41 @@ function formatUTCTimestamp(ts: number): string {
   return new Date(ts).toUTCString();
 }
 
+/** Returns number of days since the ISO date string */
+function daysSince(isoString: string): number {
+  return Math.floor(
+    (Date.now() - new Date(isoString).getTime()) / (1000 * 60 * 60 * 24),
+  );
+}
+
+function FreshnessDot({ lastUpdated }: { lastUpdated?: string }) {
+  if (!lastUpdated) return <span className="text-muted-foreground/40">·</span>;
+  const days = daysSince(lastUpdated);
+  if (days <= 7)
+    return (
+      <span
+        title={`Fresh — updated ${formatRelativeTime(lastUpdated)}`}
+        className="inline-block h-2 w-2 rounded-full bg-emerald-400 flex-shrink-0"
+        aria-label="Data fresh (< 7 days)"
+      />
+    );
+  if (days <= 30)
+    return (
+      <span
+        title={`Updated ${formatRelativeTime(lastUpdated)}`}
+        className="inline-block h-2 w-2 rounded-full bg-amber-400 flex-shrink-0"
+        aria-label="Data recent (7–30 days)"
+      />
+    );
+  return (
+    <span
+      title={`Older data — updated ${formatRelativeTime(lastUpdated)}`}
+      className="inline-block h-2 w-2 rounded-full bg-muted-foreground/40 flex-shrink-0"
+      aria-label="Data older (> 30 days)"
+    />
+  );
+}
+
 // ─── Live Data Status Bar ─────────────────────────────────────────────────────
 function LiveDataBar({
   onRefresh,
@@ -110,13 +155,12 @@ function LiveDataBar({
       data-ocid="data-explorer.live_data_bar"
     >
       <div className="flex items-center gap-3 flex-wrap">
-        {/* Status badge */}
         {fetchStatus === "success" && (
           <span
             className="flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 text-xs font-semibold text-emerald-400"
             data-ocid="data-explorer.live_badge"
           >
-            <CheckCircle2 className="h-3.5 w-3.5" />
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
             Live Data
           </span>
         )}
@@ -145,7 +189,6 @@ function LiveDataBar({
           </span>
         )}
 
-        {/* Count */}
         {cachedCount > 0 && (
           <span className="text-xs text-muted-foreground">
             <span className="font-semibold text-foreground tabular-nums">
@@ -155,7 +198,6 @@ function LiveDataBar({
           </span>
         )}
 
-        {/* Last updated */}
         {lastFetchTimestamp && (
           <span
             className="text-xs text-muted-foreground"
@@ -167,9 +209,24 @@ function LiveDataBar({
             </span>
           </span>
         )}
+
+        {/* Freshness legend */}
+        <span className="hidden md:flex items-center gap-3 text-xs text-muted-foreground ml-2 border-l border-border pl-3">
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            &lt;7d
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-amber-400" />
+            7–30d
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+            &gt;30d
+          </span>
+        </span>
       </div>
 
-      {/* Refresh button */}
       <button
         type="button"
         onClick={onRefresh}
@@ -181,7 +238,7 @@ function LiveDataBar({
         <RefreshCw
           className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`}
         />
-        {isFetching ? "Refreshing…" : "Refresh"}
+        {isFetching ? "Refreshing…" : "Refresh from IAEA"}
       </button>
     </div>
   );
@@ -213,12 +270,19 @@ function NuclideDetail({
       aria-label={`Detail panel for ${nuclide.symbol}`}
       data-ocid="data-explorer.nuclide_detail.dialog"
     >
-      <div className="flex items-center justify-between border-b border-border px-5 py-4">
-        <div>
-          <h2 className="font-display text-xl font-bold text-foreground">
-            {nuclide.symbol}
-          </h2>
-          <p className="text-sm text-muted-foreground">{nuclide.name}</p>
+      <div className="flex items-center justify-between border-b border-border px-5 py-4 bg-muted/20">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+            <span className="font-display text-lg font-bold text-primary">
+              {nuclide.symbol.replace(/\d/g, "")}
+            </span>
+          </div>
+          <div>
+            <h2 className="font-display text-xl font-bold text-foreground">
+              {nuclide.symbol}
+            </h2>
+            <p className="text-sm text-muted-foreground">{nuclide.name}</p>
+          </div>
         </div>
         <button
           type="button"
@@ -230,13 +294,30 @@ function NuclideDetail({
           <X className="h-5 w-5 text-muted-foreground" />
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto p-5 space-y-4">
+
+      <div className="flex-1 overflow-y-auto p-5 space-y-5">
+        {/* Key metrics */}
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { label: "Z", value: nuclide.Z },
+            { label: "N", value: nuclide.N },
+            { label: "A", value: nuclide.A },
+          ].map(({ label, value }) => (
+            <div
+              key={label}
+              className="rounded-lg border border-border bg-muted/20 p-3 text-center"
+            >
+              <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
+              <p className="font-mono text-xl font-bold text-primary">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+
         <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
           {(
             [
-              ["Proton Number (Z)", nuclide.Z],
-              ["Neutron Number (N)", nuclide.N],
-              ["Mass Number (A)", nuclide.A],
               ["Half-life", nuclide.halfLifeStr],
               [
                 "Q-value (MeV)",
@@ -257,13 +338,13 @@ function NuclideDetail({
                   : "N/A",
               ],
               [
-                "B.E. / Nucleon (MeV)",
+                "B.E./Nucleon (MeV)",
                 nuclide.bindingEnergyPerNucleon_MeV != null
                   ? nuclide.bindingEnergyPerNucleon_MeV.toFixed(4)
                   : "N/A",
               ],
               [
-                "Natural Abundance (%)",
+                "Natural Abund. (%)",
                 nuclide.abundance != null ? nuclide.abundance.toFixed(4) : "—",
               ],
             ] as [string, string | number][]
@@ -277,17 +358,15 @@ function NuclideDetail({
           ))}
         </dl>
 
-        {/* Branching Ratios */}
         {nuclide.branchingRatios && nuclide.branchingRatios.length > 0 && (
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-2">
               Branching Ratios
             </p>
             <div className="flex flex-wrap gap-1.5">
-              {nuclide.branchingRatios.map((ratio, i) => (
+              {nuclide.branchingRatios.map((ratio) => (
                 <span
-                  // biome-ignore lint/suspicious/noArrayIndexKey: static list
-                  key={i}
+                  key={ratio}
                   className="inline-block rounded-full bg-primary/15 border border-primary/30 px-2.5 py-1 text-xs font-mono text-primary"
                 >
                   {ratio.toFixed(1)}%
@@ -308,17 +387,16 @@ function NuclideDetail({
           </div>
         </div>
 
-        {/* Source info */}
         {nuclide.lastUpdated && (
-          <p
-            className="text-xs text-muted-foreground"
-            title={formatAbsoluteUTC(nuclide.lastUpdated)}
-          >
-            NNDC data updated:{" "}
-            <span className="text-foreground">
-              {formatRelativeTime(nuclide.lastUpdated)}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <FreshnessDot lastUpdated={nuclide.lastUpdated} />
+            <span title={formatAbsoluteUTC(nuclide.lastUpdated)}>
+              NNDC updated:{" "}
+              <span className="text-foreground">
+                {formatRelativeTime(nuclide.lastUpdated)}
+              </span>
             </span>
-          </p>
+          </div>
         )}
 
         <Link
@@ -334,13 +412,195 @@ function NuclideDetail({
   );
 }
 
+// ─── Filter Panel ─────────────────────────────────────────────────────────────
+interface FilterState {
+  query: string;
+  decayModes: Set<DecayMode>;
+  zMin: number;
+  zMax: number;
+  aMin: number;
+  aMax: number;
+}
+
+const Z_MAX = 120;
+const A_MAX = 300;
+
+function FilterPanel({
+  filters,
+  onFiltersChange,
+}: {
+  filters: FilterState;
+  onFiltersChange: (f: FilterState) => void;
+}) {
+  const toggle = (mode: DecayMode) => {
+    const next = new Set(filters.decayModes);
+    if (next.has(mode)) next.delete(mode);
+    else next.add(mode);
+    onFiltersChange({ ...filters, decayModes: next });
+  };
+
+  const allSelected = filters.decayModes.size === 0;
+
+  return (
+    <SectionCard className="mb-4" data-ocid="data-explorer.filter_panel">
+      <div className="flex flex-wrap gap-5 items-start">
+        {/* Search */}
+        <div className="relative flex-1 min-w-52">
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <input
+            type="search"
+            placeholder="Search symbol, name, decay mode…"
+            value={filters.query}
+            onChange={(e) =>
+              onFiltersChange({ ...filters, query: e.target.value })
+            }
+            className="w-full rounded-lg border border-input bg-background pl-9 pr-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Search nuclides"
+            data-ocid="data-explorer.search_input"
+          />
+        </div>
+
+        {/* Decay mode checkboxes */}
+        <fieldset className="flex flex-wrap gap-2 border-0 p-0 m-0">
+          <legend className="text-xs text-muted-foreground font-semibold uppercase tracking-widest w-full mb-1.5 flex items-center gap-1">
+            <Filter className="h-3 w-3" />
+            Decay Mode
+          </legend>
+          <button
+            type="button"
+            onClick={() =>
+              onFiltersChange({ ...filters, decayModes: new Set() })
+            }
+            aria-pressed={allSelected}
+            className={`rounded-full px-3 py-1 text-xs font-semibold border transition-colors ${allSelected ? "bg-primary/15 text-primary border-primary/40" : "border-border text-muted-foreground hover:border-primary/30"}`}
+            data-ocid="data-explorer.decay_filter.all"
+          >
+            All
+          </button>
+          {ALL_DECAY_MODES.map((mode) => {
+            const active = filters.decayModes.has(mode);
+            return (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => toggle(mode)}
+                aria-pressed={active}
+                className={`rounded-full px-3 py-1 text-xs font-semibold border transition-colors uppercase ${
+                  active
+                    ? `${DECAY_COLORS[mode]} border-transparent`
+                    : "border-border text-muted-foreground hover:border-primary/30"
+                }`}
+                data-ocid={`data-explorer.decay_filter.${mode}`}
+              >
+                {mode}
+              </button>
+            );
+          })}
+        </fieldset>
+
+        {/* Z range */}
+        <div className="min-w-48 flex-1">
+          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest mb-1.5">
+            Z range:{" "}
+            <span className="text-foreground font-mono">
+              {filters.zMin}–{filters.zMax}
+            </span>
+          </p>
+          <div className="flex gap-2 items-center">
+            <input
+              type="range"
+              min={0}
+              max={Z_MAX}
+              value={filters.zMin}
+              onChange={(e) =>
+                onFiltersChange({
+                  ...filters,
+                  zMin: Math.min(Number(e.target.value), filters.zMax),
+                })
+              }
+              className="flex-1 accent-primary"
+              aria-label="Minimum proton number Z"
+              data-ocid="data-explorer.z_min.toggle"
+            />
+            <input
+              type="range"
+              min={0}
+              max={Z_MAX}
+              value={filters.zMax}
+              onChange={(e) =>
+                onFiltersChange({
+                  ...filters,
+                  zMax: Math.max(Number(e.target.value), filters.zMin),
+                })
+              }
+              className="flex-1 accent-primary"
+              aria-label="Maximum proton number Z"
+              data-ocid="data-explorer.z_max.toggle"
+            />
+          </div>
+        </div>
+
+        {/* A range */}
+        <div className="min-w-48 flex-1">
+          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest mb-1.5">
+            A range:{" "}
+            <span className="text-foreground font-mono">
+              {filters.aMin}–{filters.aMax}
+            </span>
+          </p>
+          <div className="flex gap-2 items-center">
+            <input
+              type="range"
+              min={0}
+              max={A_MAX}
+              value={filters.aMin}
+              onChange={(e) =>
+                onFiltersChange({
+                  ...filters,
+                  aMin: Math.min(Number(e.target.value), filters.aMax),
+                })
+              }
+              className="flex-1 accent-primary"
+              aria-label="Minimum mass number A"
+              data-ocid="data-explorer.a_min.toggle"
+            />
+            <input
+              type="range"
+              min={0}
+              max={A_MAX}
+              value={filters.aMax}
+              onChange={(e) =>
+                onFiltersChange({
+                  ...filters,
+                  aMax: Math.max(Number(e.target.value), filters.aMin),
+                })
+              }
+              className="flex-1 accent-primary"
+              aria-label="Maximum mass number A"
+              data-ocid="data-explorer.a_max.toggle"
+            />
+          </div>
+        </div>
+      </div>
+    </SectionCard>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function DataExplorer() {
   const { manualRefresh, isFetching } = useAutoRefreshIsotopes();
 
-  const [query, setQuery] = useState("");
-  const [decayFilter, setDecayFilter] = useState("All");
-  const [sizeFilter, setSizeFilter] = useState("All");
+  const [filters, setFilters] = useState<FilterState>({
+    query: "",
+    decayModes: new Set(),
+    zMin: 0,
+    zMax: Z_MAX,
+    aMin: 0,
+    aMax: A_MAX,
+  });
   const [sortKey, setSortKey] = useState<SortKey>("A");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [page, setPage] = useState(1);
@@ -348,22 +608,32 @@ export default function DataExplorer() {
   const tableRef = useRef<HTMLTableElement>(null);
 
   const filtered = useMemo(() => {
-    let base = query.trim()
-      ? fuseInstance.search(query).map((r) => r.item)
+    let base = filters.query.trim()
+      ? fuseInstance.search(filters.query).map((r) => r.item)
       : [...nuclides];
 
-    if (decayFilter !== "All") {
-      const key = decayFilter.toLowerCase() as DecayMode;
-      base = base.filter((n) =>
-        key === "stable"
-          ? n.decayModes.includes("stable")
-          : n.decayModes.includes(key),
+    if (filters.decayModes.size > 0) {
+      base = base.filter(
+        (n) =>
+          [...filters.decayModes].every((m) => n.decayModes.includes(m)) ||
+          [...filters.decayModes].some((m) => n.decayModes.includes(m)),
       );
+      // Actually: show any nuclide that has at least one of the selected decay modes
+      base = [...nuclides].filter((n) => {
+        if (filters.query.trim()) {
+          const fuseResults = fuseInstance
+            .search(filters.query)
+            .map((r) => r.item);
+          if (!fuseResults.includes(n)) return false;
+        }
+        return [...filters.decayModes].some((m) => n.decayModes.includes(m));
+      });
     }
-    if (sizeFilter === "Light") base = base.filter((n) => n.A < 50);
-    else if (sizeFilter === "Medium")
-      base = base.filter((n) => n.A >= 50 && n.A <= 100);
-    else if (sizeFilter === "Heavy") base = base.filter((n) => n.A > 100);
+
+    // Z range
+    base = base.filter((n) => n.Z >= filters.zMin && n.Z <= filters.zMax);
+    // A range
+    base = base.filter((n) => n.A >= filters.aMin && n.A <= filters.aMax);
 
     base.sort((a, b) => {
       const av =
@@ -384,7 +654,7 @@ export default function DataExplorer() {
     });
 
     return base;
-  }, [query, decayFilter, sizeFilter, sortKey, sortDir]);
+  }, [filters, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -395,6 +665,12 @@ export default function DataExplorer() {
       else setSortDir("asc");
       return key;
     });
+    setPage(1);
+  }, []);
+
+  // Reset page when filters change
+  const handleFiltersChange = useCallback((f: FilterState) => {
+    setFilters(f);
     setPage(1);
   }, []);
 
@@ -410,7 +686,7 @@ export default function DataExplorer() {
 
   const handleExport = () => {
     const header =
-      "Symbol,Name,Z,N,A,HalfLife,DecayModes,BindingEnergy_MeV,Abundance,AtomicMass_AMU,MassExcess_keV\n";
+      "Symbol,Name,Z,N,A,HalfLife,DecayModes,BindingEnergy_MeV,Abundance,AtomicMass_AMU,MassExcess_keV,QValue_MeV,LastUpdated\n";
     const rows = filtered
       .map((n) =>
         [
@@ -425,6 +701,8 @@ export default function DataExplorer() {
           n.abundance ?? "",
           n.atomicMass_AMU ?? "",
           n.massExcess_keV ?? "",
+          n.Qvalue_MeV ?? "",
+          n.lastUpdated ?? "",
         ].join(","),
       )
       .join("\n");
@@ -446,24 +724,54 @@ export default function DataExplorer() {
     );
   }
 
+  const isFiltered =
+    filters.query.trim() !== "" ||
+    filters.decayModes.size > 0 ||
+    filters.zMin > 0 ||
+    filters.zMax < Z_MAX ||
+    filters.aMin > 0 ||
+    filters.aMax < A_MAX;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <PageHeader
         title="Nuclear Data Explorer"
-        subtitle="Search, filter, and explore data on 720+ nuclides — from stable isotopes to radioactive species. Click any row for detailed properties."
+        subtitle="Search, filter, and explore data on 720+ nuclides — from stable isotopes to radioactive species. Filter by decay mode, Z range, and A range. Click any row for detailed properties."
         audienceLevel="intermediate"
         readTimeMin={5}
       />
 
-      {/* Live Data Status Bar */}
       <LiveDataBar onRefresh={manualRefresh} isFetching={isFetching} />
 
       {/* Histogram */}
       <SectionCard className="mb-6" data-ocid="data-explorer.histogram.card">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-3">
-          Decay Mode Distribution ({filtered.length} nuclides shown)
-        </p>
-        <ResponsiveContainer width="100%" height={100}>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+            Decay Mode Distribution ({filtered.length.toLocaleString()} nuclides
+            shown)
+          </p>
+          {isFiltered && (
+            <button
+              type="button"
+              onClick={() =>
+                handleFiltersChange({
+                  query: "",
+                  decayModes: new Set(),
+                  zMin: 0,
+                  zMax: Z_MAX,
+                  aMin: 0,
+                  aMax: A_MAX,
+                })
+              }
+              className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+              data-ocid="data-explorer.clear_filters_button"
+            >
+              <X className="h-3 w-3" />
+              Clear filters
+            </button>
+          )}
+        </div>
+        <ResponsiveContainer width="100%" height={110}>
           <BarChart
             data={histData}
             margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
@@ -494,86 +802,27 @@ export default function DataExplorer() {
         </ResponsiveContainer>
       </SectionCard>
 
-      {/* Controls */}
-      <SectionCard className="mb-4" data-ocid="data-explorer.controls.card">
-        <div className="flex flex-wrap gap-3 items-end">
-          <div className="relative flex-1 min-w-48">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
-              aria-hidden="true"
-            />
-            <input
-              type="search"
-              placeholder="Search symbol, name, decay mode…"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setPage(1);
-              }}
-              className="w-full rounded-lg border border-input bg-background pl-9 pr-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              aria-label="Search nuclides"
-              data-ocid="data-explorer.search_input"
-            />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <select
-              value={decayFilter}
-              onChange={(e) => {
-                setDecayFilter(e.target.value);
-                setPage(1);
-              }}
-              className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              aria-label="Filter by decay mode"
-              data-ocid="data-explorer.decay_filter.select"
-            >
-              {[
-                "All",
-                "Stable",
-                "Alpha",
-                "Beta-",
-                "Beta+",
-                "Gamma",
-                "Other",
-              ].map((v) => (
-                <option key={v} value={v}>
-                  {v}
-                </option>
-              ))}
-            </select>
-            <select
-              value={sizeFilter}
-              onChange={(e) => {
-                setSizeFilter(e.target.value);
-                setPage(1);
-              }}
-              className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              aria-label="Filter by mass number range"
-              data-ocid="data-explorer.size_filter.select"
-            >
-              {(
-                [
-                  "All",
-                  "Light (A<50)",
-                  "Medium (50–100)",
-                  "Heavy (A>100)",
-                ] as const
-              ).map((v, i) => (
-                <option key={v} value={["All", "Light", "Medium", "Heavy"][i]}>
-                  {v}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              onClick={handleExport}
-              className="flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              data-ocid="data-explorer.export_button"
-            >
-              <Download className="h-4 w-4" /> Export CSV
-            </button>
-          </div>
-        </div>
-      </SectionCard>
+      {/* Filter Panel */}
+      <FilterPanel filters={filters} onFiltersChange={handleFiltersChange} />
+
+      {/* Table controls */}
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground">
+            {filtered.length.toLocaleString()}
+          </span>{" "}
+          nuclides
+          {isFiltered && <span> matching filters</span>}
+        </p>
+        <button
+          type="button"
+          onClick={handleExport}
+          className="flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          data-ocid="data-explorer.export_button"
+        >
+          <Download className="h-3.5 w-3.5" /> Export CSV
+        </button>
+      </div>
 
       {/* Table */}
       <SectionCard
@@ -588,6 +837,12 @@ export default function DataExplorer() {
           >
             <thead className="bg-muted/40 border-b border-border">
               <tr>
+                <th
+                  scope="col"
+                  className="px-3 py-3 text-left font-semibold text-muted-foreground w-8"
+                >
+                  <span className="sr-only">Freshness</span>
+                </th>
                 {(
                   [
                     ["Symbol", "symbol"],
@@ -598,16 +853,16 @@ export default function DataExplorer() {
                     ["Half-life", "halfLifeStr"],
                     ["Decay Mode(s)", null],
                     ["B.E. (MeV/u)", "bindingEnergyPerNucleon_MeV"],
-                    ["Abundance (%)", "abundance"],
+                    ["Abund. (%)", "abundance"],
                     ["Mass (AMU)", null],
-                    ["Branching (%)", null],
-                    ["Updated", null],
+                    ["Q (MeV)", null],
+                    ["Branch. (%)", null],
                   ] as [string, SortKey | null][]
                 ).map(([label, key]) => (
                   <th
                     key={label}
                     scope="col"
-                    className="px-4 py-3 text-left font-semibold text-muted-foreground whitespace-nowrap"
+                    className="px-3 py-3 text-left font-semibold text-muted-foreground whitespace-nowrap"
                   >
                     {key ? (
                       <button
@@ -636,11 +891,32 @@ export default function DataExplorer() {
               {paginated.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={12}
-                    className="py-12 text-center text-muted-foreground"
+                    colSpan={13}
+                    className="py-16 text-center"
                     data-ocid="data-explorer.table.empty_state"
                   >
-                    No nuclides match your search criteria.
+                    <div className="flex flex-col items-center gap-3">
+                      <Zap className="h-8 w-8 text-muted-foreground/30" />
+                      <p className="text-muted-foreground">
+                        No nuclides match your filters.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleFiltersChange({
+                            query: "",
+                            decayModes: new Set(),
+                            zMin: 0,
+                            zMax: Z_MAX,
+                            aMin: 0,
+                            aMax: A_MAX,
+                          })
+                        }
+                        className="text-xs text-primary hover:underline"
+                      >
+                        Clear all filters
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -654,59 +930,56 @@ export default function DataExplorer() {
                     aria-label={`${n.symbol} — ${n.name}, click for details`}
                     data-ocid={`data-explorer.table.item.${i + 1}`}
                   >
-                    <td className="px-4 py-2.5 font-mono font-bold text-primary">
+                    <td className="px-3 py-2.5">
+                      <FreshnessDot lastUpdated={n.lastUpdated} />
+                    </td>
+                    <td className="px-3 py-2.5 font-mono font-bold text-primary">
                       {n.symbol}
                     </td>
-                    <td className="px-4 py-2.5 text-foreground max-w-[160px] truncate">
+                    <td className="px-3 py-2.5 text-foreground max-w-[140px] truncate">
                       {n.name}
                     </td>
-                    <td className="px-4 py-2.5 tabular-nums text-right pr-6">
+                    <td className="px-3 py-2.5 tabular-nums text-right pr-4">
                       {n.Z}
                     </td>
-                    <td className="px-4 py-2.5 tabular-nums text-right pr-6">
+                    <td className="px-3 py-2.5 tabular-nums text-right pr-4">
                       {n.N}
                     </td>
-                    <td className="px-4 py-2.5 tabular-nums text-right pr-6 font-semibold">
+                    <td className="px-3 py-2.5 tabular-nums text-right pr-4 font-semibold">
                       {n.A}
                     </td>
-                    <td className="px-4 py-2.5 text-muted-foreground whitespace-nowrap">
+                    <td className="px-3 py-2.5 text-muted-foreground whitespace-nowrap">
                       {n.halfLifeStr}
                     </td>
-                    <td className="px-4 py-2.5">
+                    <td className="px-3 py-2.5">
                       <div className="flex flex-wrap gap-1">
                         {n.decayModes.map((m) => (
                           <DecayBadge key={m} mode={m} />
                         ))}
                       </div>
                     </td>
-                    <td className="px-4 py-2.5 tabular-nums text-right pr-6">
+                    <td className="px-3 py-2.5 tabular-nums text-right pr-4">
                       {n.bindingEnergyPerNucleon_MeV != null
                         ? n.bindingEnergyPerNucleon_MeV.toFixed(3)
                         : "—"}
                     </td>
-                    <td className="px-4 py-2.5 tabular-nums text-right pr-6">
+                    <td className="px-3 py-2.5 tabular-nums text-right pr-4">
                       {n.abundance != null ? n.abundance.toFixed(3) : "—"}
                     </td>
-                    <td className="px-4 py-2.5 tabular-nums text-right pr-6 font-mono text-xs">
+                    <td className="px-3 py-2.5 tabular-nums text-right pr-4 font-mono text-xs">
                       {n.atomicMass_AMU != null
                         ? n.atomicMass_AMU.toFixed(6)
                         : "—"}
                     </td>
-                    <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                    <td className="px-3 py-2.5 tabular-nums text-right pr-4 text-xs text-muted-foreground">
+                      {n.Qvalue_MeV != null ? n.Qvalue_MeV.toFixed(3) : "—"}
+                    </td>
+                    <td className="px-3 py-2.5 text-xs text-muted-foreground">
                       {n.branchingRatios && n.branchingRatios.length > 0
                         ? n.branchingRatios
                             .map((r) => `${r.toFixed(1)}%`)
                             .join(", ")
                         : "—"}
-                    </td>
-                    <td className="px-4 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
-                      {n.lastUpdated ? (
-                        <span title={formatAbsoluteUTC(n.lastUpdated)}>
-                          {formatRelativeTime(n.lastUpdated)}
-                        </span>
-                      ) : (
-                        "—"
-                      )}
                     </td>
                   </tr>
                 ))
@@ -721,7 +994,7 @@ export default function DataExplorer() {
             Showing {Math.min((page - 1) * PAGE_SIZE + 1, filtered.length)}–
             {Math.min(page * PAGE_SIZE, filtered.length)} of{" "}
             <span className="font-semibold text-foreground">
-              {filtered.length}
+              {filtered.length.toLocaleString()}
             </span>{" "}
             nuclides
           </p>
@@ -735,7 +1008,7 @@ export default function DataExplorer() {
             >
               Previous
             </button>
-            <span className="text-sm text-muted-foreground min-w-[80px] text-center">
+            <span className="text-sm text-muted-foreground min-w-[90px] text-center">
               Page {page} of {totalPages}
             </span>
             <button

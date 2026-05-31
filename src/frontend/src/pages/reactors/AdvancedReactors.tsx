@@ -2845,6 +2845,305 @@ export default function AdvancedReactors() {
           </SubSection>
         </Collapsible>
 
+        {/* NEW Section: Key Equations — Reactor Engineering and Thermodynamics */}
+        <Collapsible
+          title="Key Equations: Thermal Efficiency, Breeding Ratio, and Advanced Fuel Forms"
+          badge="Advanced"
+          badgeVariant="destructive"
+          icon={<FlaskConical className="h-5 w-5" />}
+          id="key-equations"
+        >
+          <p className="text-muted-foreground text-sm mb-5">
+            Advanced reactors are distinguished by their efficiency and fuel
+            utilisation. Three fundamental equations govern the thermodynamics
+            and fuel cycle of Generation IV and SMR designs.
+          </p>
+
+          <SubSection
+            title="Thermal Efficiency: Carnot and Rankine Cycles"
+            id="thermal-efficiency"
+          >
+            <Equation
+              formula="η_Carnot = 1 − T_cold / T_hot"
+              label="Carnot (ideal maximum) thermal efficiency — upper bound for any heat engine"
+              note="T_hot and T_cold in Kelvin. LWR: T_hot ≈ 585 K → η_max ≈ 44%; HTGR: T_hot ≈ 1,050 K → η_max ≈ 71%. Real steam cycles achieve 60–70% of Carnot maximum."
+            />
+            <div className="overflow-x-auto rounded-lg border border-border my-4">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-muted/50">
+                    {[
+                      "Reactor Type",
+                      "T_hot (°C)",
+                      "T_cold (°C)",
+                      "η_Carnot",
+                      "Practical η",
+                      "Application",
+                    ].map((h) => (
+                      <th
+                        key={h}
+                        className="px-4 py-3 text-left font-semibold text-foreground border-b border-border whitespace-nowrap"
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    [
+                      "PWR / BWR (LWR)",
+                      "~310",
+                      "~40",
+                      "~48%",
+                      "~33%",
+                      "Electricity only; Rankine steam cycle",
+                    ],
+                    [
+                      "CANDU PHWR",
+                      "~290",
+                      "~40",
+                      "~45%",
+                      "~31%",
+                      "Natural U fuel; on-power refuelling",
+                    ],
+                    [
+                      "HTGR (Xe-100)",
+                      "~750",
+                      "~40",
+                      "~70%",
+                      "~45%",
+                      "He closed-cycle gas turbine (Brayton)",
+                    ],
+                    [
+                      "VHTR (>1000°C)",
+                      ">1,000",
+                      "~40",
+                      ">76%",
+                      ">50%",
+                      "H₂ production; highest T nuclear plant",
+                    ],
+                    [
+                      "SFR (Natrium)",
+                      "~550",
+                      "~40",
+                      "~62%",
+                      "~40%",
+                      "Na coolant; combined cycle possible",
+                    ],
+                    [
+                      "MSR (IMSR)",
+                      "~650",
+                      "~40",
+                      "~67%",
+                      "~44%",
+                      "Salt-cooled; liquid fuel advantages",
+                    ],
+                  ].map((row, ri) => (
+                    <tr
+                      key={String(row[0])}
+                      className={ri % 2 === 0 ? "bg-background" : "bg-muted/20"}
+                    >
+                      {row.map((cell, ci) => (
+                        <td
+                          key={`${String(row[0])}-${ci}`}
+                          className="px-4 py-2.5 border-b border-border/50 text-foreground/90"
+                        >
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Higher outlet temperature is the primary driver of efficiency
+              improvement in advanced reactors. Each additional 100 °C of outlet
+              temperature corresponds to approximately 2–5% absolute increase in
+              thermal efficiency for practical steam/gas cycles.
+              IAEA-TECDOC-1561, 2007.
+            </p>
+          </SubSection>
+
+          <SubSection
+            title="Breeding Ratio (BR): Net Fissile Production"
+            id="breeding-ratio-eq"
+          >
+            <Equation
+              formula="BR = fissile produced / fissile consumed (per unit time)"
+              label="Breeding Ratio — fundamental figure of merit for fissile sustainability"
+              note="BR > 1.0: 'breeder' — produces more fissile material than consumed. BR ≈ 0.6: typical LWR (net consumption). BR ≈ 1.0: 'converter' or 'breakeven breeder'."
+            />
+            <Equation
+              formula="BR = η × ε_absorption × f_fertile − 1"
+              label="Simplified BR formula: η = neutrons per fission; ε = fertile capture fraction; f = fuel fraction"
+              note="For U-238 → Pu-239 in fast spectrum: η(Pu-239 fast) ≈ 2.9–3.0, enabling BR up to 1.3–1.5 in optimised SFR designs."
+            />
+            <div className="grid sm:grid-cols-3 gap-3 my-4">
+              {[
+                {
+                  reactor: "LWR (PWR/BWR)",
+                  br: "~0.55–0.65",
+                  note: "Net Pu consumer; requires continuous enrichment feed",
+                },
+                {
+                  reactor: "CANDU PHWR",
+                  br: "~0.75–0.80",
+                  note: "High conversion from U-238; natural U fuel",
+                },
+                {
+                  reactor: "Fast Breeder Reactor (SFR)",
+                  br: "~1.10–1.30",
+                  note: "Net fissile producer; can sustain Th/U-233 or U/Pu cycle indefinitely",
+                },
+                {
+                  reactor: "MSR (Th-U233 thermal)",
+                  br: "~0.95–1.05",
+                  note: "Near-breakeven breeding; can approach self-sufficiency",
+                },
+                {
+                  reactor: "HTGR (TRISO-Th)",
+                  br: "~0.55–0.70",
+                  note: "Modest conversion; safety benefits outweigh low BR",
+                },
+                {
+                  reactor: "LFR (lead-cooled fast)",
+                  br: "~1.05–1.20",
+                  note: "Fast spectrum + Pb reflector; good breeding capability",
+                },
+              ].map((s) => (
+                <div
+                  key={s.reactor}
+                  className="rounded-lg bg-card border border-border p-3 text-sm"
+                >
+                  <div className="font-semibold text-foreground text-xs mb-1">
+                    {s.reactor}
+                  </div>
+                  <div className="font-mono text-primary text-base font-bold">
+                    BR ≈ {s.br}
+                  </div>
+                  <div className="text-muted-foreground text-xs mt-1">
+                    {s.note}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </SubSection>
+
+          <SubSection
+            title="Advanced Fuel Forms: TRISO Particles and Metallic Fuel"
+            id="fuel-forms"
+          >
+            <div className="grid sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <div className="font-semibold text-foreground text-sm mb-2">
+                  TRISO Particle Architecture
+                </div>
+                <p className="text-muted-foreground text-sm mb-2">
+                  TRISO (Tri-structural ISO-tropic) particles consist of a
+                  uranium (or Th/U) fuel kernel surrounded by four concentric
+                  protective layers. The SiC layer is the primary pressure
+                  vessel — retaining fission gases and metallic fission products
+                  at temperatures up to 1,600°C. Failure fraction &lt;10⁻⁵ per
+                  particle is the design standard.
+                </p>
+                <ol className="space-y-1 text-xs text-muted-foreground list-decimal list-inside">
+                  <li>
+                    <span className="text-foreground font-medium">
+                      UO₂/UCO/ThO₂ kernel
+                    </span>{" "}
+                    — fissile fuel source (~300–600 μm)
+                  </li>
+                  <li>
+                    <span className="text-foreground font-medium">
+                      Porous PyC buffer
+                    </span>{" "}
+                    — absorbs fission recoil, accommodates swelling
+                  </li>
+                  <li>
+                    <span className="text-foreground font-medium">
+                      Inner dense PyC (IPyC)
+                    </span>{" "}
+                    — structural protection; prevents Cl⁻ attack on SiC
+                  </li>
+                  <li>
+                    <span className="text-foreground font-medium">
+                      SiC layer (~35 μm)
+                    </span>{" "}
+                    — primary fission product barrier; 2600°C melting point
+                  </li>
+                  <li>
+                    <span className="text-foreground font-medium">
+                      Outer dense PyC (OPyC)
+                    </span>{" "}
+                    — structural protection; pre-stresses SiC in compression
+                  </li>
+                </ol>
+              </div>
+              <div>
+                <div className="font-semibold text-foreground text-sm mb-2">
+                  Metallic Fuel (SFR/EBR-II Heritage)
+                </div>
+                <p className="text-muted-foreground text-sm mb-2">
+                  U-Zr and U-Pu-Zr metallic alloy fuel (used in EBR-II, tested
+                  at INL) offers higher heavy metal density than oxide fuel,
+                  enabling very high burnup (&gt;200 GWd/tHM) and improved
+                  neutron economy in fast reactors. TerraPower's Natrium uses
+                  metallic U-Zr fuel at ~16.5% enrichment.
+                </p>
+                <ul className="space-y-1 text-xs text-muted-foreground list-disc list-inside">
+                  <li>
+                    Higher thermal conductivity than UO₂ — lower peak fuel
+                    temperature
+                  </li>
+                  <li>
+                    Excellent swelling accommodation via plenum volume design
+                  </li>
+                  <li>
+                    Compatible with sodium coolant; pyroprocessing recycling
+                    pathway
+                  </li>
+                  <li>
+                    EBR-II operated 30 years on metallic fuel without a cladding
+                    failure from fuel cause
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Sources: IAEA-TECDOC-1854 (TRISO fuel performance); Walters, L.C.
+              (1999) Metallic fuel for fast reactors, <em>J. Nucl. Mater.</em>{" "}
+              270; Carmack, W.J. et al. (2009) Metallic fuels for advanced
+              reactors.
+            </p>
+          </SubSection>
+
+          <SubSection
+            title="Passive Safety Metrics: Natural Circulation and Temperature Coefficients"
+            id="passive-safety-eq"
+          >
+            <Equation
+              formula="T_hot (fuel) = T_coolant + q''' × (r_fuel² / 4k_fuel)"
+              label="Peak fuel centreline temperature: fuel power density q''' [W/m³], fuel radius r, thermal conductivity k"
+              note="For LWR UO₂ fuel at 40 kW/m linear heat rate: T_peak ≈ 1,500°C (melting point ~2,850°C). For TRISO at same power density: T_peak ≈ 1,000°C (well below 1,600°C SiC limit). Higher k_fuel → lower peak temperature → larger safety margin."
+            />
+            <Equation
+              formula="\alpha_{Doppler} = \frac{d\rho}{dT_{fuel}} \approx -2 \text{ to } -4 \; \text{pcm/°C}"
+              label="Doppler temperature coefficient of reactivity (pcm = 10⁻⁵ Δk/k per degree Celsius)"
+              note="The Doppler coefficient is negative and prompt — as fuel heats, resonance absorption increases, reactivity decreases. This is the most critical inherent safety mechanism in all thermal reactors. HTGR Doppler coefficient is particularly strong due to graphite's large thermal capacitance amplifying the effect."
+            />
+            <p className="text-sm text-muted-foreground mt-3">
+              The combination of strong negative Doppler and moderator
+              temperature coefficients with passive decay heat removal (natural
+              circulation or conduction cooling) defines the "walk-away safe"
+              property claimed by Generation IV and SMR designs. Under any
+              conceivable accident scenario, these reactors self-shutdown and
+              self-cool without operator action, pumps, or external power.
+            </p>
+          </SubSection>
+        </Collapsible>
+
         {/* References */}
         <div className="mt-8 border-t border-border pt-6">
           <h2 className="font-display text-lg font-semibold text-foreground mb-4">
