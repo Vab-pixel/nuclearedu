@@ -6,6 +6,8 @@ export type AudienceLevel =
 
 export type GlossaryCategory =
   | "Physics"
+  | "Quantum Mechanics"
+  | "Particle Physics"
   | "Reactor Engineering"
   | "Fuel Cycle"
   | "Safety"
@@ -2768,6 +2770,926 @@ export const glossaryTerms: GlossaryTerm[] = [
       "background-radiation",
     ],
     equation: "\\dot{D} = \\frac{dD}{dt} \\; [\\text{Gy/s}]",
+  },
+  // ────────────────────────────────────────────────
+  // NEW PHYSICS TERMS
+  // ────────────────────────────────────────────────
+  {
+    id: "q-value",
+    term: "Q-value",
+    definition:
+      "The net energy released (Q > 0, exothermic) or absorbed (Q < 0, endothermic) in a nuclear reaction, equal to the difference between initial and final rest-mass energies. For a reaction A + a → B + b: Q = [m_A + m_a − m_B − m_b]c². Q-values are used to determine whether a reaction is energetically possible and how much kinetic energy the products carry.",
+    category: "Physics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["binding-energy", "mass-defect", "threshold-energy"],
+    equation: "Q = (\\sum m_i - \\sum m_f)c^2",
+  },
+  {
+    id: "barn",
+    term: "Barn",
+    definition:
+      "A unit of nuclear cross-section area used to quantify the probability of a nuclear reaction. 1 barn = 10⁻²⁸ m² = 10⁻²⁴ cm². The name is jocular: physicists working on the Manhattan Project found uranium nuclei were 'as big as a barn' compared to what they expected. Thermal-neutron fission cross-section of ²³⁵U = 585 barns.",
+    category: "Physics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["neutron-cross-section", "fission", "mean-free-path"],
+    equation: "1\\,\\text{b} = 10^{-28}\\,\\text{m}^2",
+  },
+  {
+    id: "lawson-criterion",
+    term: "Lawson criterion",
+    definition:
+      "A condition for net energy gain from nuclear fusion: the product of plasma density n and energy confinement time τ_E must exceed ~10²⁰ m⁻³·s for a D-T plasma at ~10 keV. Derived by John Lawson in 1957. Modern formulations use the 'triple product' nτ_E T ≥ 3 × 10²¹ m⁻³·s·keV. The NIF 2022 ignition exceeded the Lawson criterion for inertial confinement.",
+    category: "Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["fusion", "plasma", "confinement"],
+    equation: "n\\tau_E \\geq 10^{20}\\,\\text{m}^{-3}\\text{s}",
+  },
+  {
+    id: "four-factor-formula",
+    term: "Four-factor formula",
+    definition:
+      "Relates the infinite-medium multiplication factor k∞ to four physical quantities: k∞ = η·ε·p·f. η = thermal fission factor (neutrons per absorption in fuel); ε = fast fission factor; p = resonance escape probability; f = thermal utilisation factor. Introduced by Fermi and Szilard for the CP-1 reactor design. For a finite reactor, leakage terms introduce k_eff = k∞ · P_NL.",
+    category: "Reactor Engineering",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["criticality", "multiplication-factor", "thermal-neutron"],
+    equation: "k_\\infty = \\eta\\,\\varepsilon\\, p\\, f",
+  },
+  {
+    id: "breit-wigner",
+    term: "Breit-Wigner resonance",
+    definition:
+      "A formula describing the energy-dependent cross-section near a nuclear resonance: σ(E) = σ₀ [Γ²/4] / [(E − E₀)² + Γ²/4]. E₀ is the resonance energy, Γ is the total width (sum of partial widths Γ_n + Γ_γ + …), and σ₀ is the peak cross-section. Describes U-238's capture resonances (4–4000 eV) that are critical for reactor design.",
+    category: "Physics",
+    audience: "professional",
+    audienceLevel: "professional",
+    relatedTerms: [
+      "neutron-cross-section",
+      "resonance-absorption",
+      "doppler-broadening",
+    ],
+    equation:
+      "\\sigma(E) = \\sigma_0 \\frac{\\Gamma^2/4}{(E-E_0)^2+\\Gamma^2/4}",
+  },
+  {
+    id: "geiger-nuttall-law",
+    term: "Geiger-Nuttall law",
+    definition:
+      "An empirical relationship between the alpha-decay half-life and the kinetic energy of the emitted alpha particle: log(T½) ∝ Z / √E_α. Established by Geiger and Nuttall in 1911 and later derived quantum mechanically via the Gamow tunnelling factor. Explains why alpha emitters with higher Q-values have shorter half-lives — spanning 19 orders of magnitude.",
+    category: "Isotopes & Decay",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["alpha-decay", "gamow-factor", "q-value", "half-life"],
+    equation: "\\log T_{1/2} \\propto \\frac{Z}{\\sqrt{E_\\alpha}}",
+  },
+  {
+    id: "gamow-factor",
+    term: "Gamow factor",
+    definition:
+      "The quantum-mechanical tunnelling probability for a charged particle to penetrate the Coulomb barrier of a nucleus. G = exp(−2πη) where η = Z₁Z₂e²/(ℏv) is the Sommerfeld parameter and v is the relative velocity. The Gamow factor determines both alpha-decay rates (Geiger-Nuttall law) and thermonuclear reaction rates (Gamow window).",
+    category: "Physics",
+    audience: "professional",
+    audienceLevel: "professional",
+    relatedTerms: [
+      "alpha-decay",
+      "geiger-nuttall-law",
+      "coulomb-barrier",
+      "quantum-tunneling",
+    ],
+    equation:
+      "G = \\exp\\!\\left(-2\\pi\\eta\\right), \\quad \\eta = \\frac{Z_1 Z_2 e^2}{\\hbar v}",
+  },
+  {
+    id: "auger-electron",
+    term: "Auger electron",
+    definition:
+      "An electron emitted when an atom relaxes after inner-shell ionisation, instead of emitting a characteristic X-ray. The excess energy from the electron transition is transferred to an outer-shell electron (the Auger electron), which is ejected with characteristic energy E_KLL = E_K − E_L1 − E_L2. Auger-emitting radionuclides (e.g., I-125, Tl-201) are highly cytotoxic when localised near DNA.",
+    category: "Radiation & Biology",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "electron-capture",
+      "characteristic-x-ray",
+      "nuclear-medicine",
+    ],
+  },
+  {
+    id: "bremsstrahlung",
+    term: "Bremsstrahlung",
+    definition:
+      "Electromagnetic radiation ('braking radiation') emitted by a charged particle (usually an electron) decelerating in the Coulomb field of a nucleus. The spectrum is continuous from 0 to E_max (the endpoint). Bremsstrahlung is the dominant X-ray production mechanism in medical X-ray tubes and contributes to the dose from high-energy beta emitters (e.g., ³²P, ⁹⁰Y).",
+    category: "Radiation & Biology",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "beta-decay",
+      "ionizing-radiation",
+      "linear-energy-transfer",
+    ],
+  },
+  {
+    id: "cerenkov-radiation",
+    term: "Čerenkov radiation",
+    definition:
+      "Electromagnetic radiation emitted when a charged particle travels through a medium at a speed greater than the phase velocity of light in that medium (v > c/n). The threshold condition is β = v/c ≥ 1/n. In water (n ≈ 1.33), electrons above ~0.26 MeV produce the characteristic blue glow seen in reactor pools. Čerenkov detectors are used in neutrino experiments and medical PET devices.",
+    category: "Detection",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["ionizing-radiation", "refractive-index", "neutrino"],
+    equation: "\\cos\\theta = \\frac{1}{n\\beta}",
+  },
+  {
+    id: "compound-nucleus",
+    term: "Compound nucleus",
+    definition:
+      "An excited nuclear state formed transiently when a projectile merges with a target nucleus, distributing its energy among all nucleons before decaying independently of how it was formed (Bohr independence hypothesis). The compound nucleus has a lifetime of ~10⁻¹⁸–10⁻¹⁶ s. Examples: ²³⁶U* formed by n + ²³⁵U; ⁶⁴Zn* formed by α + ⁶⁰Ni.",
+    category: "Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["breit-wigner", "resonance", "fission"],
+  },
+  {
+    id: "conversion-electron",
+    term: "Conversion electron",
+    definition:
+      "An orbital electron ejected from the atom when a nucleus de-excites by transferring gamma-ray energy directly to an inner-shell electron (internal conversion), instead of emitting a gamma photon. The electron carries kinetic energy T_e = E_γ − E_binding. Conversion coefficient α = I_e / I_γ (number of conversion electrons per photon). Important for ⁵⁷Fe Mössbauer spectroscopy and Tc-99m dosimetry.",
+    category: "Isotopes & Decay",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["gamma-radiation", "isomeric-transition", "auger-electron"],
+  },
+  {
+    id: "delayed-neutron",
+    term: "Delayed neutron",
+    definition:
+      "A neutron emitted seconds to minutes after fission, from highly excited fission fragment 'precursor' nuclides (e.g., ⁸⁷Br, ¹³⁷I) rather than promptly from the initial fission event. The total delayed neutron fraction β for ²³⁵U is 0.0065 (0.65%), divided across six precursor groups with half-lives of 0.2–55 s. Delayed neutrons are crucial for reactor control — they slow the effective neutron generation time from ~10⁻⁷ s to ~0.1 s.",
+    category: "Reactor Engineering",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["prompt-neutron", "reactivity", "criticality", "fission"],
+    equation: "\\beta_{\\rm total}^{^{235}\\rm U} = 0.0065",
+  },
+  {
+    id: "dose-equivalent",
+    term: "Dose equivalent",
+    definition:
+      "The product of absorbed dose D and radiation weighting factor w_R: H = w_R · D. Measured in sievert (Sv). For gamma and X-rays: w_R = 1; protons: w_R = 2; alpha particles: w_R = 20; thermal neutrons: w_R ≈ 5. Effective dose E = Σ_T w_T · H_T further accounts for tissue radiosensitivity. Annual occupational limit: 50 mSv (ICRP); public limit: 1 mSv.",
+    category: "Radiation & Biology",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["absorbed-dose", "sievert", "effective-dose", "alara"],
+    equation: "H = w_R \\cdot D \\quad [\\text{Sv}]",
+  },
+  {
+    id: "fluence",
+    term: "Fluence",
+    definition:
+      "The time-integrated particle flux: Φ = ∫φ dt (particles/m²). Also defined as the number of particles crossing a unit sphere per unit area. Neutron fluence is used to quantify reactor vessel embrittlement (IAEA limit: 10¹⁹ n/cm² at E > 1 MeV). Distinct from dose (which accounts for energy deposition) and related to but not equal to particle flux.",
+    category: "Detection",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["neutron-flux", "absorbed-dose", "kerma"],
+    equation: "\\Phi = \\int_0^t \\phi\\, dt' \\quad [\\text{m}^{-2}]",
+  },
+  {
+    id: "fermi-age",
+    term: "Fermi age",
+    definition:
+      "A measure of the spatial displacement of neutrons as they slow down from fast to thermal energies in a moderating medium. τ = D/Σ_s · (integral over lethargy), with units of cm². In water: τ ≈ 27 cm²; in graphite: τ ≈ 368 cm². Used in Fermi age theory to describe neutron slowing-down before thermalisation.",
+    category: "Reactor Engineering",
+    audience: "professional",
+    audienceLevel: "professional",
+    relatedTerms: ["moderator", "thermal-neutron", "diffusion-length"],
+    equation:
+      "\\tau = \\frac{D}{\\Sigma_s}\\int \\frac{du}{\\xi\\Sigma_s} \\quad [\\text{cm}^2]",
+  },
+  {
+    id: "isomeric-transition",
+    term: "Isomeric transition (IT)",
+    definition:
+      "Radioactive decay of a nuclear isomer (metastable excited state) to the ground state by emission of a gamma photon or conversion electron. The most important example is ⁹⁹ᵐTc → ⁹⁹Tc + γ (140.5 keV), T½ = 6.01 h — the workhorse of nuclear medicine. Isomeric transitions preserve the element (same Z and A) but change the nuclear energy state.",
+    category: "Isotopes & Decay",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "isomer-nuclear",
+      "gamma-radiation",
+      "conversion-electron",
+      "nuclear-medicine",
+    ],
+  },
+  {
+    id: "kerma",
+    term: "Kerma",
+    definition:
+      "Kinetic Energy Released per unit MAss in a medium by uncharged ionising particles (photons or neutrons). K = ΣE_tr / m, expressed in J/kg (gray). Kerma is equal to absorbed dose D in conditions of charged-particle equilibrium (CPE). For photons: K = Φ · E · μ_tr/ρ. Important for dosimetry in radiation therapy and nuclear reactor environments.",
+    category: "Radiation & Biology",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["absorbed-dose", "fluence", "mass-attenuation-coefficient"],
+    equation:
+      "K = \\Phi \\cdot E \\cdot (\\mu_{\\rm tr}/\\rho) \\quad [\\text{Gy}]",
+  },
+  {
+    id: "lethargy",
+    term: "Lethargy",
+    definition:
+      "A logarithmic energy variable used in neutron transport theory: u = ln(E₀/E), where E₀ is a reference energy (typically 10 MeV). Lethargy increases as neutrons slow down; per-collision lethargy increase ξ = 1 + [(A−1)²/2A] ln[(A−1)/(A+1)] is constant for elastic scattering. Average number of collisions to thermalise: n = (u_thermal) / ξ ≈ 18 (H₂O), 114 (graphite).",
+    category: "Reactor Engineering",
+    audience: "professional",
+    audienceLevel: "professional",
+    relatedTerms: ["thermal-neutron", "moderator", "fermi-age"],
+    equation: "u = \\ln(E_0 / E)",
+  },
+  {
+    id: "mass-attenuation-coefficient",
+    term: "Mass attenuation coefficient",
+    definition:
+      "The attenuation coefficient μ divided by density ρ, characterising a material's ability to attenuate photons independent of its physical state: μ/ρ (cm²/g). The total coefficient is the sum of photoelectric, Compton, and pair production contributions. Beer-Lambert law: I = I₀ exp(−μ/ρ · ρx). NIST provides XCOM tabulations for all elements and photon energies from 1 keV to 100 GeV.",
+    category: "Detection",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "photoelectric-effect",
+      "compton-scattering",
+      "pair-production",
+      "shielding",
+    ],
+    equation: "I = I_0\\,e^{-\\,(\\mu/\\rho)\\,\\rho x}",
+  },
+  {
+    id: "migration-area",
+    term: "Migration area",
+    definition:
+      "The sum of the slowing-down area (Fermi age τ) and the thermal diffusion area L²: M² = τ + L². Characterises the total spatial spread of neutrons from fast to thermal, and from thermal to absorption. In water: M² ≈ 27 + 8 = 35 cm². Used in reactor criticality calculations as the 'migration length' M ≈ 6 cm.",
+    category: "Reactor Engineering",
+    audience: "professional",
+    audienceLevel: "professional",
+    relatedTerms: ["fermi-age", "diffusion-length", "criticality"],
+    equation: "M^2 = \\tau + L^2 \\quad [\\text{cm}^2]",
+  },
+  {
+    id: "neutron-poison",
+    term: "Neutron poison",
+    definition:
+      "A neutron-absorbing material that reduces reactor reactivity. Burnable poisons (e.g., Gd₂O₃ in fuel, B₄C rods) compensate for excess reactivity early in core life. Chemical shim (boric acid H₃BO₃ dissolved in coolant) allows fine reactivity control in PWRs. Xe-135, with a thermal absorption cross-section of 2.7 × 10⁶ barns, is the dominant fission product poison.",
+    category: "Reactor Engineering",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "xenon-poisoning",
+      "reactivity",
+      "control-rod",
+      "multiplication-factor",
+    ],
+  },
+  {
+    id: "pair-production",
+    term: "Pair production",
+    definition:
+      "A photon interaction in which a gamma ray converts into an electron–positron pair in the Coulomb field of a nucleus (threshold E_γ ≥ 2m_e c² = 1.022 MeV). Above ~10 MeV, pair production dominates photon attenuation. The positron subsequently annihilates with an electron producing two 511 keV annihilation photons in opposite directions — the basis of PET imaging.",
+    category: "Radiation & Biology",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "gamma-radiation",
+      "positron",
+      "pet-scan",
+      "mass-attenuation-coefficient",
+    ],
+    equation: "E_\\gamma \\geq 2 m_e c^2 = 1.022\\,\\text{MeV}",
+  },
+  {
+    id: "reactivity",
+    term: "Reactivity",
+    definition:
+      "A dimensionless measure of the deviation of a reactor from criticality: ρ = (k_eff − 1) / k_eff. Positive ρ: supercritical (power increasing); ρ = 0: critical (steady power); negative ρ: subcritical (power decreasing). The unit 'pcm' (per cent mille) = 10⁻⁵. 'Dollar' ($) unit = β (delayed neutron fraction). Prompt criticality occurs at ρ ≥ β ≈ 0.0065 for ²³⁵U.",
+    category: "Reactor Engineering",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["criticality", "multiplication-factor", "delayed-neutron"],
+    equation: "\\rho = \\frac{k_{\\rm eff}-1}{k_{\\rm eff}}",
+  },
+  {
+    id: "secular-equilibrium",
+    term: "Secular equilibrium",
+    definition:
+      "A state reached in a decay chain when a parent nuclide has a much longer half-life than its daughters. After several daughter half-lives, each daughter decays as fast as it is produced: λ₁N₁ = λ₂N₂ = λ₃N₃. Applies when T½(parent) >> T½(daughter). Example: ²²⁶Ra (1600 y) → ²²²Rn (3.8 d): Rn activity = Ra activity in an undisturbed source.",
+    category: "Isotopes & Decay",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["radioactivity", "decay-chain", "bateman-equations"],
+    equation: "\\lambda_1 N_1 = \\lambda_2 N_2 = \\lambda_3 N_3",
+  },
+  {
+    id: "specific-activity",
+    term: "Specific activity",
+    definition:
+      "The radioactivity per unit mass of a radionuclide: A_sp = λ N_A / M = ln2 · N_A / (T½ · M), in Bq/g. For ²²⁶Ra: A_sp = 3.7 × 10¹⁰ Bq/g (the original definition of 1 curie). For ¹³¹I (T½=8 d): A_sp ≈ 4.6 × 10¹⁵ Bq/g. High specific activity is required for radiolabelled pharmaceuticals to minimise administered mass.",
+    category: "Isotopes & Decay",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["radioactivity", "half-life", "becquerel", "curie"],
+    equation:
+      "A_{\\rm sp} = \\frac{\\lambda N_A}{M} = \\frac{\\ln 2 \\cdot N_A}{T_{1/2} \\cdot M}",
+  },
+  {
+    id: "transmutation",
+    term: "Transmutation",
+    definition:
+      "The conversion of one nuclide into another by nuclear reaction (neutron capture, fission, or spallation). In the context of nuclear waste management, transmutation of long-lived actinides (²³⁹Pu, ²⁴¹Am) into shorter-lived fission products in fast reactors or accelerator-driven systems (ADS) can dramatically reduce repository timescales. The concept dates to alchemists' dream of converting lead to gold.",
+    category: "Fuel Cycle",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["actinide", "fast-reactor", "nuclear-waste"],
+  },
+  {
+    id: "photofission",
+    term: "Photofission",
+    definition:
+      "Nuclear fission induced by a high-energy photon (gamma ray) rather than a neutron. Threshold for ²³⁸U: ~5.1 MeV; for ²³⁵U: ~5.3 MeV. Photofission is used in nuclear security (cargo scanning, warhead authentication) and was first observed by Haxby et al. in 1941. Cross-sections are generally 1–100 mb near threshold.",
+    category: "Physics",
+    audience: "professional",
+    audienceLevel: "professional",
+    relatedTerms: ["fission", "gamma-radiation", "q-value"],
+  },
+  // ────────────────────────────────────────────────
+  // QUANTUM MECHANICS
+  // ────────────────────────────────────────────────
+  {
+    id: "aufbau-principle",
+    term: "Aufbau principle",
+    definition:
+      "Electrons fill atomic orbitals in order of increasing energy, as given by the Madelung (n+l) rule: fill 1s, 2s, 2p, 3s, 3p, 4s, 3d, 4p... The principle (German: 'building up') determines ground-state electron configurations. Exceptions arise for Cr (d⁵ half-shell stability) and Cu (d¹⁰ full-shell stability).",
+    category: "Quantum Mechanics",
+    audience: "beginner",
+    audienceLevel: "beginner",
+    relatedTerms: [
+      "pauli-exclusion",
+      "hunds-rule",
+      "quantum-number",
+      "orbital",
+    ],
+  },
+  {
+    id: "bloch-wave",
+    term: "Bloch wave",
+    definition:
+      "A quantum-mechanical eigenstate of an electron in a periodic potential (crystal lattice): ψ_k(r) = u_k(r) exp(ik·r), where u_k has the periodicity of the lattice and k is the crystal momentum (wave vector). Bloch's theorem (1928) is the foundation of solid-state band theory, explaining why electrons in metals form energy bands rather than discrete levels.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["schrodinger-equation", "energy-band", "eigenstate"],
+    equation:
+      "\\psi_{\\mathbf{k}}(\\mathbf{r}) = u_{\\mathbf{k}}(\\mathbf{r})\\,e^{i\\mathbf{k}\\cdot\\mathbf{r}}",
+  },
+  {
+    id: "bose-einstein-statistics",
+    term: "Bose-Einstein statistics",
+    definition:
+      "Quantum statistics governing identical particles with integer spin (bosons). The mean occupation number for state with energy ε is n̄ = 1 / [exp((ε−μ)/k_B T) − 1]. Unlike fermions, bosons can occupy the same quantum state in unlimited numbers. Photons, gluons, and the Higgs boson are bosons. Bose-Einstein condensation occurs when a macroscopic fraction occupies the ground state.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["boson", "fermi-dirac-statistics", "superposition"],
+    equation: "\\bar{n} = \\frac{1}{e^{(\\varepsilon-\\mu)/k_BT}-1}",
+  },
+  {
+    id: "boson",
+    term: "Boson",
+    definition:
+      "A particle with integer spin (s = 0, 1, 2, …) that obeys Bose-Einstein statistics. Force-carrying gauge bosons include photons (γ), W±, Z⁰, gluons (g), and the graviton (hypothetical). The Higgs boson (H⁰, mass 125.25 GeV/c²) was discovered at CERN in 2012. Composite bosons include alpha particles (²⁴He, spin-0) and many atomic nuclei with even-mass number.",
+    category: "Particle Physics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "fermion",
+      "gauge-boson",
+      "bose-einstein-statistics",
+      "higgs-mechanism",
+    ],
+  },
+  {
+    id: "commutator",
+    term: "Commutator",
+    definition:
+      "The commutator of two operators Â and B̂ is [Â, B̂] = ÂB̂ − B̂Â. Non-commuting observables cannot be simultaneously measured with arbitrary precision. The canonical commutation relation [x̂, p̂] = iℏ is the mathematical basis of Heisenberg's uncertainty principle and quantum mechanics itself. Position and momentum, energy and time, angular momentum components are canonically conjugate pairs.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["heisenberg-uncertainty", "operator", "hamiltonian"],
+    equation: "[\\hat{x},\\hat{p}] = i\\hbar",
+  },
+  {
+    id: "copenhagen-interpretation",
+    term: "Copenhagen interpretation",
+    definition:
+      "The standard interpretation of quantum mechanics developed primarily by Bohr and Heisenberg in 1927. Core tenets: (1) wave function ψ provides a complete description of a quantum system; (2) physical quantities are only defined when measured; (3) measurement causes wave function collapse to an eigenstate; (4) quantum mechanics is inherently probabilistic. Alternative interpretations include many-worlds (Everett) and pilot-wave (de Broglie-Bohm).",
+    category: "Quantum Mechanics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["wavefunction", "superposition", "measurement-problem"],
+  },
+  {
+    id: "de-broglie-wavelength",
+    term: "de Broglie wavelength",
+    definition:
+      "The quantum-mechanical wavelength associated with any particle, proposed by Louis de Broglie in 1924: λ = h/p = h/(mv) for non-relativistic particles. For a thermal neutron at 25 meV: λ ≈ 1.8 Å, comparable to atomic spacings, enabling neutron diffraction. For an electron at 100 eV: λ ≈ 1.2 Å — the basis of electron microscopy.",
+    category: "Quantum Mechanics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "wave-particle-duality",
+      "heisenberg-uncertainty",
+      "quantum-number",
+    ],
+    equation: "\\lambda = \\frac{h}{p} = \\frac{h}{mv}",
+  },
+  {
+    id: "dirac-equation",
+    term: "Dirac equation",
+    definition:
+      "A relativistic wave equation for spin-½ particles proposed by Paul Dirac in 1928: (iγ^μ∂_μ − mc/ℏ)ψ = 0. It naturally incorporates electron spin without postulation, predicts the electron's magnetic moment (g ≈ 2), and led to the prediction of antimatter (positron, discovered by Anderson in 1932). The Dirac equation is the relativistic generalisation of the Schrödinger equation.",
+    category: "Quantum Mechanics",
+    audience: "professional",
+    audienceLevel: "professional",
+    relatedTerms: ["schrodinger-equation", "positron", "spin", "relativistic"],
+    equation: "(i\\gamma^\\mu \\partial_\\mu - mc/\\hbar)\\psi = 0",
+  },
+  {
+    id: "eigenstate",
+    term: "Eigenstate",
+    definition:
+      "A quantum state with a definite (sharp) value for a particular observable. If Ôψ = λψ, then ψ is an eigenstate of operator Ô with eigenvalue λ. Measurement of an observable yields eigenvalues with probabilities |⟨φ_n|ψ⟩|². Between measurements, particles exist in superpositions of eigenstates. Energy eigenstates (stationary states) are solutions of the time-independent Schrödinger equation.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "schrodinger-equation",
+      "operator",
+      "superposition",
+      "quantum-number",
+    ],
+  },
+  {
+    id: "fermi-dirac-statistics",
+    term: "Fermi-Dirac statistics",
+    definition:
+      "Quantum statistics governing identical particles with half-integer spin (fermions). The mean occupation number is n̄ = 1 / [exp((ε−μ)/k_B T) + 1]. At T=0, all states below the Fermi energy E_F are occupied (Fermi sea). The Fermi energy of copper: E_F ≈ 7 eV. Explains the stability of white dwarf stars (electron degeneracy pressure) and neutron stars (neutron degeneracy).",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["fermion", "pauli-exclusion", "bose-einstein-statistics"],
+    equation: "\\bar{n} = \\frac{1}{e^{(\\varepsilon-\\mu)/k_BT}+1}",
+  },
+  {
+    id: "fermion",
+    term: "Fermion",
+    definition:
+      "A particle with half-integer spin (s = ½, 3/2, …) that obeys Fermi-Dirac statistics and the Pauli exclusion principle. Quarks (spin ½) and leptons (electrons, muons, tau, neutrinos — all spin ½) are fundamental fermions. Composite fermions include protons and neutrons (each containing three quarks). The exchange of bosons between fermions mediates the fundamental forces.",
+    category: "Particle Physics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "boson",
+      "pauli-exclusion",
+      "fermi-dirac-statistics",
+      "standard-model",
+    ],
+  },
+  {
+    id: "hamiltonian-operator",
+    term: "Hamiltonian operator",
+    definition:
+      "The quantum-mechanical operator corresponding to the total energy of a system: Ĥ = T̂ + V̂ (kinetic + potential). For a particle in a potential V(r): Ĥ = −(ℏ²/2m)∇² + V(r). The time-independent Schrödinger equation is Ĥψ = Eψ. In nuclear physics, the nuclear Hamiltonian includes nucleon kinetic terms, two-body nuclear forces, and Coulomb interactions.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["schrodinger-equation", "eigenstate", "operator"],
+    equation: "\\hat{H} = -\\frac{\\hbar^2}{2m}\\nabla^2 + V(\\mathbf{r})",
+  },
+  {
+    id: "heisenberg-uncertainty",
+    term: "Heisenberg uncertainty principle",
+    definition:
+      "A fundamental limit on the simultaneous precision of conjugate observables, derived by Werner Heisenberg in 1927: ΔxΔp ≥ ℏ/2 and ΔEΔt ≥ ℏ/2. These are not limitations of measurement technology but intrinsic properties of quantum systems. The uncertainty principle explains the finite size of hydrogen atom (electron cannot collapse to zero radius), nuclear energy levels, and zero-point energy.",
+    category: "Quantum Mechanics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["commutator", "wavefunction", "zero-point-energy"],
+    equation: "\\Delta x\\,\\Delta p \\geq \\frac{\\hbar}{2}",
+  },
+  {
+    id: "ladder-operators",
+    term: "Ladder operators",
+    definition:
+      "Operators that raise (â†) or lower (â) the quantum number of an eigenstate: â†|n⟩ = √(n+1)|n+1⟩ and â|n⟩ = √n|n−1⟩. Used to solve the quantum harmonic oscillator algebraically, derive angular momentum eigenstates (J±), and construct field operators in quantum field theory. The number operator N̂ = â†â has eigenvalues n = 0, 1, 2, …",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["harmonic-oscillator", "hamiltonian-operator", "eigenstate"],
+    equation: "[\\hat{a},\\hat{a}^\\dagger] = 1",
+  },
+  {
+    id: "harmonic-oscillator",
+    term: "Quantum harmonic oscillator",
+    definition:
+      "A quantum system with a parabolic potential V = ½mω²x². Energy eigenvalues: E_n = ℏω(n + ½), n = 0, 1, 2, … The zero-point energy E₀ = ℏω/2 is irreducible due to Heisenberg uncertainty. The QHO is exactly solvable and serves as the basis for vibrational modes in molecules, phonons in solids, and quantized electromagnetic field modes (photons).",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "zero-point-energy",
+      "ladder-operators",
+      "schrodinger-equation",
+    ],
+    equation: "E_n = \\hbar\\omega\\!\\left(n + \\tfrac{1}{2}\\right)",
+  },
+  {
+    id: "matrix-mechanics",
+    term: "Matrix mechanics",
+    definition:
+      "The first complete formulation of quantum mechanics, developed by Heisenberg, Born, and Jordan in 1925. Physical observables are represented as infinite matrices; their multiplication is non-commutative, embodying the uncertainty principle. Schrödinger's wave mechanics (1926) was later shown to be mathematically equivalent. Dirac unified both into transformation theory.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "heisenberg-uncertainty",
+      "operator",
+      "schrodinger-equation",
+    ],
+  },
+  {
+    id: "operator",
+    term: "Quantum operator",
+    definition:
+      "A mathematical operation on a wave function that corresponds to a physical observable. In quantum mechanics: position x̂ = x (multiplication); momentum p̂ = −iℏ∂/∂x; energy Ê = iℏ∂/∂t; angular momentum L̂_z = −iℏ∂/∂φ. Hermitian operators have real eigenvalues (physically measurable). The expectation value ⟨O⟩ = ⟨ψ|Ô|ψ⟩.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["hamiltonian-operator", "eigenstate", "commutator"],
+    equation: "\\hat{p} = -i\\hbar\\frac{\\partial}{\\partial x}",
+  },
+  {
+    id: "pauli-exclusion",
+    term: "Pauli exclusion principle",
+    definition:
+      "No two identical fermions can occupy the same quantum state simultaneously (same n, l, m_l, m_s). Formulated by Wolfgang Pauli in 1925. Explains the periodic table structure, prevents electron shells from collapsing, and is responsible for the stability of matter, chemical bonding, and the degeneracy pressure in white dwarfs and neutron stars.",
+    category: "Quantum Mechanics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["fermion", "aufbau-principle", "fermi-dirac-statistics"],
+  },
+  {
+    id: "perturbation-theory",
+    term: "Perturbation theory",
+    definition:
+      "A systematic method for finding approximate solutions to quantum systems when a small perturbation H' is added to a solvable Hamiltonian H₀: H = H₀ + λH'. First-order energy correction: E_n^(1) = ⟨n⁰|H'|n⁰⟩. Time-dependent perturbation theory (Fermi's golden rule) gives transition rates. Used extensively for atomic spectra, nuclear energy levels, and scattering theory.",
+    category: "Quantum Mechanics",
+    audience: "professional",
+    audienceLevel: "professional",
+    relatedTerms: ["hamiltonian-operator", "eigenstate", "fermi-golden-rule"],
+    equation: "E_n^{(1)} = \\langle n^0 | H' | n^0 \\rangle",
+  },
+  {
+    id: "probability-density",
+    term: "Probability density",
+    definition:
+      "The squared modulus of the wave function |ψ(r,t)|² gives the probability per unit volume of finding the particle at position r at time t. The Born rule: P(r,t) = |ψ|² with ∫|ψ|² dV = 1 (normalisation). For hydrogen 1s: |ψ₁s|² ∝ exp(−2r/a₀), peaking at r = 0 but with most probability at the Bohr radius a₀ = 0.529 Å.",
+    category: "Quantum Mechanics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["wavefunction", "born-rule", "eigenstate"],
+    equation: "P(\\mathbf{r},t) = |\\psi(\\mathbf{r},t)|^2",
+  },
+  {
+    id: "quantum-number",
+    term: "Quantum numbers",
+    definition:
+      "Integer or half-integer numbers specifying the quantum state of a particle. For hydrogen: n (principal, 1, 2, 3…), l (orbital angular momentum, 0 to n−1), m_l (magnetic, −l to +l), m_s (spin, ±½). Nuclear quantum numbers include I (nuclear spin), parity π, isospin T. Magic numbers (2, 8, 20, 28, 50, 82, 126) correspond to closed nuclear shells.",
+    category: "Quantum Mechanics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "aufbau-principle",
+      "pauli-exclusion",
+      "nuclear-shell-model",
+    ],
+  },
+  {
+    id: "quantum-tunneling",
+    term: "Quantum tunnelling",
+    definition:
+      "The quantum phenomenon allowing a particle to penetrate a potential energy barrier higher than its total energy — impossible in classical mechanics. The transmission coefficient T ≈ exp(−2∫√(2m(V−E))/ℏ dx). Responsible for alpha decay (Gamow factor), nuclear fusion in stars (Gamow window), and tunnel junctions in electronics (scanning tunnelling microscope).",
+    category: "Quantum Mechanics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "gamow-factor",
+      "alpha-decay",
+      "wavefunction",
+      "heisenberg-uncertainty",
+    ],
+    equation:
+      "T \\approx \\exp\\!\\left(-2\\int_a^b \\frac{\\sqrt{2m(V-E)}}{\\hbar}\\,dx\\right)",
+  },
+  {
+    id: "schrodinger-equation",
+    term: "Schrödinger equation",
+    definition:
+      "The fundamental equation governing quantum-mechanical evolution, proposed by Erwin Schrödinger in 1926. Time-dependent form: iℏ ∂ψ/∂t = Ĥψ. For stationary states (time-independent): Ĥψ = Eψ. Solutions are wave functions ψ(r,t) whose squared modulus gives probability density. Analytically solvable for hydrogen, harmonic oscillator, and particle in a box; numerical methods needed for multi-electron atoms.",
+    category: "Quantum Mechanics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "hamiltonian-operator",
+      "wavefunction",
+      "eigenstate",
+      "probability-density",
+    ],
+    equation: "i\\hbar\\frac{\\partial\\psi}{\\partial t} = \\hat{H}\\psi",
+  },
+  {
+    id: "selection-rules",
+    term: "Selection rules",
+    definition:
+      "Rules governing which quantum transitions are allowed by conservation of angular momentum, parity, or other symmetries. For electric dipole (E1) transitions: Δl = ±1, Δm_l = 0, ±1, Δn = any, Δs = 0. For nuclear gamma transitions: ΔI ≥ 1 (except I_i = I_f = 0), parity depends on multipole order. Forbidden transitions occur via higher-multipole terms at reduced rates.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["gamma-radiation", "angular-momentum", "eigenstate"],
+    equation: "\\Delta l = \\pm 1 \\quad (\\text{E1 rule})",
+  },
+  {
+    id: "spherical-harmonics",
+    term: "Spherical harmonics",
+    definition:
+      "Functions Y_l^m(θ,φ) that are the angular eigenfunctions of the orbital angular momentum operator. For hydrogen: ψ_nlm = R_nl(r) · Y_l^m(θ,φ). The shapes define atomic orbital geometry: s (l=0, spherical), p (l=1, dumbbell), d (l=2, cloverleaf). Nuclear multipole moments are expressed in terms of spherical harmonics; quadrupole moments Q = ∫ρ(2z²−x²−y²)dV characterise deformed nuclei.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["quantum-number", "orbital", "schrodinger-equation"],
+  },
+  {
+    id: "spin-orbit-coupling",
+    term: "Spin-orbit coupling",
+    definition:
+      "An interaction between a particle's intrinsic spin and its orbital angular momentum: H_SO = ξ(r) L·S. Causes fine structure splitting of atomic spectral lines (~10⁻⁴ eV in hydrogen). In nuclei, the strong spin-orbit coupling (opposite sign to atoms) is responsible for the magic numbers 28, 50, 82, 126 — a key success of the nuclear shell model (Mayer and Jensen, Nobel Prize 1963).",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["nuclear-shell-model", "magic-number", "angular-momentum"],
+    equation: "H_{SO} = \\xi(r)\\,\\mathbf{L}\\cdot\\mathbf{S}",
+  },
+  {
+    id: "superposition",
+    term: "Quantum superposition",
+    definition:
+      "A fundamental quantum principle: a quantum system can exist in a linear combination of multiple eigenstates simultaneously: |ψ⟩ = Σ_n c_n |n⟩. The squared amplitudes |c_n|² give the probability of measuring state |n⟩. Superposition collapses to a definite state upon measurement (Copenhagen interpretation). Schrödinger's cat is a gedanken thought experiment illustrating superposition at macroscopic scale.",
+    category: "Quantum Mechanics",
+    audience: "beginner",
+    audienceLevel: "beginner",
+    relatedTerms: [
+      "copenhagen-interpretation",
+      "eigenstate",
+      "probability-density",
+    ],
+    equation: "|\\psi\\rangle = \\sum_n c_n |n\\rangle",
+  },
+  {
+    id: "variational-principle",
+    term: "Variational principle",
+    definition:
+      "A method for finding approximate ground-state energies: E_trial = ⟨ψ_trial|Ĥ|ψ_trial⟩ ≥ E_0 (the true ground state energy). By minimising E_trial over variational parameters, increasingly accurate ground states are obtained. The Hartree-Fock method and density functional theory (DFT) are variational approaches. Applied to nuclear many-body calculations for binding energies and level structures.",
+    category: "Quantum Mechanics",
+    audience: "professional",
+    audienceLevel: "professional",
+    relatedTerms: ["hamiltonian-operator", "perturbation-theory", "eigenstate"],
+    equation:
+      "E_{\\rm trial} = \\langle\\psi_{\\rm trial}|\\hat{H}|\\psi_{\\rm trial}\\rangle \\geq E_0",
+  },
+  {
+    id: "zero-point-energy",
+    term: "Zero-point energy",
+    definition:
+      "The minimum energy of a quantum system at absolute zero (T = 0 K), arising from Heisenberg uncertainty: a confined particle cannot have zero momentum simultaneously. For a quantum harmonic oscillator: E₀ = ℏω/2. For a hydrogen atom: E₀ = −13.6 eV. Zero-point motion contributes to van der Waals forces and prevents helium from solidifying at ambient pressure without applied pressure.",
+    category: "Quantum Mechanics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "heisenberg-uncertainty",
+      "harmonic-oscillator",
+      "vacuum-energy",
+    ],
+    equation: "E_0 = \\frac{\\hbar\\omega}{2}",
+  },
+  {
+    id: "larmor-precession",
+    term: "Larmor precession",
+    definition:
+      "The precession of a magnetic dipole moment in an external magnetic field B at the Larmor frequency ω_L = γB, where γ is the gyromagnetic ratio. For a proton: γ_p = 2.675 × 10⁸ rad·s⁻¹·T⁻¹, giving 42.6 MHz/T in NMR/MRI. The nuclear Larmor precession is exploited in NMR spectroscopy, MRI, and precision measurements of nuclear magnetic moments.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["nuclear-magnetic-resonance", "spin"],
+    equation: "\\omega_L = \\gamma B",
+  },
+  {
+    id: "radial-wavefunction",
+    term: "Radial wave function",
+    definition:
+      "The radial part R_nl(r) of the hydrogen wave function ψ_nlm = R_nl(r) Y_l^m(θ,φ). Depends on principal quantum number n and orbital quantum number l. For the 1s orbital: R_10 = 2(1/a₀)^(3/2) exp(−r/a₀). Radial probability density: P(r) = r²|R_nl(r)|². The most probable radius for 1s is the Bohr radius a₀ = 0.529 Å.",
+    category: "Quantum Mechanics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "quantum-number",
+      "probability-density",
+      "spherical-harmonics",
+    ],
+    equation: "P(r) = r^2|R_{nl}(r)|^2",
+  },
+  // ────────────────────────────────────────────────
+  // PARTICLE PHYSICS
+  // ────────────────────────────────────────────────
+  {
+    id: "baryon-number",
+    term: "Baryon number",
+    definition:
+      "A conserved quantum number B = (n_quarks − n_antiquarks)/3. Protons and neutrons each have B = +1; antiprotons have B = −1; leptons and bosons have B = 0. Baryon number conservation forbids proton decay in the Standard Model. Grand Unified Theories (GUTs) predict proton decay with T½ > 10³⁴ years — currently beyond experimental limits (Super-Kamiokande T½ > 1.6 × 10³⁴ years).",
+    category: "Particle Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["quark", "standard-model", "lepton-number"],
+  },
+  {
+    id: "color-charge",
+    term: "Color charge",
+    definition:
+      "The quantum charge associated with the strong nuclear force in quantum chromodynamics (QCD). Quarks carry one of three color charges (red, green, blue); gluons carry color-anticolor pairs. Hadrons are 'color neutral' (white): baryons = RGB, mesons = color-anticolor. Color confinement prevents the observation of free quarks or gluons — only color-neutral composites are observed.",
+    category: "Particle Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["quark", "gluon", "standard-model", "strong-force"],
+  },
+  {
+    id: "electroweak-unification",
+    term: "Electroweak unification",
+    definition:
+      "The theoretical unification of electromagnetism and the weak nuclear force into a single electroweak force, achieved by Glashow, Salam, and Weinberg (Nobel Prize 1979). At energies above ~100 GeV, the forces become equal in strength. The electroweak symmetry is broken at lower energies by the Higgs mechanism, giving the W± and Z⁰ bosons their large masses while the photon remains massless.",
+    category: "Particle Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "gauge-boson",
+      "w-boson",
+      "z-boson",
+      "higgs-mechanism",
+      "standard-model",
+    ],
+  },
+  {
+    id: "gauge-boson",
+    term: "Gauge boson",
+    definition:
+      "Force-carrying particles that mediate the fundamental interactions: photon (γ, electromagnetic), W± and Z⁰ (weak), gluons (g, strong), graviton (gravity, not yet detected). All are spin-1 (vector) bosons except the spin-2 graviton. In gauge theories, bosons arise from local symmetry requirements — U(1) for QED, SU(2) for weak, SU(3) for QCD.",
+    category: "Particle Physics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["boson", "standard-model", "w-boson", "z-boson", "gluon"],
+  },
+  {
+    id: "gluon",
+    term: "Gluon",
+    definition:
+      "The massless gauge boson of QCD that mediates the strong nuclear force between quarks. Gluons carry color charge themselves (unlike photons which are electrically neutral), leading to gluon self-coupling and color confinement. Eight types of gluons correspond to the 8 generators of SU(3). At low energies, quark-gluon interactions produce the residual strong force between nucleons (nuclear force).",
+    category: "Particle Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["color-charge", "quark", "gauge-boson", "strong-force"],
+  },
+  {
+    id: "hadron",
+    term: "Hadron",
+    definition:
+      "A composite particle made of quarks bound by the strong force. Baryons (e.g., proton, neutron) contain three quarks (qqq); mesons (e.g., pion, kaon) contain a quark-antiquark pair (qq̄). Exotic hadrons include tetraquarks (qq̄q'q̄') and pentaquarks (qqqqq̄) — observed at LHCb. Hadrons are the particles that participate in the nuclear force; leptons do not.",
+    category: "Particle Physics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["quark", "baryon-number", "meson", "gluon"],
+  },
+  {
+    id: "higgs-mechanism",
+    term: "Higgs mechanism",
+    definition:
+      "The spontaneous symmetry-breaking mechanism by which the W± and Z⁰ bosons acquire mass while the photon remains massless. The Higgs field φ has a non-zero vacuum expectation value ⟨φ⟩ = v/√2 ≈ 174 GeV. Interaction with this field gives fermions and gauge bosons their masses: m_W = gv/2 ≈ 80.4 GeV/c². The associated quantum is the Higgs boson (H⁰), discovered at CERN in 2012 with mass 125.25 GeV/c².",
+    category: "Particle Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "electroweak-unification",
+      "w-boson",
+      "z-boson",
+      "standard-model",
+    ],
+    equation: "m_W = \\frac{gv}{2} \\approx 80.4\\,\\text{GeV}/c^2",
+  },
+  {
+    id: "lepton-number",
+    term: "Lepton number",
+    definition:
+      "A conserved quantum number: L = +1 for leptons (e⁻, μ⁻, τ⁻, ν_e, ν_μ, ν_τ); L = −1 for antileptons; L = 0 for quarks and bosons. Separate lepton family numbers L_e, L_μ, L_τ are approximately conserved (violated only slightly by neutrino oscillations). Beta decay: n → p + e⁻ + ν̄_e conserves L_e = 0 (electron: +1, antineutrino: −1).",
+    category: "Particle Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: ["neutrino", "beta-decay", "standard-model", "baryon-number"],
+  },
+  {
+    id: "meson",
+    term: "Meson",
+    definition:
+      "A hadron consisting of one quark and one antiquark (qq̄). Pions (π±, π⁰) are the lightest mesons (mass ~135–140 MeV/c²) and are the primary carriers of the residual nuclear force between nucleons (Yukawa theory). Kaons (K±, K⁰) are strange mesons; D mesons contain charm quarks; B mesons contain bottom quarks. All mesons are unstable, decaying via the weak or electromagnetic force.",
+    category: "Particle Physics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["hadron", "quark", "strong-force", "nuclear-force"],
+  },
+  {
+    id: "neutrino",
+    term: "Neutrino",
+    definition:
+      "A nearly massless, electrically neutral lepton that interacts only via the weak force and gravity. Three flavours: ν_e (electron neutrino), ν_μ (muon neutrino), ν_τ (tau neutrino). Solar neutrino flux: ~6.5 × 10¹⁰ cm⁻²s⁻¹ at Earth. Neutrino oscillations between flavours prove they have non-zero mass. Mean free path in iron at 1 MeV: ~10¹⁷ m — essentially undetectable without large underground detectors (Super-K, IceCube).",
+    category: "Particle Physics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: ["beta-decay", "lepton-number", "standard-model"],
+  },
+  {
+    id: "quark",
+    term: "Quark",
+    definition:
+      "A fundamental constituent of matter, carrying fractional electric charge (±⅓e or ±⅔e) and color charge. Six flavours: up (u, +⅔e), down (d, −⅓e), strange (s, −⅓e), charm (c, +⅔e), bottom (b, −⅓e), top (t, +⅔e, mass 172.7 GeV/c²). Proton = uud; neutron = udd. Quarks are never observed in isolation (confinement); top quark discovered at Fermilab in 1995.",
+    category: "Particle Physics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "hadron",
+      "color-charge",
+      "gluon",
+      "standard-model",
+      "baryon-number",
+    ],
+  },
+  {
+    id: "standard-model",
+    term: "Standard Model",
+    definition:
+      "The theoretical framework describing all known fundamental particles and three of the four fundamental forces (electromagnetic, weak, strong — not gravity). Contains 6 quarks, 6 leptons, 4 force-carrying gauge bosons, and the Higgs boson (17 fundamental particles total). Formulated in the 1960s–1970s; validated by hundreds of precision measurements. Incomplete: does not include gravity, dark matter, or explain matter-antimatter asymmetry.",
+    category: "Particle Physics",
+    audience: "intermediate",
+    audienceLevel: "intermediate",
+    relatedTerms: [
+      "quark",
+      "fermion",
+      "boson",
+      "gauge-boson",
+      "higgs-mechanism",
+    ],
+  },
+  {
+    id: "w-boson",
+    term: "W boson",
+    definition:
+      "Charged gauge bosons (W⁺ and W⁻) that mediate the weak nuclear force responsible for beta decay and nuclear reactions in stars. Discovered at CERN by Carlo Rubbia and Simon van der Meer in 1983 (Nobel Prize 1984). Mass M_W = 80.377 ± 0.012 GeV/c² (PDG 2022). In beta-minus decay: n → p + e⁻ + ν̄_e proceeds via d → u + W⁻.",
+    category: "Particle Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "gauge-boson",
+      "electroweak-unification",
+      "z-boson",
+      "beta-decay",
+    ],
+    equation: "M_W = 80.4\\,\\text{GeV}/c^2",
+  },
+  {
+    id: "z-boson",
+    term: "Z boson",
+    definition:
+      "The neutral gauge boson of the weak force, mediating neutral-current weak interactions. Mass M_Z = 91.1876 ± 0.0021 GeV/c² — the most precisely measured electroweak parameter. Discovered at CERN in 1983. The Z⁰ decay width Γ_Z = 2.4952 GeV constrains the number of light neutrino species to exactly three, a key early precision test of the Standard Model.",
+    category: "Particle Physics",
+    audience: "advanced",
+    audienceLevel: "advanced",
+    relatedTerms: [
+      "gauge-boson",
+      "electroweak-unification",
+      "w-boson",
+      "neutrino",
+    ],
+    equation: "M_Z = 91.2\\,\\text{GeV}/c^2",
   },
 ];
 

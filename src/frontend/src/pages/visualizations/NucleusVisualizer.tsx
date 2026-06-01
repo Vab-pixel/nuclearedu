@@ -2050,6 +2050,16 @@ export function NucleusVisualizer() {
                 annotation="Bethe-Weizsäcker formula: Volume, Surface, Coulomb, Asymmetry, and Pairing terms"
                 label="Semi-Empirical Mass Formula"
               />
+              <EquationBlock
+                latex="\\text{Magic numbers}: 2,\\,8,\\,20,\\,28,\\,50,\\,82,\\,126"
+                annotation="Nuclei with these proton or neutron counts have completely filled nuclear shells, yielding exceptional stability — analogous to noble-gas electron configurations. Double-magic nuclei (e.g. ²⁰⁸Pb: Z=82, N=126) are the most bound."
+                label="Nuclear Magic Numbers"
+              />
+              <EquationBlock
+                latex="Q = \\frac{3Ze^2}{5R_0^2}\\beta_2\\left(1 + \\frac{1}{2}\\sqrt{\\frac{5}{\\pi}}\\beta_2\\right)"
+                annotation="Electric quadrupole moment Q; β₂ is the deformation parameter. Positive β₂ = prolate (rugby-ball shaped), negative β₂ = oblate (flattened disc) nucleus. Q = 0 for a perfectly spherical nucleus."
+                label="Electric Quadrupole Moment"
+              />
               <dl className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
                 {[
                   {

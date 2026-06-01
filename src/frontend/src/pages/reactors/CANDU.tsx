@@ -1,4 +1,7 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SafetyCallout } from "@/components/SafetyCallout";
 import { SectionCard } from "@/components/SectionCard";
@@ -317,15 +320,11 @@ export default function CANDUPage() {
               <p className="text-sm font-semibold text-foreground mb-2">
                 Thermal Neutron Absorption Cross-Sections (at 2200 m/s)
               </p>
-              <pre className="text-sm font-mono text-foreground overflow-x-auto">
-                {`σ_a(¹H)  = 0.332000 barns
-σ_a(²H)  = 0.000506 barns
-Ratio:     0.332 / 0.000506 ≈ 656×`}
-              </pre>
-              <p className="mt-2 text-xs text-muted-foreground">
-                Source: NNDC/BNL Atlas of Neutron Resonances, 6th ed. (2018);
-                IAEA-NDS ENDF/B-VIII.0.
-              </p>
+              <EquationBlock
+                latex="\\sigma_a(^1\\text{H}) = 0.332 \\text{ b} \\qquad \\sigma_a(^2\\text{H}) = 0.000506 \\text{ b} \\qquad \\text{Ratio} = \\frac{0.332}{0.000506} \\approx 656\\times"
+                annotation="Thermal neutron absorption cross-sections at 2200 m/s (0.0253 eV). The 656-fold difference between H-1 and H-2 (deuterium) is the entire physical basis of the CANDU design — D₂O wastes so few neutrons that natural uranium (0.72% U-235) can sustain a chain reaction."
+                label="σ_a: ¹H vs ²H — NNDC/BNL Atlas of Neutron Resonances, 6th ed. (2018); IAEA-NDS ENDF/B-VIII.0"
+              />
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
               This 656-fold difference is the entire basis of the CANDU design
@@ -354,15 +353,11 @@ Ratio:     0.332 / 0.000506 ≈ 656×`}
               The <strong className="text-foreground">moderating ratio</strong>{" "}
               is defined as:
             </p>
-            <div className="rounded-md bg-muted/30 border border-border px-4 py-3 mb-3">
-              <pre className="text-sm font-mono text-foreground overflow-x-auto">
-                {`Moderating Ratio = ξ · Σ_s / Σ_a
-
-  ξ  = mean logarithmic energy decrement per collision
-  Σ_s = macroscopic scattering cross-section [cm⁻¹]
-  Σ_a = macroscopic absorption cross-section [cm⁻¹]`}
-              </pre>
-            </div>
+            <EquationBlock
+              latex="MR = \\frac{\\xi \\,\\Sigma_s}{\\Sigma_a}"
+              annotation="Moderating Ratio (MR): ξ is the mean logarithmic energy decrement per collision (ξ = 1 for hydrogen, 0.725 for deuterium); Σ_s is the macroscopic scattering cross-section (cm⁻¹); Σ_a is the macroscopic absorption cross-section (cm⁻¹). A high MR means the material slows neutrons efficiently without absorbing them — ideal for neutron economy. D₂O has MR ≈ 21,000 vs H₂O ≈ 71 and graphite ≈ 200."
+              label="Moderating Ratio — Figure of Merit for Reactor Moderators"
+            />
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
               A high moderating ratio means a material slows neutrons quickly
               (high ξΣ_s) without absorbing them (low Σ_a) — ideal for neutron

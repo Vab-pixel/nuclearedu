@@ -2,6 +2,8 @@ import { AudienceBadge } from "@/components/AudienceBadge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { CollapsibleSection } from "@/components/CollapsibleSection";
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 
@@ -217,10 +219,12 @@ export default function Research() {
             Neutron Diffraction: Crystal Structure Determination
           </h3>
           <p className="text-muted-foreground leading-relaxed mb-3">
-            Bragg's law governs all diffraction:{" "}
-            <code className="font-mono text-foreground text-xs bg-muted px-1 rounded">
-              nλ = 2d·sinθ
-            </code>
+            Bragg's law governs all diffraction:
+            <EquationBlock
+              latex="n\lambda = 2d\sin\theta"
+              annotation="Bragg's law: n = diffraction order (integer); λ = neutron de Broglie wavelength (Å); d = interplanar spacing (Å); θ = Bragg angle. For thermal neutrons (λ ≈ 1–3 Å), d-spacings of 0.5–5 Å are accessible — exactly the atomic bond-length scale."
+              label="Bragg's Diffraction Law"
+            />
             . Neutron diffraction locates atomic positions — including hydrogen
             — with sub-ångström precision. Critical applications include:
           </p>
@@ -514,9 +518,11 @@ export default function Research() {
             acts as a catalyst: four protons are consumed, one helium-4 and two
             neutrinos are produced, and C-12 is regenerated:
           </p>
-          <p className="text-center font-mono text-sm text-foreground bg-muted/40 rounded-lg px-4 py-3 mb-4">
-            ¹²C(p,γ)¹³N(β⁺)¹³C(p,γ)¹⁴N(p,γ)¹⁵O(β⁺)¹⁵N(p,α)¹²C
-          </p>
+          <EquationBlock
+            latex="{}^{12}\text{C}(p,\gamma){}^{13}\text{N}(\beta^+){}^{13}\text{C}(p,\gamma){}^{14}\text{N}(p,\gamma){}^{15}\text{O}(\beta^+){}^{15}\text{N}(p,\alpha){}^{12}\text{C}"
+            annotation="CNO cycle: carbon-12 is the catalyst. Four protons are consumed; one helium-4 (alpha) and two electron neutrinos are produced; C-12 is regenerated. Net energy release: ~26.7 MeV. The bottleneck is ¹⁴N(p,γ)¹⁵O, which has a cross-section of ~10⁻¹² barns at stellar energies."
+            label="CNO Cycle — Catalytic Hydrogen Burning"
+          />
           <p className="text-muted-foreground leading-relaxed mb-3">
             The bottleneck reaction ¹⁴N(p,γ)¹⁵O determines the CNO cycle rate.
             Its cross-section at stellar energies (E_Gamow ≈ 25–50 keV for the
@@ -575,9 +581,11 @@ export default function Research() {
             momentarily fuse into a highly excited compound nucleus (CN) which
             must survive without fissioning:
           </p>
-          <p className="text-center font-mono text-sm text-foreground bg-muted/40 rounded-lg px-4 py-3 mb-4">
-            Projectile + Target → [Compound Nucleus]* → SHE + xn
-          </p>
+          <EquationBlock
+            latex="\text{Projectile} + \text{Target} \rightarrow [\text{CN}]^* \rightarrow \text{SHE} + x n"
+            annotation="Superheavy element synthesis via compound nucleus (CN) reaction. After fusion, the excited compound nucleus must survive without fissioning: it deexcites by emitting x prompt neutrons (typically 1–4 for 'cold fusion', 4–5 for 'hot fusion'). Cross-sections range from ~1 nb (Z=112) to ~0.1 pb (Z=118 at Dubna)."
+            label="Superheavy Element Synthesis Reaction"
+          />
           <ul className="list-none space-y-2 text-sm text-muted-foreground mb-4">
             <li className="flex gap-2 items-start">
               <span className="text-primary mt-1">▸</span>

@@ -2,6 +2,8 @@ import { AudienceBadge } from "@/components/AudienceBadge";
 import { CitationMarker } from "@/components/CitationMarker";
 import { CollapsibleSection } from "@/components/CollapsibleSection";
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 import { Button } from "@/components/ui/button";
@@ -194,42 +196,42 @@ const nuclideTypes = [
 
 const nuclearSizeData = [
   {
-    nuclide: "¹H",
+    nuclide: "H-1",
     A: 1,
     r_fm: "0.85",
     V_fm3: "2.6",
     note: "Proton charge radius (CODATA 2018)",
   },
   {
-    nuclide: "⁴He",
+    nuclide: "He-4",
     A: 4,
     r_fm: "1.90",
     V_fm3: "28.7",
     note: "Alpha particle; doubly magic",
   },
   {
-    nuclide: "¹²C",
+    nuclide: "C-12",
     A: 12,
     r_fm: "2.73",
     V_fm3: "85.2",
     note: "Common accelerator target",
   },
   {
-    nuclide: "⁵⁶Fe",
+    nuclide: "Fe-56",
     A: 56,
     r_fm: "4.54",
     V_fm3: "392",
     note: "Most tightly bound nucleus",
   },
   {
-    nuclide: "²⁰⁸Pb",
+    nuclide: "Pb-208",
     A: 208,
     r_fm: "7.11",
     V_fm3: "1,503",
     note: "Doubly magic; heaviest stable nuclide",
   },
   {
-    nuclide: "²³⁸U",
+    nuclide: "U-238",
     A: 238,
     r_fm: "7.44",
     V_fm3: "1,726",

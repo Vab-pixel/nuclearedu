@@ -1,25 +1,29 @@
 import katex from "katex";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "katex/dist/katex.min.css";
+import { Check, Copy } from "lucide-react";
 
 interface EquationBlockProps {
   latex: string;
-  annotation: string;
+  annotation?: string;
   label?: string;
+  display?: boolean;
 }
 
 export function EquationBlock({
   latex,
   annotation,
   label,
+  display,
 }: EquationBlockProps) {
   const mathRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!mathRef.current) return;
     try {
       katex.render(latex, mathRef.current, {
-        displayMode: true,
+        displayMode: display !== false,
         throwOnError: false,
         trust: false,
       });
@@ -28,7 +32,7 @@ export function EquationBlock({
         mathRef.current.innerHTML = `<code class="text-sm font-mono text-foreground">${latex}</code>`;
       }
     }
-  }, [latex]);
+  }, [latex, display]);
 
   return (
     <figure
@@ -40,13 +44,43 @@ export function EquationBlock({
           {label}
         </figcaption>
       )}
-      <div
-        ref={mathRef}
-        className="overflow-x-auto text-foreground"
-        aria-hidden="true"
-      />
-      <p className="sr-only">{annotation}</p>
-      <p className="mt-3 text-sm italic text-muted-foreground">{annotation}</p>
+      <div className="relative">
+        <div
+          ref={mathRef}
+          className="overflow-x-auto text-foreground"
+          aria-hidden="true"
+        />
+        <button
+          type="button"
+          onClick={() => {
+            navigator.clipboard.writeText(latex).then(() => {
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1500);
+            });
+          }}
+          className="absolute top-0 right-0 p-1.5 rounded-md bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          aria-label="Copy equation"
+          title="Copy equation"
+          data-ocid="equation.copy_button"
+        >
+          {copied ? (
+            <Check className="w-3.5 h-3.5" />
+          ) : (
+            <Copy className="w-3.5 h-3.5" />
+          )}
+        </button>
+        {copied && (
+          <span className="absolute top-8 right-0 text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded shadow-sm">
+            Copied!
+          </span>
+        )}
+      </div>
+      {annotation && <p className="sr-only">{annotation}</p>}
+      {annotation && (
+        <p className="mt-3 text-sm italic text-muted-foreground">
+          {annotation}
+        </p>
+      )}
     </figure>
   );
 }

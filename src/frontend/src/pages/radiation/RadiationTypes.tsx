@@ -1,4 +1,6 @@
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 import { Button } from "@/components/ui/button";
@@ -9,7 +11,7 @@ import { useState } from "react";
 const radiationTypes = [
   {
     type: "Alpha (α)",
-    composition: "2 protons + 2 neutrons (⁴He nucleus)",
+    composition: "2 protons + 2 neutrons (He-4 nucleus)",
     penetration: "Stopped by paper, skin, ~5 cm air",
     ionization: "Very high (high LET)",
     hazard: "External: minimal. Internal: very dangerous.",
@@ -22,7 +24,7 @@ const radiationTypes = [
   },
   {
     type: "Beta (β)",
-    composition: "Electron (β⁻) or positron (β⁺)",
+    composition: "Electron (β⁻) or positron (β⁺) — e.g. C-14 beta-minus decay",
     penetration: "Stopped by ~1 cm plastic, light metal",
     ionization: "Medium",
     hazard: "External: skin/eye exposure possible. Internal: significant.",
@@ -791,10 +793,13 @@ export default function RadiationTypes() {
                 <p className="text-sm text-muted-foreground mb-3">
                   The photon is <em>completely absorbed</em> by an inner-shell
                   (K or L) bound electron. The electron is ejected with kinetic
-                  energy T = E_γ − B_e, where B_e is the electron binding
-                  energy. The resulting vacancy is filled by outer-shell
-                  electrons, emitting characteristic X-rays (fluorescence) or
-                  Auger electrons.
+                  energy <InlineEquation tex="T = E_\gamma - B_e" />, where
+                  <InlineEquation tex="B_e" /> is the electron binding energy.
+                  The resulting vacancy is filled by outer-shell electrons,
+                  emitting characteristic X-rays (fluorescence) or Auger
+                  electrons. The cross-section scales as
+                  <InlineEquation tex="\sigma_{PE} \propto Z^{4.5} / E_\gamma^{3.5}" />
+                  .
                 </p>
                 <ul className="text-sm text-muted-foreground space-y-1 list-none">
                   <li>
@@ -878,13 +883,20 @@ export default function RadiationTypes() {
                 </h4>
                 <p className="text-sm text-muted-foreground mb-3">
                   In the Coulomb field of a nucleus, a photon spontaneously
-                  converts into an electron-positron (e⁻e⁺) pair. This is a
-                  direct manifestation of E = mc². The threshold is exactly 2m_e
-                  c² = 1.022 MeV. Any excess photon energy above threshold is
-                  shared as kinetic energy of the pair. The positron rapidly
-                  slows, annihilates with an ambient electron, and emits two
-                  collinear 511 keV photons — the signature exploited in PET
-                  imaging.
+                  converts into an electron-positron (
+                  <InlineEquation tex="e^-e^+" />) pair. This is a direct
+                  manifestation of <InlineEquation tex="E = mc^2" />. The
+                  threshold energy is exactly:
+                  <div className="my-2">
+                    <EquationBlock
+                      latex="E_\gamma \geq 2m_e c^2 = 2 \times 0.511\,\text{MeV} = 1.022\,\text{MeV}"
+                      annotation="Pair production threshold. Any photon energy above 1.022 MeV can materialize as an electron-positron pair in a nuclear Coulomb field. Excess energy E_γ − 1.022 MeV is shared equally as kinetic energy of the pair."
+                      label="Pair Production Threshold Energy"
+                    />
+                  </div>
+                  The positron rapidly slows, annihilates with an ambient
+                  electron, and emits two collinear 511 keV photons — the
+                  signature exploited in PET imaging.
                 </p>
                 <ul className="text-sm text-muted-foreground space-y-1 list-none">
                   <li>

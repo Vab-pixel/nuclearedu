@@ -1,3 +1,6 @@
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@tanstack/react-router";
 import {
@@ -108,27 +111,14 @@ function SubSection({
   );
 }
 
-function Equation({
+// Local Equation shim — maps legacy <Equation> to EquationBlock
+const Equation = ({
   formula,
   label,
   note,
-}: {
-  formula: string;
-  label?: string;
-  note?: string;
-}) {
-  return (
-    <div className="bg-muted/40 border border-border rounded-lg px-5 py-3 my-3 font-mono text-sm">
-      <div className="text-primary font-semibold">{formula}</div>
-      {label && (
-        <div className="text-muted-foreground text-xs mt-1">{label}</div>
-      )}
-      {note && (
-        <div className="text-foreground/70 text-xs mt-1 italic">{note}</div>
-      )}
-    </div>
-  );
-}
+}: { formula: string; label?: string; note?: string }) => (
+  <EquationBlock latex={formula} annotation={note ?? label} />
+);
 
 interface TableRow {
   key: string;

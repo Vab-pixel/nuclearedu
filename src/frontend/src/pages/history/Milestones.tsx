@@ -1,3 +1,5 @@
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
 import { Badge } from "@/components/ui/badge";
 import {
   Atom,
@@ -124,11 +126,8 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 
 function Equation({ tex, label }: { tex: string; label?: string }) {
   return (
-    <div className="my-2 flex flex-col gap-1">
-      <code className="font-mono text-primary bg-muted px-3 py-1.5 rounded text-sm inline-block">
-        {tex}
-      </code>
-      {label && <span className="text-xs text-muted-foreground">{label}</span>}
+    <div className="my-2">
+      <EquationBlock latex={tex} label={label} />
     </div>
   );
 }
@@ -186,12 +185,16 @@ const milestones: Milestone[] = [
             using available cross-section data.
           </p>
           <Equation
-            tex="k_eff = k∞ × P_NL"
+            tex="k_{\text{eff}} = k_{\infty} \cdot P_{NL}"
             label="Effective neutron multiplication factor; P_NL = non-leakage probability"
           />
           <Equation
-            tex="k_eff = 1.0006 (slightly supercritical)"
-            label="At criticality on December 2; greater than 1 means a growing reaction"
+            tex="k_{\infty} = \eta \cdot \varepsilon \cdot p \cdot f \quad \text{(four-factor formula)}"
+            label="η = neutrons per absorption in fuel; ε = fast fission factor; p = resonance escape prob; f = thermal utilization"
+          />
+          <Equation
+            tex="k_{\text{eff}} = 1.0006 \quad (\text{slightly supercritical on December 2, 1942})"
+            label="Greater than 1 means a self-sustaining, growing chain reaction"
           />
           <p>
             k∞ (the infinite medium multiplication factor) depends on the

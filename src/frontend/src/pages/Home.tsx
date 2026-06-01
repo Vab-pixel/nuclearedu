@@ -1,3 +1,4 @@
+import { InlineEquation } from "@/components/InlineEquation";
 import {
   Accordion,
   AccordionContent,
@@ -285,7 +286,7 @@ const faqs = [
   },
   {
     q: "What's the difference between fission and fusion?",
-    a: "Fission splits heavy nuclei (like uranium-235) into lighter fragments, releasing ~200 MeV of energy per reaction. It powers all commercial nuclear plants today. Fusion combines light nuclei (like deuterium and tritium) into heavier ones, releasing even more energy per unit mass. Fusion powers stars — sustainable terrestrial fusion is under active research (ITER, NIF).",
+    a: "Fission splits heavy nuclei (like uranium-235) into lighter fragments, releasing ≈ 200 MeV of energy per reaction. It powers all commercial nuclear plants today. Fusion combines light nuclei (like deuterium and tritium) into heavier ones, releasing even more energy per unit mass. Fusion powers stars — sustainable terrestrial fusion is under active research (ITER, NIF).",
   },
   {
     q: "What are Generation IV reactors?",

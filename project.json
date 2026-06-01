@@ -1,30 +1,23 @@
 {
-  "overview": "NuclearEdu is a comprehensive interactive educational platform for nuclear science with 3D visualizations, simulations, and deep technical content for all learning levels.",
+  "overview": "NuclearEdu is an advanced interactive educational platform covering nuclear science, atomic models, quantum mechanics, reactor physics, and radiation — with deep data, accurate formulas, and high-fidelity visualizations.",
   "features": [
-    "Interactive 3D reactor visualizations with cinematic effects",
-    "Chart of Nuclides heatmap with 3000+ isotopes",
-    "Decay Chain Explorer with gamma spectroscopy and secular equilibrium",
-    "Nucleus Visualizer with shell model and decay animations",
-    "Full interactive periodic table with 12+ heatmap overlays",
-    "Nuclear Power Plant World Map with 440+ reactors",
-    "Criticality and Dose Rate calculators",
-    "Monte Carlo neutron transport simulation",
-    "Reactor Fuel Cycle visualizer",
-    "Cross-Section Data Viewer",
-    "Interactive Nuclear History Timeline",
-    "Learning Lab with quizzes, badges, and progress tracking",
-    "Carbon Dating and Dosimetry calculators",
-    "Expert mode toggle for students and researchers",
-    "Internet Identity login and PWA offline support"
+    "Proper KaTeX rendering for all equations and symbols across 50+ pages",
+    "Accurate nuclear data from NNDC, IAEA, and NIST sources",
+    "Complete Bethe-Weizsäcker, point kinetics, and reactor physics equations",
+    "Interactive visualizations for decay chains, quantum orbitals, and reactor simulations",
+    "Expanded glossary with 200+ terms and proper formatting",
+    "Nuclear notation rendered with correct superscript/subscript formatting",
+    "Comprehensive data tables for isotopes, cross-sections, and decay modes"
   ],
   "category": "educational-platform",
   "tags": [
     "nuclear-science",
+    "physics",
     "education",
     "interactive",
-    "3d-visualization",
-    "physics",
-    "simulation"
+    "visualizations",
+    "quantum-mechanics",
+    "reactor-physics"
   ],
-  "last_updated": "2026-05-30T15:14:47.453Z"
+  "last_updated": "2026-06-01T07:21:57.311Z"
 }

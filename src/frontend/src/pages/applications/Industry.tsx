@@ -1,6 +1,8 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { CollapsibleSection } from "@/components/CollapsibleSection";
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 
@@ -380,9 +382,14 @@ export default function Industry() {
 
           <p className="text-muted-foreground text-sm mt-3 mb-4">
             HVL = half-value layer — thickness of steel that reduces gamma
-            intensity by 50%. Source replacement is driven by activity decay
-            below the minimum required for acceptable exposure times.
+            intensity by 50%. The dose rate from a gamma source follows the
+            inverse-square law with exponential attenuation:
           </p>
+          <EquationBlock
+            latex="\dot{H}(r) = \frac{\Gamma \cdot A}{r^2} \cdot e^{-\mu x}"
+            annotation="Industrial dose rate equation. Γ = specific dose rate constant (μSv·m²/GBq·h), specific to each radionuclide (e.g., Ir-192: Γ ≈ 108 μSv·m²/GBq·h; Co-60: Γ ≈ 308 μSv·m²/GBq·h); A = source activity (GBq); r = distance from source (m); μ = linear attenuation coefficient (cm⁻¹); x = shielding thickness (cm). The inverse-square law alone reduces dose rate by 75% when distance doubles."
+            label="Industrial Gamma Source Dose Rate"
+          />
 
           <h3 className="font-semibold text-foreground mb-2">
             Industrial Computed Tomography (CT)
@@ -650,9 +657,16 @@ export default function Industry() {
             concentrations are determined from their characteristic gamma-ray
             energies and half-lives:
           </p>
-          <p className="text-center font-mono text-sm text-foreground bg-muted/40 rounded-lg px-4 py-3 mb-4">
-            ²³X + n → ²⁴X* + γ (prompt) → ²⁴X → (β⁻, γ delayed) → daughter
-          </p>
+          <EquationBlock
+            latex="{}^{A}X + n \rightarrow {}^{A+1}X^* + \gamma_{\text{prompt}} \rightarrow {}^{A+1}X \rightarrow \beta^- + \gamma_{\text{delayed}} \rightarrow \text{daughter}"
+            annotation="NAA nuclear reaction: target nuclide ᴬX captures a thermal neutron to form a compound nucleus (ᴬ⁺¹X*) which emits a prompt gamma and decays to a radioactive product that emits delayed gammas. The product's gamma spectrum (energy + half-life) uniquely identifies the original element."
+            label="Neutron Activation Reaction"
+          />
+          <EquationBlock
+            latex="C = \frac{N_A \cdot m \cdot \sigma \cdot \phi \cdot (1 - e^{-\lambda t_i})}{M \cdot \lambda} \cdot e^{-\lambda t_d} \cdot (1 - e^{-\lambda t_c})"
+            annotation="NAA quantification: C = counts measured; N_A = Avogadro number; m = mass of element in sample (g); σ = thermal neutron capture cross-section (cm²); φ = neutron flux (n/cm²/s); M = atomic mass (g/mol); λ = decay constant (s⁻¹); t_i = irradiation time; t_d = decay/cooling time; t_c = counting time. Mass sensitivity: ppb to ppt depending on σ and φ."
+            label="NAA Quantification Equation"
+          />
           <p className="text-muted-foreground leading-relaxed mb-3">
             <strong className="text-foreground">Instrumental NAA (INAA)</strong>{" "}
             is fully non-destructive — the sample is sealed in a capsule, mailed

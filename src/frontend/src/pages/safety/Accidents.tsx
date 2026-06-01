@@ -1,9 +1,13 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SafetyCallout } from "@/components/SafetyCallout";
 import { SectionCard } from "@/components/SectionCard";
 import { AlertTriangle, ChevronDown, ChevronRight } from "lucide-react";
+import React from "react";
 import { useState } from "react";
 
 interface CollapsibleSectionProps {
@@ -568,37 +572,53 @@ export default function AccidentsPage() {
             rows={[
               [
                 "Total release",
-                "~5.2 × 10¹⁸ Bq (5.2 EBq)",
+                <React.Fragment key="total-release-bq">
+                  <InlineEquation tex="\\approx 5.2 \\times 10^{18}" /> Bq (5.2
+                  EBq)
+                </React.Fragment>,
                 "—",
                 "Total radioactivity released (all isotopes)",
               ],
               [
-                "I-131",
-                "1.76 × 10¹⁸ Bq (1.76 EBq)",
+                <NuclearNotation key="I-131" A={131} Z={53} symbol="I" />,
+                <React.Fragment key="I-131-bq">
+                  <InlineEquation tex="1.76 \\times 10^{18}" /> Bq (1.76 EBq)
+                </React.Fragment>,
                 "8 days",
                 "Thyroid dose; thyroid cancer in children; deposited via milk",
               ],
               [
-                "Cs-137",
-                "85 × 10¹⁵ Bq (85 PBq)",
+                <NuclearNotation key="Cs-137" A={137} Z={55} symbol="Cs" />,
+                <React.Fragment key="Cs-137-bq">
+                  <InlineEquation tex="85 \\times 10^{15}" /> Bq (85 PBq)
+                </React.Fragment>,
                 "30 years",
                 "Long-term ground contamination; food chain contamination",
               ],
               [
-                "Cs-134",
-                "47 × 10¹⁵ Bq",
+                <NuclearNotation key="Cs-134" A={134} Z={55} symbol="Cs" />,
+                <React.Fragment key="Cs-134-bq">
+                  <InlineEquation tex="47 \\times 10^{15}" /> Bq
+                </React.Fragment>,
                 "2 years",
                 "Short-to-medium term ground contamination",
               ],
               [
-                "Sr-90",
-                "8 × 10¹⁵ Bq",
+                <NuclearNotation key="Sr-90" A={90} Z={38} symbol="Sr" />,
+                <React.Fragment key="Sr-90-bq">
+                  <InlineEquation tex="8 \\times 10^{15}" /> Bq
+                </React.Fragment>,
                 "28.8 years",
                 "Bone-seeking; long-term soil contamination",
               ],
               [
-                "Pu-239/240",
-                "~3 × 10¹² Bq",
+                <React.Fragment key="Pu-239-240">
+                  <NuclearNotation A={239} Z={94} symbol="Pu" />/
+                  <NuclearNotation A={240} Z={94} symbol="Pu" />
+                </React.Fragment>,
+                <React.Fragment key="Pu-239-240-bq">
+                  <InlineEquation tex="\\approx 3 \\times 10^{12}" /> Bq
+                </React.Fragment>,
                 "24,100 yr / 6,560 yr",
                 "Localized soil contamination near plant; alpha emitter",
               ],
@@ -606,6 +626,11 @@ export default function AccidentsPage() {
           />
           <p className="mt-2 text-xs text-muted-foreground italic">
             Source: UNSCEAR 2008 Report, Annex D; Chernobyl Forum 2005.
+            <EquationBlock
+              latex="H = D \\cdot w_R"
+              annotation="Equivalent dose H (in sievert, Sv) equals the absorbed dose D (in gray, Gy) multiplied by the radiation weighting factor w_R. For gamma and X-rays: w_R = 1 (1 Gy = 1 Sv). For alpha particles: w_R = 20 (1 Gy = 20 Sv). For fast neutrons: w_R = 5–20 depending on energy. The ARS victims at Chernobyl received absorbed doses of ~1–16 Gy from gamma/beta, corresponding directly to 1–16 Sv effective dose."
+              label="Equivalent Dose (ICRP-103) — used for ARS threshold assessment"
+            />
           </p>
 
           <h3 className="font-semibold text-foreground mt-5 mb-2">

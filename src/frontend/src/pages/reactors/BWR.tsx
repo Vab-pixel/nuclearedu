@@ -1,4 +1,7 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SafetyCallout } from "@/components/SafetyCallout";
 import { SectionCard } from "@/components/SectionCard";
@@ -218,6 +221,139 @@ export default function BWRPage() {
         </SectionCard>
 
         {/* ─── Operating Parameters ─── */}
+        {/* ─── BWR Physics Equations ─── */}
+        <SectionCard data-ocid="bwr.physics_equations_card">
+          <h2 className="font-display text-xl font-semibold text-foreground mb-4">
+            BWR Physics: Void Reactivity & Thermal-Hydraulics
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+            The BWR’s defining physics is the two-phase boiling within the core.
+            Void fraction, steam quality, and boiling heat transfer govern
+            stability and control:
+          </p>
+
+          <EquationBlock
+            label="Void Fraction Definition"
+            latex="\\alpha_v = \\frac{A_g}{A_g + A_f} = \\frac{V_g}{V_g + V_f}"
+            annotation="α_v = void fraction (gas volume/total volume). At BWR core exit, α_v ≈ 0.40–0.50. Source: Todreas & Kazimi, Nuclear Systems I, MIT Press."
+          />
+
+          <EquationBlock
+            label="Void Reactivity Coefficient"
+            latex="\\alpha_V = \\frac{\\partial k_{\\text{eff}}}{\\partial \\alpha_v} \\approx -100\\text{ to }-200\\;\\text{pcm/%void}"
+            annotation="Strongly negative in BWR: increased boiling → more voids → less moderation → lower k_eff. Primary self-stabilizing mechanism. Source: GE BWR/6 General Description of a Boiling Water Reactor, 1980."
+          />
+
+          <EquationBlock
+            label="Steam Quality at Core Exit"
+            latex="x = \\frac{h - h_f}{h_{fg}} = \\frac{h - h_f}{h_g - h_f}"
+            annotation="x = thermodynamic steam quality; h = specific enthalpy of two-phase mixture; h_f = saturated liquid enthalpy; h_g = saturated vapor enthalpy at 70 bar. Typical BWR core exit quality: x ≈ 0.14–0.15 (14–15%). Source: IAEA-TECDOC-1234."
+          />
+
+          <EquationBlock
+            label="Two-Phase Pressure Drop (Martinelli-Nelson)"
+            latex="\\left(\\frac{dP}{dz}\\right)_{\\text{2φ}} = \\phi_{fo}^2 \\left(\\frac{dP}{dz}\\right)_{fo}"
+            annotation="Two-phase friction multiplier φ²_fo accounts for void-induced pressure drop increase. BWR core hydraulic design must ensure stable, non-oscillatory two-phase flow. Source: Collier & Thome, Convective Boiling and Condensation, 3rd ed."
+          />
+
+          <EquationBlock
+            label="Critical Heat Flux (Boiling Crisis)"
+            latex="\\text{MCPR} = \\frac{q''_{\\text{critical}}}{q''_{\\text{operating}}} \\geq 1.2"
+            annotation="Minimum Critical Power Ratio (MCPR) ≥ 1.2 required by NRC regulations. Below critical heat flux, nucleate boiling transitions to film boiling → rapid cladding temperature rise. Source: 10 CFR 50 Appendix A GDC-10."
+          />
+
+          <div className="rounded-md bg-muted/30 border border-border px-4 py-3 my-3">
+            <p className="text-sm font-semibold text-foreground mb-2">
+              BWR Typical Operating Parameters
+            </p>
+            <div className="grid sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
+              {(
+                [
+                  ["T_coolant", "285°C", "Core outlet / steam temperature"],
+                  ["P_reactor", "70 bar", "Operating pressure"],
+                  ["Steam fraction", "14–15%", "Core exit quality (x)"],
+                  [
+                    "Void fraction (α_v)",
+                    "~40–50%",
+                    "Core average void fraction",
+                  ],
+                  ["β_eff (U-235)", "0.0065", "Delayed neutron fraction"],
+                  [
+                    "Recirculation flow",
+                    "~9,000 kg/s",
+                    "Core inlet mass flow rate",
+                  ],
+                ] as [string, string, string][]
+              ).map(([p, v, d]) => (
+                <div key={p} className="flex gap-2">
+                  <span className="font-mono text-primary shrink-0">{p}</span>
+                  <span className="text-foreground font-semibold shrink-0">
+                    {v}
+                  </span>
+                  <span className="text-muted-foreground text-xs self-center">
+                    {d}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground italic">
+              Source: GE BWR/6 General Description; IAEA Nuclear Power Reactors
+              in the World 2023.
+            </p>
+          </div>
+
+          <h3 className="font-display text-base font-semibold text-foreground mt-4 mb-2">
+            ECCS Systems
+          </h3>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+            The BWR Emergency Core Cooling System (ECCS) consists of three
+            independent, redundant subsystems:
+          </p>
+          <div className="grid gap-2">
+            {(
+              [
+                [
+                  "HPCI",
+                  "High Pressure Coolant Injection",
+                  "Steam-driven turbopump injects into core at full reactor pressure (70 bar). No AC power required.",
+                ],
+                [
+                  "LPCI",
+                  "Low Pressure Coolant Injection",
+                  "Motor-driven pumps flood reactor vessel after depressurization. High flow rate for long-term cooling.",
+                ],
+                [
+                  "CS",
+                  "Core Spray System",
+                  "Sprays water onto fuel from above to prevent cladding oxidation at high temperatures. Two independent loops.",
+                ],
+                [
+                  "RCIC",
+                  "Reactor Core Isolation Cooling",
+                  "Maintains water level during isolation/station blackout. Steam-driven, passive, no AC required.",
+                ],
+              ] as [string, string, string][]
+            ).map(([abbr, name, desc]) => (
+              <div
+                key={abbr}
+                className="rounded-lg border border-border bg-muted/20 p-3 text-sm"
+              >
+                <span className="font-mono font-semibold text-primary">
+                  {abbr}
+                </span>
+                <span className="ml-2 font-semibold text-foreground">
+                  {name}
+                </span>
+                <p className="text-muted-foreground mt-1">{desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground italic">
+            Source: GE ABWR Design Control Document, Rev. 3; 10 CFR 50 Appendix
+            K.
+          </p>
+        </SectionCard>
+
         <SectionCard data-ocid="bwr.parameters_card">
           <h2 className="font-display text-xl font-semibold text-foreground mb-4">
             Typical Operating Parameters

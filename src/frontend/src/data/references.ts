@@ -4,6 +4,8 @@ export type ReferenceType =
   | "nist"
   | "paper"
   | "book"
+  | "journal"
+  | "textbook"
   | "wna"
   | "regulatory"
   | "unscear"
@@ -430,5 +432,80 @@ export const references: Reference[] = [
     year: 2023,
     url: "https://www.iea.org/reports/world-energy-outlook-2023",
     type: "oecd",
+  },
+  {
+    id: 45,
+    authors: "Mohr, P.J. et al.",
+    title:
+      "CODATA Internationally Recommended 2018 Values of the Fundamental Physical Constants",
+    source: "NIST CODATA 2018",
+    year: 2019,
+    url: "https://physics.nist.gov/cuu/Constants/",
+    type: "nist",
+  },
+  {
+    id: 46,
+    authors: "Wang, M. et al.",
+    title: "The AME 2020 Atomic Mass Evaluation",
+    source: "Chinese Physics C",
+    year: 2021,
+    url: "https://doi.org/10.1088/1674-1137/abddaf",
+    type: "journal",
+  },
+  {
+    id: 47,
+    authors: "ITER Physics Expert Groups",
+    title: "Chapter 1: Overview and Summary, ITER Physics Basis",
+    source: "Nuclear Fusion, vol. 39, no. 12",
+    year: 1999,
+    url: "https://doi.org/10.1088/0029-5515/39/12/301",
+    type: "journal",
+  },
+  {
+    id: 48,
+    authors: "Brown, D.A. et al.",
+    title:
+      "ENDF/B-VIII.0: The 8th Major Release of the Nuclear Reaction Data Library with CIELO-project Cross Sections, New Standards and Thermal Scattering Data",
+    source: "Nuclear Data Sheets, vol. 148",
+    year: 2018,
+    url: "https://doi.org/10.1016/j.nds.2018.02.001",
+    type: "journal",
+  },
+  {
+    id: 49,
+    authors: "Krane, K.S.",
+    title: "Introductory Nuclear Physics",
+    source: "John Wiley & Sons",
+    year: 1988,
+    url: "https://www.wiley.com/en-us/Introductory+Nuclear+Physics-p-9780471805533",
+    type: "textbook",
+  },
+  {
+    id: 50,
+    authors: "Lamarsh, J.R. & Baratta, A.J.",
+    title: "Introduction to Nuclear Engineering, 3rd Edition",
+    source: "Prentice Hall",
+    year: 2001,
+    url: "https://www.pearson.com/en-us/subject-catalog/p/introduction-to-nuclear-engineering/P200000003209",
+    type: "textbook",
+  },
+  {
+    id: 51,
+    authors: "Particle Data Group",
+    title: "Review of Particle Physics",
+    source: "Progress of Theoretical and Experimental Physics, vol. 2022",
+    year: 2022,
+    url: "https://pdg.lbl.gov/",
+    type: "journal",
+  },
+  {
+    id: 52,
+    authors: "IAEA",
+    title:
+      "Radiation Protection and Safety of Radiation Sources: International Basic Safety Standards",
+    source: "IAEA Safety Standards Series No. GSR Part 3",
+    year: 2014,
+    url: "https://www.iaea.org/publications/8930/radiation-protection-and-safety-of-radiation-sources-international-basic-safety-standards",
+    type: "iaea",
   },
 ];

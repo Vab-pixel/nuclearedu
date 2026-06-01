@@ -17,6 +17,18 @@ import {
 } from "@tanstack/react-router";
 import { Suspense, lazy } from "react";
 
+// Atoms pages
+const OrbitalsPage = lazy(() => import("@/pages/atoms/Orbitals"));
+const ElectronConfigPage = lazy(() => import("@/pages/atoms/ElectronConfig"));
+const SpectralSeriesPage = lazy(() => import("@/pages/atoms/SpectralSeries"));
+const AtomicModelsPage = lazy(() => import("@/pages/atoms/AtomicModels"));
+const SubatomicParticlesPage = lazy(
+  () => import("@/pages/atoms/SubatomicParticles"),
+);
+const QuantumMechanicsPage = lazy(
+  () => import("@/pages/atoms/QuantumMechanics"),
+);
+
 // Lazy-loaded pages
 const AtomStructure = lazy(() => import("@/pages/basics/AtomStructure"));
 const Isotopes = lazy(() => import("@/pages/basics/Isotopes"));
@@ -68,12 +80,19 @@ const DosimetryCalculator = lazy(
   () => import("@/pages/tools/DosimetryCalculator"),
 );
 const NuclearNewsFeed = lazy(() => import("@/pages/tools/NuclearNewsFeed"));
+const ScienceNewsFeed = lazy(() => import("@/pages/tools/ScienceNewsFeed"));
+const RelativisticKinematics = lazy(
+  () => import("@/pages/tools/RelativisticKinematics"),
+);
 
 // Learning pages
 const LearningLab = lazy(() => import("@/pages/learning/LearningLab"));
 const Quiz = lazy(() => import("@/pages/learning/Quiz"));
 
 // Visualization pages
+const ValleyOfStability = lazy(
+  () => import("@/pages/visualizations/ValleyOfStability"),
+);
 const NucleusVisualizer = lazy(
   () => import("@/pages/visualizations/NucleusVisualizer"),
 );
@@ -367,6 +386,22 @@ const periodicTableRoute = createRoute({
   path: "/visualizations/periodic-table",
   component: () => <LazyPage component={PeriodicTable} />,
 });
+const valleyOfStabilityRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/visualizations/valley-of-stability",
+  component: () => <LazyPage component={ValleyOfStability} />,
+});
+const QuantumVisualizer = lazy(
+  () => import("@/pages/visualizations/QuantumVisualizer"),
+);
+const FeynmanDiagrams = lazy(
+  () => import("@/pages/visualizations/FeynmanDiagrams"),
+);
+const quantumVisualizerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/visualizations/quantum",
+  component: () => <LazyPage component={QuantumVisualizer} />,
+});
 
 const glossaryRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -435,10 +470,58 @@ const toolsCarbonDatingRoute = createRoute({
   path: "/tools/carbon-dating",
   component: () => <LazyPage component={CarbonDatingCalculator} />,
 });
+const toolsRelativisticKinematicsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/relativistic-kinematics",
+  component: () => <LazyPage component={RelativisticKinematics} />,
+});
+
+// New lazy imports for new tool pages
+const CrossSectionPlotterPage = lazy(
+  () => import("@/pages/tools/CrossSectionPlotter"),
+);
+const RadiationMapPage = lazy(() => import("@/pages/tools/RadiationMap"));
+const MLNuclearEmulatorPage = lazy(
+  () => import("@/pages/tools/MLNuclearEmulator"),
+);
+const LabToursPage = lazy(() => import("@/pages/tools/LabTours"));
+const NuclideDatabasePage = lazy(() => import("@/pages/tools/NuclideDatabase"));
+// New tools routes
+const toolsCrossSectionPlotterRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/cross-section-plotter",
+  component: () => <LazyPage component={CrossSectionPlotterPage} />,
+});
+const toolsRadiationMapRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/radiation-map",
+  component: () => <LazyPage component={RadiationMapPage} />,
+});
+const toolsMLEmulatorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/ml-emulator",
+  component: () => <LazyPage component={MLNuclearEmulatorPage} />,
+});
+const toolsLabToursRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/lab-tours",
+  component: () => <LazyPage component={LabToursPage} />,
+});
+const toolsNuclideDatabaseRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/nuclide-database",
+  component: () => <LazyPage component={NuclideDatabasePage} />,
+});
+
 const newsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/news",
   component: () => <LazyPage component={NuclearNewsFeed} />,
+});
+const scienceNewsFeedRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/tools/science-news",
+  component: () => <LazyPage component={ScienceNewsFeed} />,
 });
 const learningLabRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -456,8 +539,51 @@ const quizRoute = createRoute({
   component: () => <LazyPage component={Quiz} />,
 });
 
+const orbitalsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/atoms/orbitals",
+  component: () => <LazyPage component={OrbitalsPage} />,
+});
+const electronConfigRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/atoms/electron-config",
+  component: () => <LazyPage component={ElectronConfigPage} />,
+});
+const spectralSeriesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/atoms/spectral-series",
+  component: () => <LazyPage component={SpectralSeriesPage} />,
+});
+const atomicModelsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/atoms/atomic-models",
+  component: () => <LazyPage component={AtomicModelsPage} />,
+});
+const subatomicParticlesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/atoms/subatomic-particles",
+  component: () => <LazyPage component={SubatomicParticlesPage} />,
+});
+const quantumMechanicsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/atoms/quantum-mechanics",
+  component: () => <LazyPage component={QuantumMechanicsPage} />,
+});
+const feynmanDiagramsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/visualizations/feynman-diagrams",
+  component: () => <LazyPage component={FeynmanDiagrams} />,
+});
+
 const routeTree = rootRoute.addChildren([
   homeRoute,
+  orbitalsRoute,
+  electronConfigRoute,
+  spectralSeriesRoute,
+  atomicModelsRoute,
+  subatomicParticlesRoute,
+  quantumMechanicsRoute,
+  feynmanDiagramsRoute,
   basicsRoute,
   atomStructureRoute,
   isotopesRoute,
@@ -493,12 +619,14 @@ const routeTree = rootRoute.addChildren([
   interactiveTimelineRoute,
   milestonesRoute,
   visualizationsRoute,
+  valleyOfStabilityRoute,
   nucleusVisualizerRoute,
   decayChainExplorerRoute,
   nuclideChartRoute,
   reactorCrossSectionRoute,
   reactorWorldMapRoute,
   periodicTableRoute,
+  quantumVisualizerRoute,
   glossaryRoute,
   referencesRoute,
   aboutRoute,
@@ -512,7 +640,14 @@ const routeTree = rootRoute.addChildren([
   toolsDoseRateCalculatorRoute,
   toolsFuelCycleVisualizerRoute,
   toolsMonteCarloSimRoute,
+  toolsRelativisticKinematicsRoute,
+  toolsCrossSectionPlotterRoute,
+  toolsRadiationMapRoute,
+  toolsMLEmulatorRoute,
+  toolsLabToursRoute,
+  toolsNuclideDatabaseRoute,
   newsRoute,
+  scienceNewsFeedRoute,
   learningLabRoute,
   readingListRoute,
   quizRoute,
@@ -568,7 +703,21 @@ export const routeLabels: Record<string, string> = {
   "/visualizations/nuclide-chart": "Nuclide Chart",
   "/visualizations/reactor": "Reactor Cross-Section",
   "/visualizations/periodic-table": "Periodic Table",
+  "/visualizations/valley-of-stability": "Valley of Stability",
+  "/visualizations/quantum": "Quantum Visualizer",
   "/visualizations/reactor-world-map": "Reactor World Map",
+  "/atoms/orbitals": "Electron Orbitals",
+  "/atoms/electron-config": "Electronic Configuration",
+  "/atoms/spectral-series": "Spectral Series",
+  "/atoms/atomic-models": "Atomic Models",
+  "/atoms/subatomic-particles": "Subatomic Particles",
+  "/atoms/quantum-mechanics": "Quantum Mechanics",
+  "/visualizations/feynman-diagrams": "Feynman Diagrams",
+  "/tools/cross-section-plotter": "Cross-Section Plotter",
+  "/tools/radiation-map": "Radiation Map",
+  "/tools/ml-emulator": "ML Nuclear Emulator",
+  "/tools/lab-tours": "Virtual Lab Tours",
+  "/tools/nuclide-database": "Nuclide Database",
   "/glossary": "Glossary",
   "/references": "References",
   "/about": "About",
@@ -582,8 +731,10 @@ export const routeLabels: Record<string, string> = {
   "/tools/dose-rate-calculator": "Dose Rate Calculator",
   "/tools/fuel-cycle": "Fuel Cycle Visualizer",
   "/tools/monte-carlo-sim": "Monte Carlo Simulation",
+  "/tools/relativistic-kinematics": "Relativistic Kinematics",
   "/learning-lab/reading-list": "Reading List",
   "/news": "News & Research",
+  "/tools/science-news": "Science News Feed",
   "/learning-lab": "Learning Lab",
   "/learning-lab/$topicId": "Quiz",
 };

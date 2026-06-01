@@ -1,4 +1,6 @@
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -128,12 +130,11 @@ export default function CrossSections() {
             What Is a Nuclear Cross-Section?
           </h2>
           <p className="text-muted-foreground leading-relaxed mb-4">
-            A nuclear cross-section (σ) is an <em>effective area</em> that
-            quantifies the probability of a specific nuclear interaction
-            occurring when a projectile (most commonly a neutron) encounters a
-            target nucleus. It is not literally a geometric area — quantum
-            effects mean σ can be orders of magnitude larger or smaller than the
-            actual nuclear size.
+            A nuclear cross-section <InlineEquation tex="\sigma" /> is an{" "}
+            <em>effective area</em> that quantifies the probability of a
+            specific nuclear interaction. It is not literally a geometric area —
+            quantum effects mean <InlineEquation tex="\sigma" /> can be orders
+            of magnitude larger or smaller than the actual nuclear size.
           </p>
 
           <div className="rounded-lg bg-accent/10 border border-accent/20 p-4 mb-5">
@@ -142,19 +143,18 @@ export default function CrossSections() {
             </h3>
             <p className="text-muted-foreground text-sm leading-relaxed">
               Cross-sections are measured in{" "}
-              <strong className="text-foreground">barns (b)</strong>: 1 b =
-              10⁻²⁴ cm² = 10⁻²⁸ m². The unit was coined during the Manhattan
-              Project — physicists joked that uranium nuclei were "as big as a
-              barn" compared to expected cross-sections. In context: the actual
-              nuclear geometric area is ~10⁻³⁰ m² (nuclear radius ~1–8 fm), yet
-              thermal neutron fission cross-sections for U-235 reach 584 barns —
-              roughly
+              <strong className="text-foreground">barns (b)</strong>:{" "}
+              <InlineEquation tex="1\,\text{b} = 10^{-24}\,\text{cm}^2 = 10^{-28}\,\text{m}^2" />
+              . The unit was coined during the Manhattan Project. The actual
+              nuclear geometric area is{" "}
+              <InlineEquation tex="\sim 10^{-30}\,\text{m}^2" />
+              (nuclear radius 1–8 fm), yet thermal neutron fission
+              cross-sections for <NuclearNotation symbol="U" A={235} Z={92} />{" "}
+              reach 584 barns — roughly{" "}
               <strong className="text-foreground">
-                {" "}
                 500× the geometric area
               </strong>
-              . Conversely, fast-neutron cross-sections can fall to millibarns
-              (10⁻³ b), far below geometric size.
+              .
             </p>
           </div>
 
@@ -162,42 +162,49 @@ export default function CrossSections() {
             Cross-Section Types
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
-            {[
-              ["σ_T", "Total", "All interactions; σ_T = σ_el + σ_in + σ_abs"],
+            {(
               [
-                "σ_el",
-                "Elastic scattering",
-                "Neutron bounces; nucleus unchanged; kinetic energy conserved",
-              ],
-              [
-                "σ_in",
-                "Inelastic scattering",
-                "Nucleus left in excited state; neutron loses energy; threshold reaction",
-              ],
-              [
-                "σ_abs",
-                "Absorption",
-                "Neutron captured; σ_abs = σ_γ + σ_f + σ_α + ...",
-              ],
-              [
-                "σ_f",
-                "Fission",
-                "Nucleus splits; releases ≥2 neutrons + ~200 MeV",
-              ],
-              [
-                "σ_γ",
-                "Radiative capture",
-                "Neutron absorbed → compound nucleus → γ-ray emission",
-              ],
-            ].map(([sym, name, desc]) => (
+                [
+                  "\\sigma_T",
+                  "Total",
+                  "All interactions; \u03c3_T = \u03c3_el + \u03c3_in + \u03c3_abs",
+                ],
+                [
+                  "\\sigma_{\\text{el}}",
+                  "Elastic scattering",
+                  "Neutron bounces; nucleus unchanged; kinetic energy conserved",
+                ],
+                [
+                  "\\sigma_{\\text{in}}",
+                  "Inelastic scattering",
+                  "Nucleus left in excited state; neutron loses energy; threshold reaction",
+                ],
+                [
+                  "\\sigma_{\\text{abs}}",
+                  "Absorption",
+                  "Neutron captured; \u03c3_abs = \u03c3_\u03b3 + \u03c3_f + \u03c3_\u03b1 + ...",
+                ],
+                [
+                  "\\sigma_f",
+                  "Fission",
+                  "Nucleus splits; releases \u22652 neutrons + ~200 MeV",
+                ],
+                [
+                  "\\sigma_\\gamma",
+                  "Radiative capture",
+                  "Neutron absorbed \u2192 compound nucleus \u2192 \u03b3-ray emission",
+                ],
+              ] as [string, string, string][]
+            ).map(([sym, name, desc]) => (
               <div
                 key={sym}
                 className="rounded-lg bg-muted/30 border border-border p-3"
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <code className="text-xs font-mono text-primary font-semibold">
-                    {sym}
-                  </code>
+                  <InlineEquation
+                    tex={sym}
+                    className="text-primary font-semibold"
+                  />
                   <span className="text-sm font-semibold text-foreground">
                     {name}
                   </span>
@@ -208,14 +215,20 @@ export default function CrossSections() {
           </div>
 
           <EquationBlock
-            latex="R = n_1 \, v \, \sigma \, n_2"
-            annotation="Reaction rate R [reactions/cm³/s]: n₁ and n₂ are the number densities of projectile and target [cm⁻³], v is their relative velocity [cm/s], σ is the cross-section [cm²]. For a neutron beam: n₂ is the target atom density, n₁v is the neutron flux Φ."
-            label="Reaction Rate"
+            latex="\sigma = \frac{R}{n\,\Phi}"
+            annotation="Definition: cross-section \u03c3 [cm\u00b2] equals the reaction rate density R [reactions/cm\u00b3/s] divided by target atom density n [cm\u207b\u00b3] and neutron flux \u03a6 = nv [n/cm\u00b2/s]. 1 barn = 10\u207b\u00b2\u2078 m\u00b2. Source: IAEA Nuclear Energy Series."
+            label="Cross-Section Definition \u03c3 = R / n\u03a6"
           />
 
           <EquationBlock
-            latex="\lambda = \frac{1}{n\,\sigma}"
-            annotation="Mean free path λ [cm]: the average distance a projectile travels between successive interactions. n is the target atom number density [cm⁻³], σ is the cross-section [cm²]."
+            latex="R = N \, \sigma \, \Phi"
+            annotation="Reaction rate R [reactions/cm\u00b3/s]: N = atom density [atoms/cm\u00b3], \u03c3 = microscopic cross-section [cm\u00b2], \u03a6 = neutron flux [n/cm\u00b2/s]. Macroscopic cross-section \u03a3 = N\u03c3 [cm\u207b\u00b9]."
+            label="Reaction Rate R = N\u03c3\u03a6"
+          />
+
+          <EquationBlock
+            latex="\lambda_{\text{mfp}} = \frac{1}{N\sigma} = \frac{1}{\Sigma}"
+            annotation="Mean free path \u03bb_mfp [cm]: average distance a neutron travels between interactions. \u03a3 = N\u03c3 is the macroscopic cross-section [cm\u207b\u00b9]. Source: Lamarsh & Baratta, Introduction to Nuclear Engineering."
             label="Mean Free Path"
           />
 
@@ -226,7 +239,6 @@ export default function CrossSections() {
             <strong className="text-foreground">projectile energy</strong> (can
             vary by 10 orders of magnitude for neutrons in a reactor), and the{" "}
             <strong className="text-foreground">target nuclide</strong>.
-            Understanding this energy dependence is the core of reactor physics.
           </p>
         </SectionCard>
 

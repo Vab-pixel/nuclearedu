@@ -2,6 +2,7 @@ import { AudienceBadge } from "@/components/AudienceBadge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { CollapsibleSection } from "@/components/CollapsibleSection";
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 import { cn } from "@/lib/utils";
@@ -1076,8 +1077,23 @@ export function RadiationSafety() {
 
           <EquationBlock
             latex="I(x) = I_0 \\cdot e^{-\\mu x}"
-            annotation="Exponential attenuation: beam intensity I at depth x through shielding material equals initial intensity I₀ times e^(−μx), where μ is the linear attenuation coefficient (cm⁻¹). The HVL = ln(2)/μ ≈ 0.693/μ. For broad-beam geometry, a build-up factor B is applied: I(x) = B · I₀ · e^(−μx), since scattered photons contribute to dose beyond the primary beam."
+            annotation="Exponential attenuation: beam intensity I at depth x through shielding material equals initial intensity I₀ times e^(−μx), where μ is the linear attenuation coefficient (cm⁻¹). For broad-beam geometry, a build-up factor B is applied: I(x) = B · I₀ · e^(−μx), since scattered photons contribute to dose beyond the primary beam."
             label="Gamma-Ray Attenuation in Shielding (Narrow Beam)"
+          />
+          <EquationBlock
+            latex="\\text{HVL} = \\frac{\\ln 2}{\\mu} \\approx \\frac{0.693}{\\mu}"
+            annotation="Half-Value Layer (HVL): the thickness of shielding material required to reduce radiation intensity by one half. μ is the linear attenuation coefficient in cm⁻¹. For 1 MeV gamma: HVL(Pb) ≈ 0.87 cm, HVL(concrete) ≈ 10.8 cm, HVL(water) ≈ 18.0 cm. Data from NIST XCOM (Berger et al., 2010)."
+            label="Half-Value Layer (HVL) from Attenuation Coefficient"
+          />
+          <EquationBlock
+            latex="\\text{TVL} = \\frac{\\ln 10}{\\mu} \\approx \\frac{2.303}{\\mu} = 3.32 \\times \\text{HVL}"
+            annotation="Tenth-Value Layer (TVL): the thickness required to reduce intensity by a factor of 10. TVL = 3.32 × HVL. Ten HVLs reduce intensity by 2^10 = 1024×; one TVL reduces it by 10×. Engineers use TVL for practical shielding design in hot cells, vaults, and waste storage."
+            label="Tenth-Value Layer (TVL) — Practical Shielding Design"
+          />
+          <EquationBlock
+            latex="C_\\text{opt} = \\arg\\min_X \\left[ \\alpha \\cdot H(X) + C_P(X) \\right]"
+            annotation="ALARA Optimization: the optimal protection measure X minimizes the sum of the detriment cost α·H(X) — where α is the monetary value of unit collective dose (ICRP recommends ~20,000 USD/person-Sv) and H(X) is collective dose in person-Sv — and the cost of protection C_P(X). Protection is added only while the marginal detriment reduction exceeds the marginal cost. (Source: ICRP Publication 103, 2007; IAEA GSR Part 3, 2014.)"
+            label="ALARA Optimization — Cost-Benefit Framework (ICRP-103)"
           />
         </CollapsibleSection>
 

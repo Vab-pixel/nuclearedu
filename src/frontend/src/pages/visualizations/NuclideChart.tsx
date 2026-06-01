@@ -66,8 +66,8 @@ export const FRESHNESS_LEGEND = [
 export const FILTER_OPTIONS: { label: string; value: FilterMode }[] = [
   { label: "All", value: "all" },
   { label: "Alpha", value: "alpha" },
-  { label: "Beta⁻", value: "beta-" },
-  { label: "Beta⁺", value: "beta+" },
+  { label: "β⁻ Decay", value: "beta-" },
+  { label: "β⁺/EC Decay", value: "beta+" },
   { label: "Stable", value: "stable" },
   { label: "Gamma", value: "gamma" },
   { label: "Other", value: "other" },

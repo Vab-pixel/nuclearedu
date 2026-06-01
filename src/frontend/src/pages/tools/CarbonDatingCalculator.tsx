@@ -1,5 +1,7 @@
 import { CollapsibleSection } from "@/components/CollapsibleSection";
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { useMemo, useState } from "react";
 import {
@@ -369,6 +371,21 @@ export function CarbonDatingCalculator() {
             latex="N(t) = N_0 \cdot e^{-\lambda t} \qquad \lambda = \frac{\ln 2}{t_{1/2}}"
             annotation="N(t) is the remaining C-14 fraction at time t. N₀ is the initial C-14 fraction. λ is the decay constant = ln(2) divided by the half-life t½ = 5,730 years."
             label="Radiocarbon Decay Law (Libby 1949)"
+          />
+          <EquationBlock
+            latex="{}^{14}_{6}\mathrm{C} \longrightarrow {}^{14}_{7}\mathrm{N} + e^- + \bar{\nu}_e \qquad Q = 0.156\,\mathrm{MeV}"
+            annotation="Carbon-14 undergoes beta-minus decay to Nitrogen-14, emitting an electron and an electron antineutrino. Q-value = 0.156 MeV (NNDC AME2020)."
+            label="C-14 Beta Decay Reaction"
+          />
+          <EquationBlock
+            latex="t = -\frac{t_{1/2}}{\ln 2} \cdot \ln\!\left(\frac{A}{A_0}\right) = -\frac{5730}{\ln 2}\,\ln\!\left(\frac{\mathrm{pMC}}{100}\right)\;\mathrm{yr}"
+            annotation="Age equation from Stuiver & Polach (1977). A/A₀ is the measured activity ratio (pMC/100). Uses the Libby half-life of 5,730 yr. Modern AMS measures ¹⁴C/¹²C ratios with precision ~0.2%."
+            label="Radiocarbon Age Equation"
+          />
+          <EquationBlock
+            latex="\frac{{}^{14}\mathrm{C}}{{}^{12}\mathrm{C}}\bigg|_{\mathrm{atm}} = 1.2 \times 10^{-12} \qquad (\text{modern reference, AD 1950})"
+            annotation="Atmospheric ratio of Carbon-14 to Carbon-12 at the modern reference point (AD 1950 = 100 pMC). Varies ±10% due to solar cycles, geomagnetic field changes, and fossil fuel dilution (Suess effect)."
+            label="Atmospheric ¹⁴C/¹²C Reference Ratio"
           />
 
           {/* Calculate button */}

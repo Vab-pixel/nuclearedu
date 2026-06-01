@@ -1,3 +1,4 @@
+import { EquationBlock } from "@/components/EquationBlock";
 import { PageHeader } from "@/components/PageHeader";
 import { SafetyCallout } from "@/components/SafetyCallout";
 import { SectionCard } from "@/components/SectionCard";
@@ -659,47 +660,50 @@ export default function CriticalityCalculator() {
       {/* ── Physics Explanation ──────────────────────────────────────────── */}
       <SectionCard className="mt-6" data-ocid="criticality.physics.section">
         <h2 className="font-display text-lg font-semibold text-foreground mb-3">
-          Simplified Physics Model
+          Physics Model — One-Group Diffusion Theory
         </h2>
         <div className="space-y-3 text-sm text-muted-foreground">
           <p>
-            This calculator uses a{" "}
+            This calculator uses{" "}
             <strong className="text-foreground">
               simplified one-group diffusion theory
             </strong>{" "}
-            approach for educational demonstration:
-          </p>
-          <ol className="list-decimal list-inside space-y-1 ml-2">
-            <li>
-              <strong className="text-foreground">Four-factor formula:</strong>{" "}
-              k∞ = η × ε × p × f, where η is neutrons per absorption, ε is fast
-              fission factor, p is resonance escape probability, and f is
-              thermal utilization.
-            </li>
-            <li>
-              <strong className="text-foreground">Critical radius:</strong> For
-              a bare sphere, Rc = π × L / √(k∞ − 1), where L is the diffusion
-              length (~2–3 cm for common fissile materials).
-            </li>
-            <li>
-              <strong className="text-foreground">Reflector effect:</strong> A
-              reflector reduces the critical radius by returning leaked
-              neutrons. Water reflectors can reduce critical mass by ~70%.
-            </li>
-            <li>
-              <strong className="text-foreground">Geometry factor:</strong>{" "}
-              Cylinders and slabs have larger surface-to-volume ratios than
-              spheres, requiring more mass for criticality.
-            </li>
-          </ol>
-          <p className="text-xs mt-2">
-            <strong className="text-foreground">Important:</strong> Real
-            criticality safety analysis uses continuous-energy Monte Carlo
-            transport (MCNP6, Serpent, SCALE/KENO) with detailed ENDF/B nuclear
-            data, temperature feedback, and geometric fidelity. These simplified
-            estimates may deviate by 20–50% from actual values.
+            for educational purposes. The key equations are:
           </p>
         </div>
+        <EquationBlock
+          latex="k_\infty = \eta\,\varepsilon\,p\,f"
+          annotation="Four-factor formula. η = neutrons produced per neutron absorbed in fuel (reproduction factor). ε = fast fission factor (typically 1.02–1.08). p = resonance escape probability (0.75–0.9 in thermal reactors). f = thermal utilization factor (fraction of thermal neutrons absorbed in fuel)."
+          label="Four-Factor Formula (Infinite Medium)"
+        />
+        <EquationBlock
+          latex="k_{\mathrm{eff}} = k_\infty \cdot P_{\mathrm{NL}} = \frac{k_\infty}{1 + M^2 B^2}"
+          annotation="Six-factor formula for a finite reactor. P_NL is the non-leakage probability. M² is the migration area (cm²) and B² is the geometric buckling (cm⁻²). Criticality requires k_eff = 1."
+          label="Six-Factor Formula (Finite Reactor)"
+        />
+        <EquationBlock
+          latex="B^2 = \left(\frac{\pi}{R + d}\right)^2 \quad (\text{sphere}), \qquad B^2 = \frac{k_\infty - 1}{M^2}"
+          annotation="Geometric buckling B² for a bare sphere of radius R (d ≈ 0.7104 λ_tr is the extrapolation distance). Critical condition: geometric buckling equals material buckling (k∞ − 1)/M²."
+          label="Geometric Buckling & Critical Condition"
+        />
+        <EquationBlock
+          latex="M^2 = L^2 + \tau \qquad L^2 = \frac{D}{\Sigma_a}, \quad \tau = \frac{1}{3\Sigma_s}\ln\frac{E_0}{E_\mathrm{th}}"
+          annotation="Migration area M² = diffusion area L² + Fermi age τ. L² is the thermal diffusion area (D = diffusion coefficient, Σ_a = absorption cross-section). τ is the Fermi age (slowing-down area) for moderation from fission energy to thermal."
+          label="Migration Area"
+        />
+        <EquationBlock
+          latex="R_c = \frac{\pi}{B_c} - d \approx \frac{\pi \cdot L}{\sqrt{k_\infty - 1}}"
+          annotation="Critical radius for a bare sphere. L is the diffusion length (2–3 cm for common fissile materials). The reflector savings (δR) from a water reflector reduces R_c by ~5–10 cm."
+          label="Critical Radius (Bare Sphere)"
+        />
+        <p className="text-xs text-muted-foreground mt-2">
+          <strong className="text-foreground">Important:</strong> Real
+          criticality safety analysis uses continuous-energy Monte Carlo
+          transport (MCNP6, Serpent, SCALE/KENO) with ENDF/B nuclear data,
+          temperature feedback, and full geometric fidelity. These simplified
+          estimates may deviate by 20–50% from actual values. Sources: Lamarsh &
+          Baratta — Introduction to Nuclear Engineering; ORNL/LA-UR-09-03800.
+        </p>
       </SectionCard>
     </div>
   );

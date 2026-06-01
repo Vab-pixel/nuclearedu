@@ -1,3 +1,5 @@
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -1506,7 +1508,6 @@ export function DecayChainExplorer() {
           integrated Carbon Dating Calculator.
         </p>
       </div>
-
       {/* ── Chain selector bar ── */}
       <div className="border-b border-border bg-card/80 px-4 py-2 shrink-0">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -1531,7 +1532,6 @@ export function DecayChainExplorer() {
           ))}
         </div>
       </div>
-
       {/* ── Simulation controls bar ── */}
       <div className="border-b border-border bg-muted/20 px-4 py-2 shrink-0 flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
@@ -1639,8 +1639,34 @@ export function DecayChainExplorer() {
           <Download className="h-3 w-3" /> CSV
         </Button>
       </div>
-
-      {/* ── Half-life legend ── */}
+      {/* ── Half-life legend ── */} {/* ── Decay Physics equations panel ── */}
+      <div className="hidden">
+        <EquationBlock
+          latex="^A_Z X \rightarrow ^{A-4}_{Z-2}Y + ^4_2\text{He} + Q"
+          annotation="Alpha decay: nucleus emits a helium-4 nucleus (alpha particle). Q-value = (M_parent - M_daughter - M_alpha)c²."
+          label="Alpha Decay"
+        />
+        <EquationBlock
+          latex="^A_Z X \rightarrow ^A_{Z+1}Y + e^- + \bar{\nu}_e"
+          annotation="Beta-minus decay: a neutron converts to a proton, emitting an electron and electron antineutrino."
+          label="Beta⁻ Decay"
+        />
+        <EquationBlock
+          latex="^A_Z X \rightarrow ^A_{Z-1}Y + e^+ + \nu_e"
+          annotation="Beta-plus decay: a proton converts to a neutron, emitting a positron and electron neutrino."
+          label="Beta⁺ Decay"
+        />
+        <EquationBlock
+          latex="^A_Z X + e^- \rightarrow ^A_{Z-1}Y + \nu_e"
+          annotation="Electron capture: a proton captures an inner-shell electron, converting to a neutron with emission of an electron neutrino."
+          label="Electron Capture"
+        />
+        <EquationBlock
+          latex="^A_Z X^* \rightarrow ^A_Z X + \gamma"
+          annotation="Gamma decay: an excited nucleus releases excess energy as a high-energy photon (gamma ray) without changing Z or A."
+          label="Gamma Decay"
+        />
+      </div>
       <div className="flex flex-wrap gap-2 px-4 py-1.5 bg-card/30 shrink-0 border-b border-border/40">
         <span className="text-xs text-muted-foreground font-semibold">
           t½ color:
@@ -1656,20 +1682,27 @@ export function DecayChainExplorer() {
           </div>
         ))}
         <div className="flex items-center gap-2 ml-auto">
-          {(["alpha", "beta-", "gamma", "ec"] as const).map((mode) => (
+          {(["alpha", "beta-", "beta+", "gamma", "ec"] as const).map((mode) => (
             <div key={mode} className="flex items-center gap-1">
               <span
                 className="h-2 w-2 rounded-full"
                 style={{ background: DECAY_COLORS[mode] }}
               />
               <span className="text-xs text-muted-foreground">
-                {mode === "beta-" ? "β⁻" : mode === "ec" ? "EC" : mode}
+                {mode === "beta-" ? (
+                  <InlineEquation tex="\beta^-" />
+                ) : mode === "beta+" ? (
+                  <InlineEquation tex="\beta^+" />
+                ) : mode === "ec" ? (
+                  <InlineEquation tex="\text{EC}" />
+                ) : (
+                  mode
+                )}
               </span>
             </div>
           ))}
         </div>
       </div>
-
       {/* ── Resizable split-pane ── */}
       <div className="flex-1 min-h-0">
         <ResizablePanelGroup direction="horizontal" className="h-full">

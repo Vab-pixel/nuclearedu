@@ -74,6 +74,18 @@ const typeConfig: Record<
     icon: BarChart2,
     color: "text-teal-400 border-teal-400/30 bg-teal-400/5",
   },
+  journal: {
+    label: "Journal Articles",
+    description: "Scientific journal articles and peer-reviewed publications",
+    icon: FileText,
+    color: "text-violet-400 border-violet-400/30 bg-violet-400/5",
+  },
+  textbook: {
+    label: "Textbooks",
+    description: "Nuclear science and engineering reference textbooks",
+    icon: BookOpen,
+    color: "text-pink-400 border-pink-400/30 bg-pink-400/5",
+  },
 };
 
 // Canonical display order
@@ -83,6 +95,8 @@ const typeOrder: ReferenceType[] = [
   "nist",
   "paper",
   "book",
+  "journal",
+  "textbook",
   "wna",
   "regulatory",
   "unscear",

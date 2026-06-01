@@ -43,6 +43,9 @@ type HeatmapMode =
   | "alphaStability"
   | "betaStability"
   | "nuclearChargeDensity"
+  | "electricalResistivity"
+  | "specificHeat"
+  | "yearDiscovered"
   | "block";
 
 type Palette =
@@ -76,7 +79,7 @@ const HEATMAP_CONFIGS: Record<HeatmapMode, HeatmapConfig> = {
     getValue: () => null,
   },
   electronegativity: {
-    label: "Electronegativity",
+    label: "Electronegativity (χ)",
     shortLabel: "EN",
     unit: "Pauling",
     icon: "⚡",
@@ -90,7 +93,7 @@ const HEATMAP_CONFIGS: Record<HeatmapMode, HeatmapConfig> = {
     getValue: (el) => Math.max(25, 260 - 1.8 * el.z + (el.period > 4 ? 30 : 0)),
   },
   ionizationEnergy: {
-    label: "1st Ionization Energy",
+    label: "Ionization Energy (Eᵢ)",
     shortLabel: "IE₁",
     unit: "eV",
     icon: "⚛",
@@ -214,6 +217,50 @@ const HEATMAP_CONFIGS: Record<HeatmapMode, HeatmapConfig> = {
       if (A === 0) return null;
       const R = 1.2 * A ** (1 / 3);
       return el.z / ((4 / 3) * Math.PI * R ** 3);
+    },
+  },
+  electricalResistivity: {
+    label: "Electrical Resistivity",
+    shortLabel: "ρₑ",
+    unit: "nΩ·m",
+    icon: "Ω",
+    logScale: true,
+    getValue: (el) => {
+      // Approximate resistivity based on category and position
+      if (el.category === "noble-gas" || el.category === "halogen") return null;
+      if (el.category === "alkali-metal") return 50 + el.z * 8;
+      if (el.category === "transition-metal") return 40 + Math.sin(el.z) * 30;
+      if (el.category === "post-transition-metal") return 20 + el.z * 2;
+      if (el.category === "metalloid") return 1e3 + el.z * 50;
+      return 1e5 + el.z * 1e3;
+    },
+  },
+  specificHeat: {
+    label: "Specific Heat Capacity",
+    shortLabel: "Cp",
+    unit: "J/(g·K)",
+    icon: "🔥",
+    getValue: (el) => {
+      if (el.category === "noble-gas") return 5.193;
+      if (el.category === "alkali-metal") return 1.2 + el.z * 0.01;
+      if (el.category === "transition-metal")
+        return 0.45 + Math.sin(el.z) * 0.1;
+      if (el.category === "halogen") return 0.47 + el.z * 0.005;
+      return 0.7 + el.z * 0.003;
+    },
+  },
+  yearDiscovered: {
+    label: "Year Discovered",
+    shortLabel: "Year",
+    unit: "",
+    icon: "📅",
+    getValue: (el) => el.discoveryYear ?? null,
+    special: (el) => {
+      if (el.discoveryYear == null) return "oklch(0.3 0 0)";
+      if (el.discoveryYear < 1800) return "oklch(0.65 0.18 48)";
+      if (el.discoveryYear < 1900) return "oklch(0.6 0.16 96)";
+      if (el.discoveryYear < 1950) return "oklch(0.55 0.14 192)";
+      return "oklch(0.5 0.12 286)";
     },
   },
   block: {
@@ -485,6 +532,12 @@ const FILTER_PRESETS = [
   { label: "Lanthanides", categories: ["lanthanide"], minZ: undefined },
   { label: "Actinides", categories: ["actinide"], minZ: undefined },
   { label: "Synthetic", categories: ["actinide", "unknown"], minZ: 95 },
+  {
+    label: "☢ Radioactive",
+    categories: [],
+    minZ: undefined,
+    radioactiveOnly: true,
+  },
 ];
 
 // ─── Trend Sparkline (D3-style SVG) ──────────────────────────────────────────
@@ -634,7 +687,15 @@ function ElementTile({
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: dimmed ? 0.15 : 1, scale: 1 }}
       transition={{ duration: 0.2, delay: Math.min(element.z * 0.004, 0.5) }}
-      whileHover={dimmed ? {} : { scale: 1.08, zIndex: 20 }}
+      whileHover={
+        dimmed
+          ? {}
+          : {
+              scale: 1.08,
+              zIndex: 20,
+              boxShadow: `0 0 12px 2px ${CATEGORY_COLORS[element.category] ?? CATEGORY_COLORS.unknown}40`,
+            }
+      }
       whileTap={{ scale: 0.94 }}
       style={{
         backgroundColor: isSplitMode ? undefined : bgColor,
@@ -984,10 +1045,15 @@ export default function PeriodicTable() {
   const activeZSet = useMemo<Set<number> | null>(() => {
     const preset = FILTER_PRESETS.find((p) => p.label === filterPreset);
     const conditions: ((el: ChemicalElement) => boolean)[] = [];
-    if (preset && preset.categories.length > 0)
-      conditions.push((el) => preset.categories.includes(el.category));
+    if (preset && preset.categories?.length > 0)
+      conditions.push((el) =>
+        (preset.categories as string[])?.includes(el.category),
+      );
     if (preset?.minZ != null)
       conditions.push((el) => el.z >= (preset.minZ as number));
+    if ((preset as { radioactiveOnly?: boolean })?.radioactiveOnly)
+      conditions.push((el) => el.z >= 84 || el.z === 43 || el.z === 61);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (filterBlock !== "all")
       conditions.push((el) => el.block === filterBlock);
     if (filterRadioactive) conditions.push((el) => el.isRadioactive);
@@ -1676,7 +1742,7 @@ export default function PeriodicTable() {
                   </div>
                   <Slider.Root
                     min={0}
-                    max={5000}
+                    max={6000}
                     step={10}
                     value={[tempK]}
                     onValueChange={([v]) => setTempK(v)}
@@ -1695,7 +1761,7 @@ export default function PeriodicTable() {
                     <Slider.Thumb className="block w-5 h-5 rounded-full bg-foreground border-2 border-background shadow-lg focus:outline-none focus:ring-2 focus:ring-primary" />
                   </Slider.Root>
                   <div className="flex justify-between mt-1">
-                    {["0 K", "1250 K", "2500 K", "3750 K", "5000 K"].map(
+                    {["0 K", "1500 K", "3000 K", "4500 K", "6000 K ☉"].map(
                       (l) => (
                         <span
                           key={l}

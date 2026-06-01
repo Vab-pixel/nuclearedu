@@ -503,6 +503,57 @@ function NuclearTab({
             </div>
           )}
 
+          {/* Isotope table */}
+          {elementNuclides.length > 0 && (
+            <div>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                Isotopes ({elementNuclides.length})
+              </p>
+              <div className="rounded-lg border border-border/40 bg-muted/10 overflow-hidden">
+                <div className="grid grid-cols-4 gap-1 px-2 py-1.5 text-[10px] text-muted-foreground uppercase tracking-wide border-b border-border/30">
+                  <span>Isotope</span>
+                  <span>Half-Life</span>
+                  <span>Abundance</span>
+                  <span>Decay</span>
+                </div>
+                <div className="max-h-32 overflow-y-auto">
+                  {elementNuclides.slice(0, 8).map((n) => (
+                    <div
+                      key={n.symbol}
+                      className={`grid grid-cols-4 gap-1 px-2 py-1 text-[10px] font-mono ${n.symbol === selectedNuclide?.symbol ? "bg-primary/10" : ""}`}
+                    >
+                      <span className="text-foreground">{n.symbol}</span>
+                      <span className="text-muted-foreground">
+                        {n.halfLifeStr}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {n.abundance != null ? `${n.abundance}%` : "—"}
+                      </span>
+                      <span className="text-muted-foreground truncate">
+                        {n.decayModes.includes("stable")
+                          ? "stable"
+                          : n.decayModes.join(", ")}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Magic number status */}
+          {MAGIC_NUMBERS.has(element.z) && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-yellow-600/30 bg-yellow-900/20">
+              <span className="text-yellow-400 text-sm">✨</span>
+              <span className="text-xs text-yellow-300 font-medium">
+                Magic Number: Z = {element.z}
+              </span>
+              <span className="text-[10px] text-yellow-400/70">
+                Enhanced nuclear stability
+              </span>
+            </div>
+          )}
+
           {selectedNuclide.decayModes.length > 0 &&
             !selectedNuclide.decayModes.includes("stable") && (
               <div>
@@ -1027,7 +1078,7 @@ function QuickLinks({ element }: { element: ChemicalElement }) {
       ocid: "detail.decay_chain_link",
     },
     {
-      label: "Nucleus",
+      label: "Nucleus Visualizer",
       icon: Atom,
       to: "/visualizations/nucleus",
       search: { z: String(element.z) },
@@ -1041,11 +1092,18 @@ function QuickLinks({ element }: { element: ChemicalElement }) {
       ocid: "detail.data_explorer_link",
     },
     {
-      label: "Isotopes",
+      label: "Isotope Comparison",
       icon: Activity,
       to: "/tools/isotope-comparison",
       search: { a: String(element.z) },
       ocid: "detail.isotope_comparison_link",
+    },
+    {
+      label: "Periodic Table",
+      icon: BookOpen,
+      to: "/visualizations/periodic-table",
+      search: { highlight: element.symbol },
+      ocid: "detail.periodic_table_link",
     },
   ];
 

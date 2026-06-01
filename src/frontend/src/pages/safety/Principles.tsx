@@ -1,6 +1,7 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -530,13 +531,18 @@ export default function PrinciplesPage() {
 
           <EquationBlock
             latex="H_T = \\sum_R w_R \\cdot D_{T,R}"
-            annotation="Equivalent dose H_T (in Sv) to tissue T is the absorbed dose D_{T,R} weighted by radiation weighting factor w_R. For gamma and X-rays, w_R = 1. For alpha particles, w_R = 20. This is how 'dose' is made biologically comparable across radiation types."
+            annotation="Equivalent dose H_T (in Sv) to tissue T is the absorbed dose D_{T,R} weighted by radiation weighting factor w_R. For gamma and X-rays, w_R = 1. For alpha particles, w_R = 20. This is how dose is made biologically comparable across radiation types."
             label="Equivalent Dose (ICRP)"
           />
           <EquationBlock
             latex="E = \\sum_T w_T \\cdot H_T"
             annotation="Effective dose E (in Sv) sums equivalent doses across tissues T, weighted by tissue weighting factor w_T. Tissue weights reflect relative cancer/heritable risk: gonads w_T = 0.08, colon = 0.12, lung = 0.12, bone marrow = 0.12, etc. Effective dose is used for dose limit compliance."
             label="Effective Dose (ICRP-103)"
+          />
+          <EquationBlock
+            latex="\\Delta B = \\alpha \\cdot \\Delta H - \\Delta C_P \\geq 0"
+            annotation="ALARA optimization criterion: protection measure is justified (proceed) only when the averted detriment cost α·ΔH exceeds the marginal cost of protection ΔC_P. Here α ≈ 20,000 USD/person-Sv is the ICRP recommended monetary value of a unit collective dose, ΔH is the reduction in collective dose (person-Sv), and ΔC_P is the incremental cost of the protection measure. If ΔB < 0, the cost outweighs the benefit — do not add more shielding or complexity. (Source: ICRP Publication 37, 1983; IAEA Safety Reports Series No. 21.)"
+            label="ALARA Cost-Benefit Optimization (ICRP — Net Benefit Criterion)"
           />
         </CollapsibleSection>
 

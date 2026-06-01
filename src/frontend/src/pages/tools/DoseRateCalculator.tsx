@@ -1,3 +1,4 @@
+import { EquationBlock } from "@/components/EquationBlock";
 import { PageHeader } from "@/components/PageHeader";
 import { SafetyCallout } from "@/components/SafetyCallout";
 import { SectionCard } from "@/components/SectionCard";
@@ -635,9 +636,21 @@ export default function DoseRateCalculator() {
         <h2 className="font-display text-lg font-semibold text-foreground mb-3">
           Physics Model
         </h2>
-        <div className="rounded-lg border border-border bg-muted/20 p-4 font-mono text-sm text-foreground">
-          <p>Ḣ = Γ × A / r² × exp(−μ × x)</p>
-        </div>
+        <EquationBlock
+          latex="\dot{H} = \frac{\Gamma \cdot A}{r^2} \cdot e^{-\mu x}"
+          annotation="Dose rate Ḣ (µSv/h) from a point source. Γ = specific gamma-ray constant (µSv·m²/h·GBq), A = activity (GBq), r = distance (m), μ = linear attenuation coefficient (cm⁻¹), x = shielding thickness (cm). Source: IAEA Safety Reports Series No. 44."
+          label="Point Source Dose Rate with Shielding"
+        />
+        <EquationBlock
+          latex="I = I_0\,e^{-\mu x} \qquad \mathrm{HVL} = \frac{\ln 2}{\mu}, \quad \mathrm{TVL} = \frac{\ln 10}{\mu} \approx 3.32 \cdot \mathrm{HVL}"
+          annotation="Exponential attenuation law. HVL (half-value layer) is the thickness that reduces intensity by 50%. TVL (tenth-value layer) reduces intensity by 90%. μ values from NIST XCOM database."
+          label="Photon Attenuation & HVL/TVL"
+        />
+        <EquationBlock
+          latex="I \propto \frac{1}{r^2} \qquad \Rightarrow \qquad \frac{I_2}{I_1} = \left(\frac{r_1}{r_2}\right)^2"
+          annotation="Inverse-square law: intensity (dose rate) decreases with the square of distance from a point source in air. Doubling the distance reduces dose rate by a factor of 4. Valid for point sources in open geometry."
+          label="Inverse-Square Law"
+        />
         <div className="mt-3 space-y-1 text-sm text-muted-foreground">
           <p>
             <strong className="text-foreground">Ḣ</strong> = Dose rate (µSv/h or

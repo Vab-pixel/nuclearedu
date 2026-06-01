@@ -1,4 +1,6 @@
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 import { Button } from "@/components/ui/button";
@@ -523,7 +525,11 @@ export default function DecayPage() {
           <EquationBlock
             latex="\\alpha_{IC} = \\frac{N_e}{N_\\gamma}"
             annotation="The internal conversion coefficient α_IC is the ratio of conversion electrons emitted to gamma rays emitted. α_IC >> 1 means IC dominates; α_IC << 1 means gamma emission dominates."
-            label="Internal Conversion Coefficient"
+          />
+          <EquationBlock
+            latex="\\Delta L = |l_i - l_f|,\\quad \\Delta\\pi = \\pi_i \\cdot \\pi_f = (-1)^{\\Delta L}"
+            annotation="Gamma decay multipole selection rules. Electric transitions: ΔL≥1. ΔL=0 forbidden. Parity change follows (-1)^L for electric, (-1)^(L+1) for magnetic multipoles."
+            label="Gamma Multipole Selection Rules"
           />
           <p className="text-muted-foreground text-sm leading-relaxed mb-4">
             Internal conversion is a competing process to gamma emission:
@@ -970,105 +976,131 @@ export default function DecayPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {[
-                  ["Alpha", "α", "−2", "−2", "U-238 → Th-234 + α", "4–9 MeV"],
+                {(
                   [
-                    "Beta-minus",
-                    "β⁻",
-                    "+1",
-                    "−1",
-                    "Co-60 → Ni-60 + e⁻ + ν̄",
-                    "0–10 MeV",
-                  ],
-                  [
-                    "Beta-plus",
-                    "β⁺",
-                    "−1",
-                    "+1",
-                    "F-18 → O-18 + e⁺ + ν",
-                    "0–10 MeV",
-                  ],
-                  [
-                    "Electron capture",
-                    "ε / EC",
-                    "−1",
-                    "+1",
-                    "Fe-55 → Mn-55 + ν",
-                    "> 0",
-                  ],
-                  [
-                    "Isomeric transition",
-                    "IT",
-                    "0",
-                    "0",
-                    "Tc-99m → Tc-99 + γ",
-                    "0.1–5 MeV",
-                  ],
-                  [
-                    "Spontaneous fission",
-                    "SF",
-                    "varies",
-                    "varies",
-                    "Cf-252 → 2 fragments + nν",
-                    "~200 MeV",
-                  ],
-                  [
-                    "Neutron emission",
-                    "n",
-                    "0",
-                    "−1",
-                    "Be-13 → Be-12 + n",
-                    "0–8 MeV",
-                  ],
-                  [
-                    "Proton emission",
-                    "p",
-                    "−1",
-                    "0",
-                    "Co-53 → Fe-52 + p",
-                    "0.5–2 MeV",
-                  ],
-                  [
-                    "Double beta decay",
-                    "2β⁻",
-                    "+2",
-                    "−2",
-                    "Ge-76 → Se-76 + 2e⁻ + 2ν̄",
-                    "Q ~2 MeV; T½ ~10²¹ yr",
-                  ],
-                  [
-                    "Cluster decay",
-                    "C",
-                    "varies",
-                    "varies",
-                    "Ra-223 → Pb-209 + C-14",
-                    "~30 MeV; b ~10⁻¹⁰",
-                  ],
-                ].map(([mode, sym, dz, dn, ex, q]) => (
-                  <tr
-                    key={mode}
-                    className="hover:bg-muted/20 transition-colors"
-                  >
-                    <td className="px-4 py-2 font-semibold text-foreground">
-                      {mode}
-                    </td>
-                    <td className="px-4 py-2 text-center font-mono text-foreground">
-                      {sym}
-                    </td>
-                    <td className="px-4 py-2 text-center font-mono text-muted-foreground">
-                      {dz}
-                    </td>
-                    <td className="px-4 py-2 text-center font-mono text-muted-foreground">
-                      {dn}
-                    </td>
-                    <td className="px-4 py-2 font-mono text-xs text-muted-foreground">
-                      {ex}
-                    </td>
-                    <td className="px-4 py-2 text-right text-xs text-muted-foreground">
-                      {q}
-                    </td>
-                  </tr>
-                ))}
+                    [
+                      "Alpha",
+                      "α",
+                      "−2",
+                      "−2",
+                      <EquationBlock
+                        key="alpha-decay-eq"
+                        latex="^{238}_{92}\\text{U} \\rightarrow ^{234}_{90}\\text{Th} + ^{4}_{2}\\text{He} + Q"
+                        display={true}
+                      />,
+                      "4–9 MeV",
+                    ],
+                    [
+                      "Beta-minus",
+                      "β⁻",
+                      "+1",
+                      "−1",
+                      "Co-60 → Ni-60 + e⁻ + ν̄",
+                      "0–10 MeV",
+                    ],
+                    [
+                      "Beta-plus",
+                      "β⁺",
+                      "−1",
+                      "+1",
+                      "F-18 → O-18 + e⁺ + ν",
+                      "0–10 MeV",
+                    ],
+                    [
+                      "Electron capture",
+                      "ε / EC",
+                      "−1",
+                      "+1",
+                      "Fe-55 → Mn-55 + ν",
+                      "> 0",
+                    ],
+                    [
+                      "Isomeric transition",
+                      "IT",
+                      "0",
+                      "0",
+                      "Tc-99m → Tc-99 + γ",
+                      "0.1–5 MeV",
+                    ],
+                    [
+                      "Spontaneous fission",
+                      "SF",
+                      "varies",
+                      "varies",
+                      "Cf-252 → 2 fragments + nν",
+                      "~200 MeV",
+                    ],
+                    [
+                      "Neutron emission",
+                      "n",
+                      "0",
+                      "−1",
+                      "Be-13 → Be-12 + n",
+                      "0–8 MeV",
+                    ],
+                    [
+                      "Proton emission",
+                      "p",
+                      "−1",
+                      "0",
+                      "Co-53 → Fe-52 + p",
+                      "0.5–2 MeV",
+                    ],
+                    [
+                      "Double beta decay",
+                      "2β⁻",
+                      "+2",
+                      "−2",
+                      "Ge-76 → Se-76 + 2e⁻ + 2ν̄",
+                      "Q ~2 MeV; T½ ~10²¹ yr",
+                    ],
+                    [
+                      "Cluster decay",
+                      "C",
+                      "varies",
+                      "varies",
+                      "Ra-223 → Pb-209 + C-14",
+                      "~30 MeV; b ~10⁻¹⁰",
+                    ],
+                  ] as (string | React.ReactNode)[][]
+                ).map((row) => {
+                  const [mode, sym, dz, dn, ex, q] = row as [
+                    string,
+                    string,
+                    string,
+                    string,
+                    React.ReactNode,
+                    string,
+                  ];
+                  const modeKey = String(mode)
+                    .replace(/\s+/g, "-")
+                    .slice(0, 20);
+                  return (
+                    <tr
+                      key={`dr-${modeKey}`}
+                      className="hover:bg-muted/20 transition-colors"
+                    >
+                      <td className="px-4 py-2 font-semibold text-foreground">
+                        {mode}
+                      </td>
+                      <td className="px-4 py-2 text-center font-mono text-foreground">
+                        {sym}
+                      </td>
+                      <td className="px-4 py-2 text-center font-mono text-muted-foreground">
+                        {dz}
+                      </td>
+                      <td className="px-4 py-2 text-center font-mono text-muted-foreground">
+                        {dn}
+                      </td>
+                      <td className="px-4 py-2 font-mono text-xs text-muted-foreground">
+                        {ex}
+                      </td>
+                      <td className="px-4 py-2 text-right text-xs text-muted-foreground">
+                        {q}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -2,20 +2,32 @@ import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
 import type { AudienceLevel } from "@/store/useAppStore";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Atom,
   BookOpen,
   ChevronDown,
+  Command,
   FlaskConical,
   GraduationCap,
   Menu,
   Newspaper,
+  Search,
   ShieldCheck,
   Wrench,
   X,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { GlobalSearch } from "./GlobalSearch";
+
+const atomLinks = [
+  { label: "Atomic Models", href: "/atoms/atomic-models" },
+  { label: "Subatomic Particles", href: "/atoms/subatomic-particles" },
+  { label: "Quantum Mechanics", href: "/atoms/quantum-mechanics" },
+  { label: "Orbitals", href: "/atoms/orbitals" },
+  { label: "Electron Config", href: "/atoms/electron-config" },
+  { label: "Spectral Series", href: "/atoms/spectral-series" },
+];
 
 const navLinks = [
   { label: "Basics", href: "/basics/atom-structure" },
@@ -33,6 +45,9 @@ const vizLinks = [
   { label: "Reactor Cross-Section", href: "/visualizations/reactor" },
   { label: "Reactor World Map", href: "/visualizations/reactor-world-map" },
   { label: "Periodic Table", href: "/visualizations/periodic-table" },
+  { label: "Valley of Stability", href: "/visualizations/valley-of-stability" },
+  { label: "Quantum Visualizer", href: "/visualizations/quantum" },
+  { label: "Feynman Diagrams", href: "/visualizations/feynman-diagrams" },
 ];
 
 const toolLinks = [
@@ -46,6 +61,13 @@ const toolLinks = [
   { label: "Dose Rate Calculator", href: "/tools/dose-rate-calculator" },
   { label: "Fuel Cycle Visualizer", href: "/tools/fuel-cycle" },
   { label: "Monte Carlo Simulation", href: "/tools/monte-carlo-sim" },
+  { label: "Relativistic Kinematics", href: "/tools/relativistic-kinematics" },
+  { label: "Science News", href: "/tools/science-news" },
+  { label: "Cross-Section Plotter", href: "/tools/cross-section-plotter" },
+  { label: "Radiation Map", href: "/tools/radiation-map" },
+  { label: "ML Emulator", href: "/tools/ml-emulator" },
+  { label: "Virtual Lab Tours", href: "/tools/lab-tours" },
+  { label: "Nuclide Database", href: "/tools/nuclide-database" },
 ];
 
 const safetyLinks = [
@@ -72,9 +94,22 @@ export function Navbar() {
   const [vizOpen, setVizOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [safetyOpen, setSafetyOpen] = useState(false);
+  const [atomsOpen, setAtomsOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const { audienceLevel, setAudienceLevel } = useAppStore();
   const routerState = useRouterState();
   const pathname = routerState.location.pathname;
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const currentAudience =
     audienceOptions.find((a) => a.value === audienceLevel) ??
@@ -94,6 +129,7 @@ export function Navbar() {
   const isVizActive = pathname.startsWith("/visualizations");
   const isToolsActive = pathname.startsWith("/tools");
   const isSafetyActive = pathname.startsWith("/safety");
+  const isAtomsActive = pathname.startsWith("/atoms");
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-sm">
@@ -149,6 +185,78 @@ export function Navbar() {
               </Link>
             );
           })}
+
+          {/* Atoms & Quantum dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setAtomsOpen((v) => !v)}
+              className={cn(
+                "relative flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors glow-focus",
+                isAtomsActive
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+              aria-expanded={atomsOpen}
+              aria-haspopup="true"
+              data-ocid="nav.atoms_dropdown"
+            >
+              <Atom className="h-3.5 w-3.5" aria-hidden="true" />
+              Atoms & Quantum
+              <ChevronDown
+                className={cn(
+                  "h-3.5 w-3.5 transition-transform",
+                  atomsOpen && "rotate-180",
+                )}
+                aria-hidden="true"
+              />
+              {isAtomsActive && (
+                <motion.div
+                  layoutId="nav-underline"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-primary"
+                />
+              )}
+            </button>
+            <AnimatePresence>
+              {atomsOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 top-full mt-2 w-52 rounded-lg border border-border bg-popover p-1 shadow-elevated"
+                  role="menu"
+                  aria-label="Atoms & Quantum pages"
+                >
+                  {atomLinks.map((a) => (
+                    <Link
+                      key={a.href}
+                      to={a.href}
+                      role="menuitem"
+                      onClick={() => setAtomsOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted glow-focus",
+                        pathname === a.href
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground",
+                      )}
+                      data-ocid={`nav.atoms_${a.label.toLowerCase().replace(/\s+/g, "_")}_link`}
+                    >
+                      {a.label}
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {atomsOpen && (
+              <div
+                className="fixed inset-0 z-[-1]"
+                onClick={() => setAtomsOpen(false)}
+                onKeyDown={(e) => e.key === "Escape" && setAtomsOpen(false)}
+                aria-hidden="true"
+              />
+            )}
+          </div>
 
           {/* Visualizations dropdown */}
           <div className="relative">
@@ -411,6 +519,35 @@ export function Navbar() {
           </Link>
         </nav>
 
+        {/* Search Button */}
+        <div className="hidden md:flex items-center">
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            className="flex items-center gap-2 rounded-full border border-border bg-muted/50 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground hover:bg-muted"
+            aria-label="Open search"
+            data-ocid="nav.search_open_button"
+          >
+            <Search className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="hidden lg:inline">Search...</span>
+            <kbd className="hidden lg:inline-flex items-center gap-0.5 rounded border border-border bg-card px-1.5 py-0.5 text-[10px] font-medium">
+              <Command className="h-2.5 w-2.5" aria-hidden="true" />
+              <span>K</span>
+            </kbd>
+          </button>
+        </div>
+
+        {/* Mobile Search Button */}
+        <button
+          type="button"
+          onClick={() => setSearchOpen(true)}
+          className="md:hidden rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors glow-focus mr-2"
+          aria-label="Open search"
+          data-ocid="nav.mobile_search_button"
+        >
+          <Search className="h-5 w-5" aria-hidden="true" />
+        </button>
+
         {/* Audience Selector */}
         <div className="hidden md:flex items-center relative">
           <button
@@ -527,6 +664,30 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
+
+              {/* Mobile Atoms & Quantum */}
+              <div className="mt-1 border-t border-border pt-2">
+                <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                  Atoms & Quantum
+                </p>
+                {atomLinks.map((a) => (
+                  <Link
+                    key={a.href}
+                    to={a.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors hover:bg-muted glow-focus",
+                      pathname === a.href
+                        ? "bg-muted text-primary"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                    data-ocid={`nav.mobile_atoms_${a.label.toLowerCase().replace(/\s+/g, "_")}_link`}
+                  >
+                    <Atom className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                    {a.label}
+                  </Link>
+                ))}
+              </div>
 
               {/* Mobile Visualizations */}
               <div className="mt-1 border-t border-border pt-2">
@@ -696,6 +857,7 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+      <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }

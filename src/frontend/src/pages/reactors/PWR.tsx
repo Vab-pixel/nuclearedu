@@ -1,4 +1,7 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SafetyCallout } from "@/components/SafetyCallout";
 import { SectionCard } from "@/components/SectionCard";
@@ -161,16 +164,15 @@ function TableBlock({
   );
 }
 
-function EqBlock({ content, note }: { content: string; note?: string }) {
-  return (
-    <div className="rounded-md bg-muted/30 border border-border px-4 py-3 my-3">
-      <pre className="text-sm font-mono text-foreground overflow-x-auto whitespace-pre-wrap">
-        {content}
-      </pre>
-      {note && <p className="mt-2 text-xs text-muted-foreground">{note}</p>}
-    </div>
-  );
-}
+// EqBlock shim — maps legacy <EqBlock> to a styled pre block
+const EqBlock = ({ content, note }: { content: string; note?: string }) => (
+  <div className="my-4 p-4 bg-muted/20 rounded border border-border">
+    <pre className="font-mono text-sm whitespace-pre-wrap text-foreground">
+      {content}
+    </pre>
+    {note && <p className="mt-2 text-muted-foreground text-xs">{note}</p>}
+  </div>
+);
 
 export default function PWRPage() {
   const [open, setOpen] = useState<Record<string, boolean>>({
@@ -223,6 +225,90 @@ export default function PWRPage() {
         </SectionCard>
 
         {/* ─── Operating Parameters ─── */}
+        {/* ─── Reactor Physics & Key Equations ─── */}
+        <SectionCard data-ocid="pwr.physics_equations_card">
+          <h2 className="font-display text-xl font-semibold text-foreground mb-4">
+            Core Reactor Physics Equations
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+            The behavior of a PWR core is governed by coupled neutron kinetics,
+            thermal-hydraulics, and reactivity feedback. Key governing
+            equations:
+          </p>
+
+          <EquationBlock
+            label="Neutron Moderation — Slowing Down"
+            latex="\\xi = 1 + \\frac{(A-1)^2}{2A}\\ln\\frac{A-1}{A+1}"
+            annotation="Mean logarithmic energy decrement per collision; for H₂O: ξ ≈ 0.920, for D₂O: ξ ≈ 0.510. Source: Lamarsh & Baratta, Introduction to Nuclear Engineering, 3rd ed."
+          />
+
+          <EquationBlock
+            label="Point Kinetics — Neutron Population"
+            latex="\\frac{dn}{dt} = \\frac{\\rho - \\beta}{\\Lambda}\\,n + \\sum_{i=1}^{6} \\lambda_i C_i"
+            annotation="n = neutron density, ρ = reactivity, β = delayed neutron fraction (∑βᵢ), Λ = prompt neutron lifetime, λᵢ = decay constant of precursor group i, Cᵢ = precursor concentration. Source: Bell & Glasstone, Nuclear Reactor Theory (1970)."
+          />
+
+          <EquationBlock
+            label="Delayed Neutron Precursor Balance"
+            latex="\\frac{dC_i}{dt} = \\frac{\\beta_i}{\\Lambda}\\,n - \\lambda_i C_i \\quad (i = 1,\\ldots,6)"
+            annotation="Each of the 6 precursor groups has fraction βᵢ and decay constant λᵢ. For U-235: β_total = 0.0065, Λ ≈ 0.00025 s (prompt), ℓ* ≈ 0.083 s (effective). Source: ANL-5800, Reactor Physics Constants."
+          />
+
+          <EquationBlock
+            label="Moderator Temperature Coefficient (MTC)"
+            latex="\\alpha_M = \\frac{\\partial k_{\\text{eff}}}{\\partial T_M} \\approx -20\\text{ to }-50\\;\\text{pcm/°C}"
+            annotation="MTC is strongly negative in a PWR. As moderator heats, density drops → less moderation → reactivity decreases. Source: IAEA Safety Reports Series No. 57."
+          />
+
+          <EquationBlock
+            label="Doppler (Fuel Temperature) Coefficient"
+            latex="\\alpha_D = \\frac{\\partial k_{\\text{eff}}}{\\partial T_F} \\approx -2\\text{ to }-4\\;\\text{pcm/°C}"
+            annotation="Broadening of U-238 resonance capture peaks with fuel temperature (Doppler broadening). Provides the fastest-acting negative feedback. Source: NRC Reactor Concepts Manual, NUREG-1082."
+          />
+
+          <EquationBlock
+            label="Void Coefficient (VCC)"
+            latex="\\alpha_V = \\frac{\\partial k_{\\text{eff}}}{\\partial \\alpha_v} \\approx -100\\text{ to }+50\\;\\text{pcm/%void}"
+            annotation="In a PWR, void coefficient is near zero to slightly negative because subcooled bulk boiling is rare. In a BWR it is strongly negative. Source: OECD/NEA Nuclear Safety, 2021."
+          />
+
+          <div className="rounded-md bg-muted/30 border border-border px-4 py-3 mb-3">
+            <p className="text-sm font-semibold text-foreground mb-2">
+              Typical Operating Parameters (1,000 MWe PWR)
+            </p>
+            <div className="grid sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
+              {(
+                [
+                  ["T_coolant_in", "280°C", "Primary inlet temperature"],
+                  ["T_coolant_out", "325°C", "Primary outlet temperature"],
+                  ["P_primary", "155 bar", "Primary system pressure"],
+                  ["Φ_thermal", "3×10¹³ n/cm²·s", "Thermal neutron flux"],
+                  [
+                    "β_eff (U-235)",
+                    "0.0065",
+                    "Effective delayed neutron fraction",
+                  ],
+                  ["Λ_prompt", "~2.5×10⁻⁴ s", "Prompt neutron lifetime"],
+                ] as [string, string, string][]
+              ).map(([p, v, d]) => (
+                <div key={p} className="flex gap-2">
+                  <span className="font-mono text-primary shrink-0">{p}</span>
+                  <span className="text-foreground font-semibold shrink-0">
+                    {v}
+                  </span>
+                  <span className="text-muted-foreground text-xs self-center">
+                    {d}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground italic">
+              Source: IAEA Nuclear Power Reactors in the World 2023;
+              NUREG/CR-6944.
+            </p>
+          </div>
+        </SectionCard>
+
         <SectionCard data-ocid="pwr.parameters_card">
           <h2 className="font-display text-xl font-semibold text-foreground mb-4">
             Typical Operating Parameters

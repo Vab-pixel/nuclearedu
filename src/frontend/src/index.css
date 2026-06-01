@@ -142,6 +142,25 @@
     --color-history-marker: 0.82 0.16 48;
     --transition-page: all 0.3s ease;
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --quantum-wavefunction-purple: 0.55 0.24 276;
+    --quantum-phase-gold: 0.78 0.18 72;
+    --quantum-density-cyan: 0.68 0.22 192;
+    --quantum-quark-red: 0.58 0.26 22;
+    --quantum-quark-green: 0.65 0.22 120;
+    --quantum-quark-blue: 0.62 0.2 256;
+    --quantum-lepton-cyan: 0.72 0.24 192;
+    --quantum-boson-yellow: 0.82 0.2 88;
+    --quantum-photon-white: 0.92 0.04 0;
+    --quantum-gluon-orange: 0.68 0.22 45;
+    --quantum-classical-steel: 0.52 0.12 256;
+    --quantum-quantum-violet: 0.62 0.22 276;
+    --quantum-modern-teal: 0.65 0.2 180;
+    --quantum-wavefunction-glow: 0 0 32px oklch(0.55 0.24 276 / 0.4), inset 0 0
+      16px oklch(0.55 0.24 276 / 0.1);
+    --quantum-orbital-pulse: 0 0 48px oklch(0.68 0.22 192 / 0.35), 0 0 72px
+      oklch(0.68 0.22 192 / 0.15);
+    --quantum-particle-trail: 0 0 24px oklch(0.72 0.24 192 / 0.5);
   }
 
   .dark {
@@ -277,6 +296,25 @@
     --color-history-marker: 0.88 0.2 48;
     --transition-page: all 0.3s ease;
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --quantum-wavefunction-purple: 0.68 0.28 276;
+    --quantum-phase-gold: 0.86 0.22 72;
+    --quantum-density-cyan: 0.78 0.28 192;
+    --quantum-quark-red: 0.72 0.32 22;
+    --quantum-quark-green: 0.76 0.28 120;
+    --quantum-quark-blue: 0.74 0.26 256;
+    --quantum-lepton-cyan: 0.82 0.3 192;
+    --quantum-boson-yellow: 0.88 0.24 88;
+    --quantum-photon-white: 0.96 0.06 0;
+    --quantum-gluon-orange: 0.78 0.28 45;
+    --quantum-classical-steel: 0.6 0.16 256;
+    --quantum-quantum-violet: 0.72 0.28 276;
+    --quantum-modern-teal: 0.75 0.24 180;
+    --quantum-wavefunction-glow: 0 0 48px oklch(0.68 0.28 276 / 0.5), inset 0 0
+      24px oklch(0.68 0.28 276 / 0.15);
+    --quantum-orbital-pulse: 0 0 64px oklch(0.78 0.28 192 / 0.45), 0 0 96px
+      oklch(0.78 0.28 192 / 0.2);
+    --quantum-particle-trail: 0 0 36px oklch(0.82 0.3 192 / 0.65);
   }
 
   * {
@@ -541,6 +579,20 @@
       oklch(var(--heatmap-viridis-hot))
     );
   }
+
+  .quantum-wavefunction-glow {
+    box-shadow: var(--quantum-wavefunction-glow);
+  }
+
+  .quantum-orbital-pulse {
+    animation: quantum-orbital-pulse 3s ease-in-out infinite;
+    box-shadow: var(--quantum-orbital-pulse);
+  }
+
+  .quantum-particle-trail {
+    box-shadow: var(--quantum-particle-trail);
+    filter: blur(0.5px);
+  }
 }
 
 .periodic-grid {
@@ -653,4 +705,20 @@
     size: landscape;
     margin: 1cm;
   }
+}
+
+@theme {
+  --quantum-wavefunction-purple: 0.6 0.25 276;
+  --quantum-phase-gold: 0.8 0.19 72;
+  --quantum-density-cyan: 0.7 0.23 192;
+  --quantum-quark-red: 0.62 0.27 22;
+  --quantum-quark-green: 0.68 0.23 120;
+  --quantum-quark-blue: 0.65 0.22 256;
+  --quantum-lepton-cyan: 0.74 0.25 192;
+  --quantum-boson-yellow: 0.84 0.21 88;
+  --quantum-photon-white: 0.94 0.05 0;
+  --quantum-gluon-orange: 0.72 0.24 45;
+  --quantum-classical-steel: 0.55 0.14 256;
+  --quantum-quantum-violet: 0.66 0.24 276;
+  --quantum-modern-teal: 0.68 0.21 180;
 }

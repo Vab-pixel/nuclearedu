@@ -1,5 +1,6 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -127,9 +128,15 @@ export default function PowerPage() {
             globally averaged near{" "}
             <strong className="text-foreground">90%</strong>, compared with
             approximately 35% for utility-scale solar PV and 30–40% for onshore
-            wind. A 1,000 MWe nuclear plant running at 90% capacity factor
-            delivers nine times more annual energy than a 1,000 MWe solar farm
-            at equivalent rated capacity. This makes nuclear uniquely suited to
+            wind.
+            <EquationBlock
+              latex="CF = \frac{E_{\text{actual}}}{E_{\text{rated}}} = \frac{\text{MWh generated}}{P_{\text{rated}} \times 8{,}760\,\text{h/yr}} \times 100\%"
+              annotation="Capacity factor (CF): ratio of actual energy generated over a year to the maximum possible if the plant ran at full rated power continuously. Nuclear global average ≈ 90%; solar PV ≈ 20–28%; onshore wind ≈ 30–40%. A higher CF means the same rated capacity delivers proportionally more energy."
+              label="Capacity Factor Definition"
+            />
+            A 1,000 MWe nuclear plant running at 90% capacity factor delivers
+            nine times more annual energy than a 1,000 MWe solar farm at
+            equivalent rated capacity. This makes nuclear uniquely suited to
             serve as firm, dispatchable baseload electricity that can also
             follow load (particularly French PWRs, which ramp at 5% rated power
             per minute).
@@ -140,7 +147,9 @@ export default function PowerPage() {
             <strong className="text-foreground">
               12 g CO₂-equivalent per kWh
             </strong>{" "}
-            — comparable to offshore wind and roughly 40× less than natural gas
+            — expressed as{" "}
+            <InlineEquation tex="g\,\text{CO}_2\text{-eq}\,/\,\text{kWh}_e" /> —
+            comparable to offshore wind and roughly 40× less than natural gas
             combined-cycle. France, which obtains roughly{" "}
             <strong className="text-foreground">70%</strong> of its electricity
             from nuclear, has among the lowest per-capita electricity CO₂

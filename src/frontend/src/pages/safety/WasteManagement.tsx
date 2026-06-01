@@ -1,5 +1,8 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SafetyCallout } from "@/components/SafetyCallout";
 import { SectionCard } from "@/components/SectionCard";
@@ -341,6 +344,16 @@ export default function WasteManagement() {
             loss of cooling to spent fuel pools can cause fuel damage (as nearly
             occurred at Fukushima Daiichi Unit 4 in 2011).
           </p>
+          <EquationBlock
+            latex="A(t) = A_0 \\, e^{-\\lambda t}"
+            annotation="Radioactive decay law: activity A at time t equals initial activity A₀ times e^(−λt), where λ = ln(2)/t½ is the decay constant (s⁻¹) and t½ is the half-life. For spent fuel, A₀ is the sum of all fission product activities at shutdown. This governs both the heat generation and the long-term hazard of high-level waste. Source: IAEA Safety Reports Series No. 15."
+            label="Radioactive Decay Activity — Fundamental Decay Law"
+          />
+          <EquationBlock
+            latex="P(t) \\approx 0.066 \\, P_0 \\, t^{-0.2}"
+            annotation="Approximate ANS-5.1 decay heat correlation: P(t) is decay power (W) at time t seconds after shutdown; P₀ is steady-state reactor power (W); exponent −0.2 reflects the broad spectrum of fission product half-lives. Valid for ~10 s to ~100 s. At t = 1 s: P ≈ 6.6% P₀; at t = 100 s: P ≈ 3.5% P₀; at t = 3600 s (1 hr): P ≈ 1.5% P₀. Source: ANS-5.1-1994 (reaffirmed 2014); NUREG-0800 §15."
+            label="ANS-5.1 Decay Heat Correlation (after shutdown)"
+          />
           <DataTable
             headers={[
               "Time after shutdown",
@@ -471,8 +484,11 @@ export default function WasteManagement() {
             <p>
               <strong className="text-foreground">300–1,000 years:</strong>{" "}
               <span className="text-muted-foreground">
-                Cs/Sr largely decayed. Dominant contributors: Pu-239 (T½ 24,100
-                yr), Am-241 (T½ 432 yr), Np-237 (T½ 2.14 × 10⁶ yr).
+                Cs/Sr largely decayed. Dominant contributors:{" "}
+                <NuclearNotation A={239} Z={94} symbol="Pu" /> (t½ = 24,100 yr),{" "}
+                <NuclearNotation A={241} Z={95} symbol="Am" /> (t½ = 432 yr),{" "}
+                <NuclearNotation A={237} Z={93} symbol="Np" /> (t½ = 2.14 × 10⁶
+                yr).
               </span>
             </p>
             <p>

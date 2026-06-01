@@ -1,5 +1,7 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SafetyCallout } from "@/components/SafetyCallout";
 import { SectionCard } from "@/components/SectionCard";
@@ -456,14 +458,21 @@ export default function MedicinePage() {
           />
 
           <h3 className="font-semibold text-foreground mt-5 mb-2">
-            ¹⁸F: The Dominant PET Radionuclide
+            <NuclearNotation A={18} Z={9} symbol="F" />: The Dominant PET
+            Radionuclide
           </h3>
           <p className="text-muted-foreground text-sm leading-relaxed mb-3">
             F-18 has emerged as the dominant PET radionuclide due to a unique
-            combination of favourable properties. Production via ¹⁸O(p,n)¹⁸F at
+            combination of favourable properties. Production via{" "}
+            <InlineEquation tex="{}^{18}\text{O}(p,n){}^{18}\text{F}" /> at
             16–18 MeV proton energies in medical cyclotrons yields 50–150 GBq
-            per 30-minute bombardment from H₂¹⁸O targets.
+            per 30-minute bombardment from H₂¹⁸O targets. The decay equation is:
           </p>
+          <EquationBlock
+            latex="{}^{18}_{9}\text{F} \rightarrow {}^{18}_{8}\text{O} + e^+ + \nu_e \quad (T_{1/2} = 109.8\,\text{min},\; E_{\beta^+}^{\max} = 634\,\text{keV})"
+            annotation="F-18 positron decay to O-18. The emitted positron travels ~0.6 mm in tissue before annihilating with an electron to produce two collinear 511 keV gamma photons — the basis of PET coincidence detection."
+            label="F-18 Positron Decay"
+          />
           <DataTable
             headers={["Property", "F-18 Value", "Why Optimal"]}
             rows={[
@@ -496,16 +505,19 @@ export default function MedicinePage() {
           />
 
           <h3 className="font-semibold text-foreground mt-5 mb-2">
-            ⁶⁸Ga: Generator-Based PET Without a Cyclotron
+            <NuclearNotation A={68} Z={31} symbol="Ga" />: Generator-Based PET
+            Without a Cyclotron
           </h3>
           <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-            ⁶⁸Ga (T½ = 67.7 min) has transformed PET access at hospitals without
-            on-site cyclotrons. The ⁶⁸Ge/⁶⁸Ga generator (⁶⁸Ge T½ = 270.95 days;
-            daughter ⁶⁸Ga by electron capture) provides reliable daily supply
-            for 1–2 years per generator, enabling PSMA and DOTATATE PET programs
-            at institutions globally. ⁶⁸Ga chelates readily with DOTA-peptide
-            conjugates (DOTATATE, DOTATOC, PSMA-11) via rapid kit-based
-            chemistry at room temperature.
+            <InlineEquation tex="{}^{68}\text{Ga}" /> (T½ = 67.7 min) has
+            transformed PET access at hospitals without on-site cyclotrons. The{" "}
+            <InlineEquation tex="{}^{68}\text{Ge}/{}^{68}\text{Ga}" /> generator
+            (<InlineEquation tex="{}^{68}\text{Ge}" /> T½ = 270.95 days;
+            daughter <InlineEquation tex="{}^{68}\text{Ga}" /> by electron
+            capture) provides reliable daily supply for 1–2 years per generator,
+            enabling PSMA and DOTATATE PET programs at institutions globally.
+            ⁶⁸Ga chelates readily with DOTA-peptide conjugates (DOTATATE,
+            DOTATOC, PSMA-11) via rapid kit-based chemistry at room temperature.
           </p>
           <p className="text-xs text-muted-foreground">
             Sources: IAEA Radiopharmacy: A Technologist's Guide (2014);

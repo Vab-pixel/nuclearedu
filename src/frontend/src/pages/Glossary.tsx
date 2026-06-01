@@ -1,5 +1,6 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
 import type { BadgeLevel } from "@/components/AudienceBadge";
+import { EquationBlock } from "@/components/EquationBlock";
 import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,8 @@ const audienceFilters: { label: string; value: AudienceLevel | "all" }[] = [
 
 const categories: GlossaryCategory[] = [
   "Physics",
+  "Quantum Mechanics",
+  "Particle Physics",
   "Reactor Engineering",
   "Fuel Cycle",
   "Safety",
@@ -254,8 +257,12 @@ export default function GlossaryPage() {
                   {term.definition}
                 </dd>
                 {term.equation && (
-                  <div className="mt-2 font-mono text-xs bg-muted/50 rounded px-3 py-1.5 text-foreground/80 w-fit">
-                    {term.equation}
+                  <div className="mt-3">
+                    <EquationBlock
+                      latex={term.equation}
+                      display={false}
+                      label="Equation"
+                    />
                   </div>
                 )}
                 {term.relatedTerms.length > 0 && (

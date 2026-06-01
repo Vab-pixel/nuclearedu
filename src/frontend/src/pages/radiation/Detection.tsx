@@ -1,4 +1,5 @@
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -306,7 +307,7 @@ export default function RadiationDetection() {
           <h2 className="font-display text-xl font-semibold text-foreground mb-4">
             Detection Principles
           </h2>
-          <p className="text-muted-foreground leading-relaxed">
+          <p className="text-muted-foreground leading-relaxed mb-3">
             All radiation detectors share a common principle: ionizing radiation
             deposits energy in a detector medium, which converts that energy
             into a measurable signal — an electrical pulse, light flash, or
@@ -317,6 +318,15 @@ export default function RadiationDetection() {
             (ability to distinguish different photon energies), and{" "}
             <strong className="text-foreground">response time</strong>.
           </p>
+          <p className="text-sm text-muted-foreground mb-3">
+            For an ionization chamber collecting charge, the measured current is
+            directly related to the ion-pair production rate:
+          </p>
+          <EquationBlock
+            latex="I = \dot{n} \cdot e = \frac{\dot{E}}{W} \cdot e"
+            annotation="Ionization chamber current. ṅ = ion-pair production rate (pairs/s); e = elementary charge (1.602 × 10⁻¹⁹ C); Ė = energy deposition rate (eV/s); W = mean energy per ion pair (W ≈ 34 eV in air, 26 eV in Ar, 22 eV in tissue equivalent gas). A 1 MeV gamma depositing all energy in air produces ~29,400 ion pairs."
+            label="Ionization Chamber Current"
+          />
         </SectionCard>
 
         {/* ── Detector overview cards ── */}
@@ -679,8 +689,9 @@ export default function RadiationDetection() {
                 Energy Resolution — Sources of Broadening
               </h4>
               <p className="text-sm text-muted-foreground mb-3">
-                Energy resolution R (%) = FWHM / E_peak × 100. For NaI(Tl) at
-                662 keV, R ≈ 7%. The dominant contributions:
+                Energy resolution{" "}
+                <InlineEquation tex="R\,(\%) = \frac{\text{FWHM}}{E_{\text{peak}}} \times 100" />
+                . For NaI(Tl) at 662 keV, R ≈ 7%. The dominant contributions:
               </p>
               <EquationBlock
                 latex="R^2 = R_{\\rm stat}^2 + R_{\\rm inh}^2 + R_{\\rm collect}^2"
@@ -1257,10 +1268,11 @@ export default function RadiationDetection() {
                   <p className="text-sm text-muted-foreground mb-2">
                     A calibrated multi-nuclide source (e.g., NIST-traceable
                     Eu-152 point source) is counted in the exact geometry used
-                    for samples. Full-energy peak efficiency ε(E) = counts / (Bq
-                    × I_γ × time). Efficiency is fit as a smooth function of
-                    energy (polynomial in log–log space). Absolute activity of
-                    unknowns:
+                    for samples. Full-energy peak efficiency{" "}
+                    <InlineEquation tex="\varepsilon(E) = \frac{N_{\text{net}}}{A \cdot I_\gamma \cdot t}" />{" "}
+                    where A is source activity (Bq), × I_γ × time). Efficiency
+                    is fit as a smooth function of energy (polynomial in log–log
+                    space). Absolute activity of unknowns:
                   </p>
                   <EquationBlock
                     latex="A = \\frac{N_{\\rm net}}{\\varepsilon(E) \\cdot I_\\gamma \\cdot t}"

@@ -1,4 +1,5 @@
 import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionCard } from "@/components/SectionCard";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -633,15 +634,10 @@ export default function FusionPage() {
               <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
                 Plasma Beta β
               </div>
-              <div className="font-mono text-sm text-foreground mb-1">
-                β = P_plasma / (B²/2μ₀)
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Ratio of plasma kinetic pressure to magnetic pressure. Higher β
-                means more efficient use of the magnetic field. Practical
-                tokamaks operate at β ≈ 2–5%; above the Troyon limit, ballooning
-                and tearing mode instabilities develop.
-              </div>
+              <EquationBlock
+                latex="\\beta = \\frac{p_\\text{plasma}}{B^2 / 2\\mu_0}"
+                annotation="Plasma beta — ratio of plasma pressure to magnetic pressure. High β is efficient but harder to confine."
+              />
             </div>
           </div>
 

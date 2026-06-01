@@ -1,3 +1,6 @@
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { Badge } from "@/components/ui/badge";
 import {
   Atom,
@@ -251,7 +254,7 @@ const figures: Figure[] = [
       {
         title: "Bohr model of the hydrogen atom (1913)",
         detail:
-          "Bohr postulated that electrons occupy discrete quantized orbits around the nucleus, and that radiation is emitted or absorbed only when electrons transition between orbits. The energy of a photon emitted in a transition from orbit n₂ to n₁ is given by:\nE = hcR_∞(1/n₁² − 1/n₂²)\nwhere R_∞ is the Rydberg constant. This model correctly reproduced the entire hydrogen emission spectrum (Lyman, Balmer, Paschen series) from first principles — a breakthrough that could not be explained by classical physics.",
+          "Bohr postulated that electrons occupy discrete quantized orbits around the nucleus, and that radiation is emitted or absorbed only when electrons transition between orbits. The energy of a photon emitted in a transition from orbit n₂ to n₁ is E = hcR_∞(1/n₁² − 1/n₂²) where R_∞ = 1.0974 × 10⁷ m⁻¹ is the Rydberg constant. This model correctly reproduced the entire hydrogen emission spectrum (Lyman UV, Balmer visible, Paschen IR series) from first principles — a breakthrough that could not be explained by classical physics.",
       },
       {
         title: "Copenhagen Interpretation of quantum mechanics (1927)",
@@ -266,7 +269,7 @@ const figures: Figure[] = [
       {
         title: "Theory of nuclear fission (1939, with Wheeler)",
         detail:
-          "After hearing from Otto Frisch (Lise Meitner's nephew) about the Hahn–Strassmann barium result, Bohr travelled to the US in January 1939 and immediately recognized the theoretical significance. With John Wheeler at Princeton, he published the liquid drop model of fission, deriving the fission barrier height as a function of the fissility parameter Z²/A. Crucially, Bohr correctly predicted that U-235 (not the far more abundant U-238) was responsible for slow-neutron fission, because U-235 has an odd neutron number and lower fission barrier: E_f(²³⁵U) ≈ 6.5 MeV vs binding energy of captured neutron ≈ 6.8 MeV → fission spontaneous; E_f(²³⁸U) ≈ 6.5 MeV vs ≈ 4.8 MeV → threshold ~1 MeV needed.",
+          "After hearing from Otto Frisch about the Hahn–Strassmann barium result, Bohr travelled to the US in January 1939 and recognised the theoretical significance. With John Wheeler at Princeton, he published the liquid drop model of fission, deriving the fission barrier as a function of the fissility parameter Z²/A. Crucially, Bohr correctly predicted that U-235 (odd N, lower barrier) was responsible for slow-neutron fission: activation energy for U-235 ≈ 6.5 MeV vs. binding energy of captured neutron ≈ 6.8 MeV → spontaneous; for U-238: activation ≈ 6.5 MeV vs. ≈ 4.8 MeV → ~1 MeV threshold needed.",
       },
       {
         title: "Escape from occupied Denmark and Manhattan Project (1943)",

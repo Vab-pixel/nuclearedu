@@ -1,3 +1,6 @@
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { Badge } from "@/components/ui/badge";
 import {
   Atom,
@@ -174,7 +177,7 @@ const ERAS: Era[] = [
         year: "1905",
         title: "Einstein Publishes E = mc²",
         description:
-          "Albert Einstein (Berlin) derives the mass–energy equivalence E = mc² as a consequence of special relativity, published in Annalen der Physik. The equation quantifies the enormous energy latent in matter and underpins all nuclear energy calculations.",
+          "Albert Einstein (Berlin) derives the mass–energy equivalence E = mc² as a consequence of special relativity, published in Annalen der Physik. The equation quantifies the enormous energy latent in matter and underpins all nuclear energy calculations — every MeV of nuclear binding energy corresponds to a mass deficit of ~1.07 × 10⁻³ u.",
         detail:
           "The paper, 'Does the Inertia of a Body Depend Upon Its Energy Content?' was just three pages long. Einstein himself did not immediately foresee its nuclear applications — the energy released in a single fission event (≈200 MeV) corresponds to a mass loss of only ~3.5 × 10⁻²⁵ kg.",
         citation: "Einstein, Annalen der Physik 18, 639 (1905)",
@@ -209,9 +212,9 @@ const ERAS: Era[] = [
         year: "1919",
         title: "First Artificial Nuclear Reaction",
         description:
-          "Ernest Rutherford (Manchester) achieves the first artificial nuclear transmutation: ¹⁴N + ⁴He → ¹⁷O + ¹H. Alpha particles from radium strike nitrogen gas, producing oxygen-17 and a proton. This is the first time humanity deliberately converts one element into another.",
+          "Ernest Rutherford (Manchester) achieves the first artificial nuclear transmutation. Alpha particles from radium strike nitrogen-14 gas, producing oxygen-17 and a proton — the first time humanity deliberately converts one element into another. Q-value ≈ −1.19 MeV (endothermic).",
         detail:
-          "The reaction equation in modern notation: ¹⁴₇N + ⁴₂He → ¹⁷₈O + ¹₁H. The Q-value is approximately −1.19 MeV (endothermic), meaning the alpha particle must carry sufficient kinetic energy.",
+          "In modern notation: ¹⁴N(α,p)¹⁷O. The Q-value is approximately −1.19 MeV (endothermic) — the alpha particle must carry sufficient kinetic energy to overcome both the Coulomb barrier and the reaction threshold. This experiment proved nuclear transmutation was achievable without a particle accelerator.",
         citation: "Rutherford, Phil. Mag. 37 (1919)",
         isMilestone: true,
       },
@@ -246,7 +249,7 @@ const ERAS: Era[] = [
         year: "1939",
         title: "Meitner and Frisch Explain Fission",
         description:
-          "Lise Meitner and Otto Frisch (Sweden/UK) provide the theoretical explanation for Hahn's barium result: the uranium nucleus splits into two roughly equal fragments. They coin the term 'nuclear fission' by analogy with cell division. Using Einstein's E = mc², they calculate a release of approximately 200 MeV per fission event — roughly 50 million times an ordinary chemical bond.",
+          "Lise Meitner and Otto Frisch (Sweden/UK) provide the theoretical explanation for Hahn's barium result: the uranium nucleus splits into two roughly equal fragments. They coin 'nuclear fission' by analogy with cell division. Using E = mc², they calculate a mass deficit of ~0.215 u per fission ≈ 200 MeV — roughly 50 million times the energy of a typical chemical bond.",
         detail:
           "Meitner's key letter to Frisch, Christmas 1938: 'The uranium nucleus is not spherical but elongated; it can split into two fragments.' She applied the liquid drop model — nuclear surface tension competes with electrostatic repulsion. Meitner was controversially omitted from the Nobel Prize awarded to Hahn alone in 1944.",
         citation: "Meitner & Frisch, Nature 143 (1939)",

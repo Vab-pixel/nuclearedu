@@ -1,5 +1,8 @@
 import { AudienceBadge } from "@/components/AudienceBadge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
+import { EquationBlock } from "@/components/EquationBlock";
+import { InlineEquation } from "@/components/InlineEquation";
+import { NuclearNotation } from "@/components/NuclearNotation";
 import { PageHeader } from "@/components/PageHeader";
 import { SafetyCallout } from "@/components/SafetyCallout";
 import { SectionCard } from "@/components/SectionCard";
@@ -246,6 +249,16 @@ export default function Regulation() {
             ))}
           </div>
 
+          <EquationBlock
+            latex="E_\\text{occ} \\leq 20 \\text{ mSv/yr} \\text{ (5-yr avg, max 50 mSv in any single year)}"
+            annotation="Occupational dose limit per ICRP Publication 103 (2007) and IAEA GSR Part 3 (2014): effective dose averaged over 5 consecutive years must not exceed 20 mSv/yr, with no single year exceeding 50 mSv. Extremity (hands/feet) and lens of eye limits apply separately: lens ≤ 20 mSv/yr (revised 2011 per ICRP Statement on Tissue Reactions). Workers are required to wear dosimetry and report dose annually."
+            label="Occupational Dose Limit — ICRP-103 / IAEA GSR Part 3"
+          />
+          <EquationBlock
+            latex="E_\\text{public} \\leq 1 \\text{ mSv/yr (effective dose, above natural background)}"
+            annotation="Public dose limit per ICRP-103 and IAEA GSR Part 3: effective dose to any member of the public from all licensed practices must not exceed 1 mSv/yr above natural background (~2.4 mSv/yr globally). In exceptional circumstances, up to 5 mSv in a single year is allowed if the 5-year average remains ≤ 1 mSv/yr. In practice, facility-specific design objectives (source terms) are typically a fraction of this limit (0.01–0.1 mSv/yr)."
+            label="Public Dose Limit — ICRP-103 / IAEA GSR Part 3"
+          />
           <h3 className="font-semibold text-foreground mb-2">
             Key Standards Referenced Worldwide
           </h3>
