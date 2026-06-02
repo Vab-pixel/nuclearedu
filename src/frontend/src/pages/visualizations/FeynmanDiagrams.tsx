@@ -2453,7 +2453,7 @@ export default function FeynmanDiagrams() {
             Feynman Rules (QED)
           </h3>
           <EquationBlock
-            latex="-ie\gamma^\mu"
+            latex="-ie\\gamma^\\mu"
             annotation="QED electron-photon vertex factor. e is the elementary charge (e ≈ 1.602 × 10⁻¹⁹ C) and γμ are the 4×4 Dirac gamma matrices satisfying {γμ, γν} = 2gμν. Each vertex contributes this factor to the amplitude 𝓜."
             label="QED Vertex Factor"
           />

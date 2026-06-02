@@ -138,7 +138,7 @@ export function FourMomentumSection() {
         </h2>
         <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
           Enter the covariant 4-momentum{" "}
-          <InlineMath latex="p^\mu = (E/c,\, p_x,\, p_y,\, p_z)" /> in MeV/c
+          <InlineMath latex="p^\\mu = (E/c,\\, p_x,\\, p_y,\\, p_z)" /> in MeV/c
           (natural units where c = 1 throughout).
         </p>
 
@@ -341,7 +341,7 @@ export function FourMomentumSection() {
       {/* --- Reference Equations --- */}
       <SectionCard>
         <EquationBlock
-          latex="p^\mu = \\left(\\frac{E}{c},\\, p_x,\\, p_y,\\, p_z\\right), \\quad m^2 c^2 = \\frac{E^2}{c^2} - |\\mathbf{p}|^2"
+          latex="p^\\mu = \\left(\\frac{E}{c},\\, p_x,\\, p_y,\\, p_z\\right), \\quad m^2 c^2 = \\frac{E^2}{c^2} - |\\mathbf{p}|^2"
           annotation="Four-momentum. The Lorentz-scalar invariant m²c² equals E²/c² minus the three-momentum squared. Natural units: c = 1."
           label="Four-Momentum & Invariant Mass"
         />

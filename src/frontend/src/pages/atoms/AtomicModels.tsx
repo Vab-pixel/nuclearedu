@@ -1401,7 +1401,7 @@ export default function AtomicModels() {
                       <div className="space-y-2 mt-2">
                         <EquationBlock
                           label="Bohr Radius"
-                          latex="a_0 = \\frac{4\\pi\\varepsilon_0 \\hbar^2}{m_e e^2} = 0.529\\,\\text{\u00c5}"
+                          latex="a_0 = \\frac{4\\pi\\varepsilon_0 \\hbar^2}{m_e e^2} = 0.529\\,\\text{\\u00c5}"
                           annotation="The Bohr radius a₀ = 0.529 Å is the most probable distance from the nucleus for a ground-state hydrogen electron. It sets the natural length scale for atomic physics."
                         />
                         <EquationBlock

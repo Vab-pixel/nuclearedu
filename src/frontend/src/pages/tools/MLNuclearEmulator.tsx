@@ -1524,12 +1524,12 @@ export default function MLNuclearEmulator() {
               </p>
 
               <EquationBlock
-                latex="B(Z,N) = a_V A - a_S A^{2/3} - a_C \frac{Z(Z-1)}{A^{1/3}} - a_A \frac{(N-Z)^2}{A} + \delta(A,Z)"
+                latex="B(Z,N) = a_V A - a_S A^{2/3} - a_C \\frac{Z(Z-1)}{A^{1/3}} - a_A \\frac{(N-Z)^2}{A} + \\delta(A,Z)"
                 annotation="Bethe-Weizsäcker semi-empirical mass formula (SEMF). aᵥ ≈ 15.85 MeV (volume), a_S ≈ 18.34 MeV (surface), a_C ≈ 0.711 MeV (Coulomb), a_A ≈ 23.21 MeV (asymmetry). δ(A,Z): pairing term — +a_P/√A for even-even, 0 for odd-A, −a_P/√A for odd-odd (a_P ≈ 12 MeV). Source: Weizsäcker (1935), Bethe & Bacher (1936)."
                 label="Bethe-Weizsäcker Semi-Empirical Mass Formula"
               />
               <EquationBlock
-                latex="\frac{B}{A} = a_V - \frac{a_S}{A^{1/3}} - \frac{a_C Z(Z-1)}{A^{4/3}} - a_A\frac{(N-Z)^2}{A^2} + \frac{\delta(A,Z)}{A}"
+                latex="\\frac{B}{A} = a_V - \\frac{a_S}{A^{1/3}} - \\frac{a_C Z(Z-1)}{A^{4/3}} - a_A\\frac{(N-Z)^2}{A^2} + \\frac{\\delta(A,Z)}{A}"
                 annotation="Binding energy per nucleon form of the SEMF. The volume term (a_V) dominates for large A; the surface term (a_S A^{2/3}) reduces binding for small nuclei. Maximum near A = 56 (iron group). This expression is used as the physics-prior input feature x₆ to the neural network."
                 label="Binding Energy per Nucleon (SEMF)"
               />

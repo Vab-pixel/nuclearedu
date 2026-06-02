@@ -536,7 +536,7 @@ export default function SubatomicParticles() {
           couplings.
         </p>
         <EquationBlock
-          latex="\\mathcal{L}_{\\text{SM}} = -\\tfrac{1}{4}F_{\\mu\\nu}F^{\\mu\\nu} + i\\bar{\\psi}\\,\\slashed{D}\\psi + |D_\\mu H|^2 - V(H) + \\bar{\\psi}_i\\, y_{ij}\\, \\psi_j H + \\text{h.c.}"
+          latex="\\mathcal{L}_{\\text{SM}} = -\\tfrac{1}{4}F_{\\mu\\nu}F^{\\mu\\nu} + i\\bar{\\psi}\\,\\gamma^\\mu D_\\mu \\psi + |D_\\mu H|^2 - V(H) + \\bar{\\psi}_i\\, y_{ij}\\, \\psi_j H + \\text{h.c.}"
           annotation="The Standard Model Lagrangian: kinetic terms for gauge fields F_mn, Dirac fermionic matter, Higgs kinetic |D H|^2, Higgs self-potential V(H), and Yukawa couplings y_ij generating fermion masses after electroweak symmetry breaking."
           label="Standard Model Lagrangian (compact)"
         />
@@ -691,7 +691,7 @@ export default function SubatomicParticles() {
           />
         </div>
         <EquationBlock
-          latex="m_W = \\tfrac{1}{2}g\,v \\approx 80.4\\text{ GeV} \\qquad m_Z = \\tfrac{v}{2}\\sqrt{g^2+g'^2} \\approx 91.2\\text{ GeV}"
+          latex="m_W = \\tfrac{1}{2}g\\,v \\approx 80.4\\text{ GeV} \\qquad m_Z = \\tfrac{v}{2}\\sqrt{g^2+g'^2} \\approx 91.2\\text{ GeV}"
           annotation="W and Z masses arise from the Higgs vacuum expectation value v = 246 GeV. The ratio m_W/m_Z = cos(theta_W) defines the Weinberg weak mixing angle."
           label="Electroweak Symmetry Breaking Masses"
         />

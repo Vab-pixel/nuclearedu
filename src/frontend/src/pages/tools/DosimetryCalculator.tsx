@@ -512,7 +512,7 @@ function DoseRateCalc() {
       </div>
 
       <EquationBlock
-        latex="\dot{H} = \frac{A \cdot P_\gamma \cdot E_\gamma \cdot \Gamma}{r^2} \cdot 0.5^{n_{HVL}}"
+        latex="\\dot{H} = \\frac{A \\cdot P_\\gamma \\cdot E_\\gamma \\cdot \\Gamma}{r^2} \\cdot 0.5^{n_{HVL}}"
         annotation="Dose rate Ḣ equals activity A × gamma probability × photon energy × Γ constant ÷ r² × shielding transmission (0.5 per HVL)."
         label="Point Source Dose Rate with Shielding"
       />
@@ -790,27 +790,27 @@ function EffectiveDoseCalc() {
       </div>
 
       <EquationBlock
-        latex="D = \frac{E_{\mathrm{dep}}}{m} \qquad [D] = \mathrm{Gy} = \mathrm{J\,kg^{-1}}"
+        latex="D = \\frac{E_{\\mathrm{dep}}}{m} \\qquad [D] = \\mathrm{Gy} = \\mathrm{J\\,kg^{-1}}"
         annotation="Absorbed dose D equals energy deposited per unit mass. The SI unit is the gray (Gy) = 1 joule per kilogram. Source: ICRP Publication 103 (2007)."
         label="Absorbed Dose (ICRP-103)"
       />
       <EquationBlock
-        latex="H_T = \sum_R w_R \cdot D_{T,R} \qquad [H_T] = \mathrm{Sv}"
+        latex="H_T = \\sum_R w_R \\cdot D_{T,R} \\qquad [H_T] = \\mathrm{Sv}"
         annotation="Equivalent dose H_T to tissue T is the sum over all radiation types R of the radiation weighting factor w_R times the mean absorbed dose D_{T,R}. w_R: photons/electrons = 1, protons = 2, neutrons = 2.5–20 (energy-dependent), alpha = 20."
         label="Equivalent Dose — Radiation Weighting (ICRP-103)"
       />
       <EquationBlock
-        latex="E = \sum_T w_T \cdot H_T \qquad [E] = \mathrm{Sv}"
+        latex="E = \\sum_T w_T \\cdot H_T \\qquad [E] = \\mathrm{Sv}"
         annotation="Effective dose E is the sum over tissues T of the tissue weighting factor w_T times the equivalent dose H_T. Tissue weights: gonads 0.08, lung 0.12, thyroid 0.04, bone marrow 0.12, skin 0.01, whole-body 1.0. Sum of all w_T = 1."
         label="Effective Dose — Tissue Weighting (ICRP-103)"
       />
       <EquationBlock
-        latex="E_{50} = \sum_T w_T \cdot H_{T,50} \qquad H_{T,50} = \int_0^{50\,\mathrm{yr}} \dot{H}_T(t)\,dt"
+        latex="E_{50} = \\sum_T w_T \\cdot H_{T,50} \\qquad H_{T,50} = \\int_0^{50\\,\\mathrm{yr}} \\dot{H}_T(t)\\,dt"
         annotation="Committed effective dose E₅₀: integral of equivalent dose rate over 50 years after a single intake of radionuclide. Used for internal dosimetry and inhalation/ingestion dose assessment."
         label="Committed Effective Dose (ICRP-103)"
       />
       <EquationBlock
-        latex="S = E \cdot N \qquad [S] = \mathrm{man\cdot Sv}"
+        latex="S = E \\cdot N \\qquad [S] = \\mathrm{man\\cdot Sv}"
         annotation="Collective dose S is the product of mean effective dose E and the number of individuals N exposed. Used for population-level risk assessment. Source: ICRP-103 §4.4."
         label="Collective Effective Dose"
       />
@@ -1020,7 +1020,7 @@ function ActivityCalc() {
       </div>
 
       <EquationBlock
-        latex="A(t) = A_0 \cdot e^{-\lambda t}, \quad \lambda = \frac{\ln 2}{t_{1/2}}"
+        latex="A(t) = A_0 \\cdot e^{-\\lambda t}, \\quad \\lambda = \\frac{\\ln 2}{t_{1/2}}"
         annotation="Radioactive decay law: activity at time t equals initial activity × e^(−λt). Decay constant λ = ln(2) / half-life."
         label="Radioactive Decay Law"
       />

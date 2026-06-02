@@ -1659,7 +1659,7 @@ export default function QuantumVisualizer() {
                   label="Energy Levels"
                 />
                 <EquationBlock
-                  latex="P(r)\,dr = |R_{nl}(r)|^2 r^2\,dr"
+                  latex="P(r)\\,dr = |R_{nl}(r)|^2 r^2\\,dr"
                   annotation="Radial probability density. The r² factor accounts for the increasing volume of spherical shells. Peaks correspond to most-probable radii (Bohr radii for hydrogen)."
                   label="Radial Probability"
                 />
@@ -1679,7 +1679,7 @@ export default function QuantumVisualizer() {
                   label="Selection Rules"
                 />
                 <EquationBlock
-                  latex="\\langle r \\rangle_{1s} = \\frac{3a_0}{2} = 0.794\\,\\text{Å}"
+                  latex="\\langle r \\rangle_{1s} = \\frac{3a_0}{2} = 0.794\\,\\text{\\AA}"
                   annotation="Expectation value of the electron–nucleus distance in the 1s ground state. Slightly larger than the Bohr radius a₀ = 0.529 Å because the radial probability distribution is right-skewed."
                   label="Expectation Value ⟨r⟩₁s"
                 />

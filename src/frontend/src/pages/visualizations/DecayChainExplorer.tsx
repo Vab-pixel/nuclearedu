@@ -1642,27 +1642,27 @@ export function DecayChainExplorer() {
       {/* ── Half-life legend ── */} {/* ── Decay Physics equations panel ── */}
       <div className="hidden">
         <EquationBlock
-          latex="^A_Z X \rightarrow ^{A-4}_{Z-2}Y + ^4_2\text{He} + Q"
+          latex="^A_Z X \\rightarrow ^{A-4}_{Z-2}Y + ^4_2\\text{He} + Q"
           annotation="Alpha decay: nucleus emits a helium-4 nucleus (alpha particle). Q-value = (M_parent - M_daughter - M_alpha)c²."
           label="Alpha Decay"
         />
         <EquationBlock
-          latex="^A_Z X \rightarrow ^A_{Z+1}Y + e^- + \bar{\nu}_e"
+          latex="^A_Z X \\rightarrow ^A_{Z+1}Y + e^- + \\bar{\\nu}_e"
           annotation="Beta-minus decay: a neutron converts to a proton, emitting an electron and electron antineutrino."
           label="Beta⁻ Decay"
         />
         <EquationBlock
-          latex="^A_Z X \rightarrow ^A_{Z-1}Y + e^+ + \nu_e"
+          latex="^A_Z X \\rightarrow ^A_{Z-1}Y + e^+ + \\nu_e"
           annotation="Beta-plus decay: a proton converts to a neutron, emitting a positron and electron neutrino."
           label="Beta⁺ Decay"
         />
         <EquationBlock
-          latex="^A_Z X + e^- \rightarrow ^A_{Z-1}Y + \nu_e"
+          latex="^A_Z X + e^- \\rightarrow ^A_{Z-1}Y + \\nu_e"
           annotation="Electron capture: a proton captures an inner-shell electron, converting to a neutron with emission of an electron neutrino."
           label="Electron Capture"
         />
         <EquationBlock
-          latex="^A_Z X^* \rightarrow ^A_Z X + \gamma"
+          latex="^A_Z X^* \\rightarrow ^A_Z X + \\gamma"
           annotation="Gamma decay: an excited nucleus releases excess energy as a high-energy photon (gamma ray) without changing Z or A."
           label="Gamma Decay"
         />
@@ -1690,11 +1690,11 @@ export function DecayChainExplorer() {
               />
               <span className="text-xs text-muted-foreground">
                 {mode === "beta-" ? (
-                  <InlineEquation tex="\beta^-" />
+                  <InlineEquation tex="\\beta^-" />
                 ) : mode === "beta+" ? (
-                  <InlineEquation tex="\beta^+" />
+                  <InlineEquation tex="\\beta^+" />
                 ) : mode === "ec" ? (
-                  <InlineEquation tex="\text{EC}" />
+                  <InlineEquation tex="\\text{EC}" />
                 ) : (
                   mode
                 )}

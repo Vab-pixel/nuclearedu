@@ -225,25 +225,25 @@ export default function MedicinePage() {
             Absorbed Dose and Effective Dose
           </h3>
           <EquationBlock
-            latex="D = \frac{E}{m} \quad [\text{Gray, Gy} = \text{J/kg}]"
+            latex="D = \\frac{E}{m} \\quad [\\text{Gray, Gy} = \\text{J/kg}]"
             annotation="Absorbed dose D is the fundamental physical quantity: energy E deposited per unit mass m of tissue. 1 Gy = 1 J/kg. The gray replaced the older 'rad' (1 rad = 0.01 Gy). Absorbed dose is the same regardless of radiation type — biological effects differ."
             label="Absorbed Dose"
           />
 
           <EquationBlock
-            latex="H = D \times w_R \quad [\text{Sievert, Sv}]"
+            latex="H = D \\times w_R \\quad [\\text{Sievert, Sv}]"
             annotation="Equivalent dose H multiplies absorbed dose by the radiation weighting factor w_R: 1 for gamma/beta; 20 for alpha particles; 5–20 for neutrons. H accounts for differing biological damage per unit energy deposited. The sievert (Sv) replaced the older 'rem' (1 rem = 0.01 Sv)."
             label="Equivalent Dose (Sv)"
           />
 
           <EquationBlock
-            latex="E = \sum_T w_T \cdot H_T \quad [\text{Sievert, Sv}]"
+            latex="E = \\sum_T w_T \\cdot H_T \\quad [\\text{Sievert, Sv}]"
             annotation="Effective dose E sums equivalent doses across all organs, each weighted by a tissue weighting factor w_T reflecting the organ's radiosensitivity (ICRP 103, 2007). Red bone marrow w_T = 0.12; thyroid w_T = 0.04; gonads w_T = 0.08. Effective dose is used for comparing risks across different exposure scenarios, not for individual patient risk quantification."
             label="Effective Dose (Sv) — ICRP 103"
           />
 
           <EquationBlock
-            latex="H_{\text{committed}} = \int_0^{50\,\text{yr}} \dot{H}(t)\,dt"
+            latex="H_{\\text{committed}} = \\int_0^{50\\,\\text{yr}} \\dot{H}(t)\\,dt"
             annotation="Committed effective dose is the integral of effective dose rate over 50 years following intake of a radioactive substance (or to age 70 for children). Used to assess internal contamination and nuclear medicine patient doses from long-lived radiopharmaceuticals. For short-lived nuclides like Tc-99m (T½=6h), the committed dose equals essentially the entire dose delivered within days."
             label="Committed Effective Dose (nuclear medicine patients)"
           />
@@ -452,7 +452,7 @@ export default function MedicinePage() {
           />
 
           <EquationBlock
-            latex="^{99}_{42}\text{Mo} \xrightarrow{\beta^-,\,T_{1/2}=66\,\text{h}} {^{99m}_{43}\text{Tc}} \xrightarrow{\text{IT},\,140.5\,\text{keV},\,T_{1/2}=6.01\,\text{h}} {^{99}_{43}\text{Tc}}"
+            latex="^{99}_{42}\\text{Mo} \\xrightarrow{\\beta^-,\\,T_{1/2}=66\\,\\text{h}} {^{99m}_{43}\\text{Tc}} \\xrightarrow{\\text{IT},\\,140.5\\,\\text{keV},\\,T_{1/2}=6.01\\,\\text{h}} {^{99}_{43}\\text{Tc}}"
             annotation="Mo-99 is produced with ~6.1% fission yield from U-235. The secular equilibrium in the generator column means 87% of theoretical max Tc-99m is available 24 h after elution. Global Mo-99 supply is concentrated at 5 research reactors, creating supply chain vulnerability; the 2009–2010 shortage cancelled hundreds of thousands of cardiac and cancer scans worldwide (OECD/NEA, 2022)."
             label="Mo-99 → Tc-99m Decay Chain (Generator System)"
           />
@@ -464,12 +464,12 @@ export default function MedicinePage() {
           <p className="text-muted-foreground text-sm leading-relaxed mb-3">
             F-18 has emerged as the dominant PET radionuclide due to a unique
             combination of favourable properties. Production via{" "}
-            <InlineEquation tex="{}^{18}\text{O}(p,n){}^{18}\text{F}" /> at
+            <InlineEquation tex="{}^{18}\\text{O}(p,n){}^{18}\\text{F}" /> at
             16–18 MeV proton energies in medical cyclotrons yields 50–150 GBq
             per 30-minute bombardment from H₂¹⁸O targets. The decay equation is:
           </p>
           <EquationBlock
-            latex="{}^{18}_{9}\text{F} \rightarrow {}^{18}_{8}\text{O} + e^+ + \nu_e \quad (T_{1/2} = 109.8\,\text{min},\; E_{\beta^+}^{\max} = 634\,\text{keV})"
+            latex="{}^{18}_{9}\\text{F} \\rightarrow {}^{18}_{8}\\text{O} + e^+ + \\nu_e \\quad (T_{1/2} = 109.8\\,\\text{min},\\; E_{\\beta^+}^{\\max} = 634\\,\\text{keV})"
             annotation="F-18 positron decay to O-18. The emitted positron travels ~0.6 mm in tissue before annihilating with an electron to produce two collinear 511 keV gamma photons — the basis of PET coincidence detection."
             label="F-18 Positron Decay"
           />
@@ -509,15 +509,16 @@ export default function MedicinePage() {
             Without a Cyclotron
           </h3>
           <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-            <InlineEquation tex="{}^{68}\text{Ga}" /> (T½ = 67.7 min) has
+            <InlineEquation tex="{}^{68}\\text{Ga}" /> (T½ = 67.7 min) has
             transformed PET access at hospitals without on-site cyclotrons. The{" "}
-            <InlineEquation tex="{}^{68}\text{Ge}/{}^{68}\text{Ga}" /> generator
-            (<InlineEquation tex="{}^{68}\text{Ge}" /> T½ = 270.95 days;
-            daughter <InlineEquation tex="{}^{68}\text{Ga}" /> by electron
-            capture) provides reliable daily supply for 1–2 years per generator,
-            enabling PSMA and DOTATATE PET programs at institutions globally.
-            ⁶⁸Ga chelates readily with DOTA-peptide conjugates (DOTATATE,
-            DOTATOC, PSMA-11) via rapid kit-based chemistry at room temperature.
+            <InlineEquation tex="{}^{68}\\text{Ge}/{}^{68}\\text{Ga}" />{" "}
+            generator (<InlineEquation tex="{}^{68}\\text{Ge}" /> T½ = 270.95
+            days; daughter <InlineEquation tex="{}^{68}\\text{Ga}" /> by
+            electron capture) provides reliable daily supply for 1–2 years per
+            generator, enabling PSMA and DOTATATE PET programs at institutions
+            globally. ⁶⁸Ga chelates readily with DOTA-peptide conjugates
+            (DOTATATE, DOTATOC, PSMA-11) via rapid kit-based chemistry at room
+            temperature.
           </p>
           <p className="text-xs text-muted-foreground">
             Sources: IAEA Radiopharmacy: A Technologist's Guide (2014);
@@ -676,13 +677,13 @@ export default function MedicinePage() {
           </p>
 
           <EquationBlock
-            latex="e^+ + e^- \rightarrow \gamma_1 + \gamma_2 \quad (511\,\text{keV each},\ 180^\circ \pm 0.25^\circ)"
+            latex="e^+ + e^- \\rightarrow \\gamma_1 + \\gamma_2 \\quad (511\\,\\text{keV each},\\ 180^\\circ \\pm 0.25^\\circ)"
             annotation="Positron-electron annihilation. The 0.25° FWHM angular deviation (from residual momentum of the pair) limits spatial resolution to ~2–3 mm in modern scanners. Time-of-flight (TOF) PET uses coincidence timing as short as 210 ps to localize annihilation along the LOR to within ~3 cm, substantially improving image quality."
             label="Positron-Electron Annihilation — PET Principle"
           />
 
           <EquationBlock
-            latex="\text{SUV} = \frac{\text{Tissue radioactivity concentration (kBq/mL)}}{\text{Injected activity (kBq)} / \text{Body weight (g)}}"
+            latex="\\text{SUV} = \\frac{\\text{Tissue radioactivity concentration (kBq/mL)}}{\\text{Injected activity (kBq)} / \\text{Body weight (g)}}"
             annotation="Standardised Uptake Value (SUV). SUVmax > 2.5 is a widely used (though imperfect) threshold for metabolically active malignancy on FDG PET. Deauville 5-point scale for lymphoma uses SUV relative to mediastinal blood pool and liver. PERCIST criteria: SUVmax decrease >30% indicates metabolic response to therapy."
             label="Standardised Uptake Value (SUV)"
           />
@@ -972,7 +973,7 @@ export default function MedicinePage() {
             ²²³Ra-Dichloride (Xofigo®): Alpha Therapy
           </h3>
           <EquationBlock
-            latex="^{223}_{88}\text{Ra} \xrightarrow{\alpha,\,11.43\,\text{d}} {^{219}\text{Rn}} \xrightarrow{\alpha,\,3.96\,\text{s}} {^{215}\text{Po}} \xrightarrow{\alpha,\,1.78\,\text{ms}} {^{211}\text{Pb}} \xrightarrow{\beta^-,\,36.1\,\text{min}} {^{211}\text{Bi}} \xrightarrow{\alpha,\,2.14\,\text{min}} {^{207}\text{Tl}} \xrightarrow{\beta^-} {^{207}\text{Pb (stable)}}"
+            latex="^{223}_{88}\\text{Ra} \\xrightarrow{\\alpha,\\,11.43\\,\\text{d}} {^{219}\\text{Rn}} \\xrightarrow{\\alpha,\\,3.96\\,\\text{s}} {^{215}\\text{Po}} \\xrightarrow{\\alpha,\\,1.78\\,\\text{ms}} {^{211}\\text{Pb}} \\xrightarrow{\\beta^-,\\,36.1\\,\\text{min}} {^{211}\\text{Bi}} \\xrightarrow{\\alpha,\\,2.14\\,\\text{min}} {^{207}\\text{Tl}} \\xrightarrow{\\beta^-} {^{207}\\text{Pb (stable)}}"
             annotation="Ra-223 decay chain: 4 alpha particles + 2 beta particles. Total energy per chain ≈ 28.3 MeV. Alpha range < 100 μm in tissue (~2–10 cell diameters), concentrating lethal dose at tumor-bone interface. Ra-223, a calcium mimic, selectively incorporates into hydroxyapatite at osteoblastic metastases."
             label="Ra-223 Decay Chain (ALSYMPCA therapy)"
           />
@@ -1198,7 +1199,7 @@ export default function MedicinePage() {
             Patient Dosimetry: The MIRD Formalism
           </h3>
           <EquationBlock
-            latex="\tilde{A}_s = \int_0^\infty A_s(t)\,dt \quad \rightarrow \quad D(r_T \leftarrow r_S) = \tilde{A}_s \cdot S(r_T \leftarrow r_S)"
+            latex="\\tilde{A}_s = \\int_0^\\infty A_s(t)\\,dt \\quad \\rightarrow \\quad D(r_T \\leftarrow r_S) = \\tilde{A}_s \\cdot S(r_T \\leftarrow r_S)"
             annotation="MIRD (Medical Internal Radiation Dose) formalism: the cumulated activity Ã_s in a source organ (time-integral of activity A_s(t)) is multiplied by the S-value (mean absorbed dose in target organ per unit cumulated activity in source organ) to yield absorbed dose D. S-values are published by MIRD for standard organ geometries and all relevant radionuclides. Personalized dosimetry integrates patient-specific pharmacokinetics from serial SPECT/CT or PET imaging."
             label="MIRD Dosimetry Formalism"
           />

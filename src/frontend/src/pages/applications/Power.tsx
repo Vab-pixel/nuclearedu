@@ -130,7 +130,7 @@ export default function PowerPage() {
             approximately 35% for utility-scale solar PV and 30–40% for onshore
             wind.
             <EquationBlock
-              latex="CF = \frac{E_{\text{actual}}}{E_{\text{rated}}} = \frac{\text{MWh generated}}{P_{\text{rated}} \times 8{,}760\,\text{h/yr}} \times 100\%"
+              latex="CF = \\frac{E_{\\text{actual}}}{E_{\\text{rated}}} = \\frac{\\text{MWh generated}}{P_{\\text{rated}} \\times 8{,}760\\,\\text{h/yr}} \\times 100\%"
               annotation="Capacity factor (CF): ratio of actual energy generated over a year to the maximum possible if the plant ran at full rated power continuously. Nuclear global average ≈ 90%; solar PV ≈ 20–28%; onshore wind ≈ 30–40%. A higher CF means the same rated capacity delivers proportionally more energy."
               label="Capacity Factor Definition"
             />
@@ -148,8 +148,8 @@ export default function PowerPage() {
               12 g CO₂-equivalent per kWh
             </strong>{" "}
             — expressed as{" "}
-            <InlineEquation tex="g\,\text{CO}_2\text{-eq}\,/\,\text{kWh}_e" /> —
-            comparable to offshore wind and roughly 40× less than natural gas
+            <InlineEquation tex="g\\,\\text{CO}_2\\text{-eq}\\,/\\,\\text{kWh}_e" />{" "}
+            — comparable to offshore wind and roughly 40× less than natural gas
             combined-cycle. France, which obtains roughly{" "}
             <strong className="text-foreground">70%</strong> of its electricity
             from nuclear, has among the lowest per-capita electricity CO₂
@@ -300,13 +300,13 @@ export default function PowerPage() {
           </ul>
 
           <EquationBlock
-            latex="\eta_C = 1 - \frac{T_{\text{cold}}}{T_{\text{hot}}} = 1 - \frac{303\,\text{K}}{603\,\text{K}} \approx 0.50 \quad (50\%)"
+            latex="\\eta_C = 1 - \\frac{T_{\\text{cold}}}{T_{\\text{hot}}} = 1 - \\frac{303\\,\\text{K}}{603\\,\\text{K}} \\approx 0.50 \\quad (50\%)"
             annotation="Carnot upper-bound efficiency for a typical PWR. Real gross thermal efficiency is 33–36% — the gap from Carnot (14–17 percentage points) is lost to irreversibilities. High-temperature gas-cooled reactors (HTGRs) at T_hot ≈ 950°C achieve η ≈ 45%, approaching the efficiency of modern combined-cycle gas turbines."
             label="Carnot Efficiency — PWR Upper Bound"
           />
 
           <EquationBlock
-            latex="P_{\text{thermal}} = P_{\text{electrical}} + Q_{\text{waste}} \quad \Rightarrow \quad 3{,}000\,\text{MWth} \approx 1{,}000\,\text{MWe} + 2{,}000\,\text{MWth}"
+            latex="P_{\\text{thermal}} = P_{\\text{electrical}} + Q_{\\text{waste}} \\quad \\Rightarrow \\quad 3{,}000\\,\\text{MWth} \\approx 1{,}000\\,\\text{MWe} + 2{,}000\\,\\text{MWth}"
             annotation="Power balance for a typical 1,000 MWe nuclear unit at 33% thermal efficiency. Two-thirds of the reactor's thermal output (~2,000 MWth) must be rejected to the environment via the condenser — this waste heat appears as warm discharge water or visible water-vapour plumes from cooling towers. It represents no radioactive release, only low-grade heat."
             label="Nuclear Plant Power Balance (1,000 MWe unit)"
           />
@@ -477,7 +477,7 @@ export default function PowerPage() {
             discount rate.
           </p>
           <EquationBlock
-            latex="\text{LCOE} = \frac{\sum_{t=0}^{T} \frac{C_t}{(1+r)^t}}{\sum_{t=0}^{T} \frac{E_t}{(1+r)^t}}"
+            latex="\\text{LCOE} = \\frac{\\sum_{t=0}^{T} \\frac{C_t}{(1+r)^t}}{\\sum_{t=0}^{T} \\frac{E_t}{(1+r)^t}}"
             annotation="C_t = total costs in year t (capital, fuel, O&M, decommissioning); E_t = energy generated in year t (MWh); r = discount rate; T = plant lifetime (years). Nuclear's high C_0 (overnight capital cost, incurred before any energy is generated) means LCOE is very sensitive to r. At r = 3%, nuclear LCOE ≈ $50–70/MWh; at r = 10%, LCOE ≈ $90–150/MWh (IEA/NEA 2020)."
             label="Levelized Cost of Energy (LCOE)"
           />
@@ -1086,7 +1086,7 @@ export default function PowerPage() {
           </p>
 
           <EquationBlock
-            latex="\text{SWU} = P \cdot V(x_p) + W \cdot V(x_w) - F \cdot V(x_f)"
+            latex="\\text{SWU} = P \\cdot V(x_p) + W \\cdot V(x_w) - F \\cdot V(x_f)"
             annotation="SWU (Separative Work Unit) quantifies the enrichment effort. V(x) = (2x−1) ln[x/(1−x)] is the value function; F = feed mass; P = product mass; W = waste (tails) mass; x_f = 0.00720 (natural U); x_p = desired enrichment (e.g. 0.044 for 4.4%); x_w = 0.003 (tails assay). Producing 1 kg of 4.4% enriched uranium from natural feed requires ~8.5 SWU. A 1,000 MWe PWR requires ~100,000 SWU/year. The centrifuge process uses ~50 kWh/SWU vs. ~2,500 kWh/SWU for obsolete gaseous diffusion."
             label="Separative Work Unit (SWU) — Enrichment Measure"
           />

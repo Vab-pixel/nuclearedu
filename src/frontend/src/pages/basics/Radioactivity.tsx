@@ -179,17 +179,17 @@ export default function Radioactivity() {
             is precisely predictable:
           </p>
           <EquationBlock
-            latex="N(t) = N_0 \cdot e^{-\lambda t}"
+            latex="N(t) = N_0 \\cdot e^{-\\lambda t}"
             annotation="The number of nuclei N(t) at time t equals the initial number N₀ times e to the power of minus λt, where λ is the decay constant."
             label="Exponential Decay"
           />
           <EquationBlock
-            latex="T_{1/2} = \frac{\ln 2}{\lambda} \approx \frac{0.693}{\lambda}"
+            latex="T_{1/2} = \\frac{\\ln 2}{\\lambda} \\approx \\frac{0.693}{\\lambda}"
             annotation="The half-life T½ is the time for half the nuclei to decay. It equals the natural log of 2 divided by the decay constant λ."
             label="Half-life Definition"
           />
           <EquationBlock
-            latex="\tau = \frac{1}{\lambda} = \frac{T_{1/2}}{\ln 2} \approx 1.443\,T_{1/2}"
+            latex="\\tau = \\frac{1}{\\lambda} = \\frac{T_{1/2}}{\\ln 2} \\approx 1.443\\,T_{1/2}"
             annotation="Mean lifetime τ: the average time a nucleus survives before decaying. It is longer than T½ by factor 1/ln2 ≈ 1.443. At t = τ, N(τ) = N₀/e ≈ 0.368 N₀ (36.8% remain). Mean lifetime is useful in relativistic contexts (muon decay, pion decay)."
             label="Mean Lifetime"
           />
@@ -333,12 +333,12 @@ export default function Radioactivity() {
             masses):
           </p>
           <EquationBlock
-            latex="Q_\alpha = \bigl[M(Z,A) - M(Z{-}2,A{-}4) - M({}^4\text{He})\bigr] \times 931.5\ \text{MeV/u}"
+            latex="Q_\\alpha = \\bigl[M(Z,A) - M(Z{-}2,A{-}4) - M({}^4\\text{He})\\bigr] \\times 931.5\\ \\text{MeV/u}"
             annotation="All three masses in atomic mass units (u). If Q_α > 0, the decay is energetically allowed. The alpha particle carries kinetic energy T_α = Q_α × (A−4)/A, and the daughter recoils with T_recoil = Q_α × 4/A."
             label="Alpha Decay Q-value"
           />
           <EquationBlock
-            latex="T_\alpha = Q_\alpha \cdot \frac{A-4}{A}, \quad T_{\rm recoil} = Q_\alpha \cdot \frac{4}{A}"
+            latex="T_\\alpha = Q_\\alpha \\cdot \\frac{A-4}{A}, \\quad T_{\\rm recoil} = Q_\\alpha \\cdot \\frac{4}{A}"
             annotation="Two-body kinematics. For U-238 (A=238, Q=4.270 MeV): T_α = 4.270 × 234/238 = 4.198 MeV; T_recoil = 4.270 × 4/238 = 0.072 MeV. The 72 keV Th-234 recoil is enough to displace ~100 atoms in a crystal lattice."
             label="Alpha Kinematic Energies"
           />
@@ -352,12 +352,12 @@ export default function Radioactivity() {
             the Coulomb barrier:
           </p>
           <EquationBlock
-            latex="G = \sqrt{\frac{2\mu}{\hbar^2}} \int_{R_n}^{R_C} \sqrt{V_C(r) - Q_\alpha} \, dr"
+            latex="G = \\sqrt{\\frac{2\\mu}{\\hbar^2}} \\int_{R_n}^{R_C} \\sqrt{V_C(r) - Q_\\alpha} \\, dr"
             annotation="G is the Gamow integral. μ = reduced mass of alpha+daughter system, R_n = nuclear surface radius (≈1.2 A^(1/3) fm), R_C = classical turning point where V_C(r) = Q_α. Larger G → slower tunnelling → exponentially longer half-life."
             label="Gamow Tunnelling Integral (WKB)"
           />
           <EquationBlock
-            latex="T_{1/2} \propto e^{+2\pi\eta}, \quad \eta = \frac{Z_d \cdot 2e^2}{\hbar v_\alpha}"
+            latex="T_{1/2} \\propto e^{+2\\pi\\eta}, \\quad \\eta = \\frac{Z_d \\cdot 2e^2}{\\hbar v_\\alpha}"
             annotation="η = Sommerfeld parameter (dimensionless). v_α = velocity of emitted alpha. Z_d = daughter charge (Z−2). Higher Z_d or lower v_α (lower Q) increases η and exponentially increases T½. This is the exact result from integrating the Coulomb barrier analytically."
             label="Gamow-Sommerfeld Half-life"
           />
@@ -370,7 +370,7 @@ export default function Radioactivity() {
             mechanics existed:
           </p>
           <EquationBlock
-            latex="\log_{10}(T_{1/2}) \approx \frac{a}{\sqrt{Q_\alpha}} + b"
+            latex="\\log_{10}(T_{1/2}) \\approx \\frac{a}{\\sqrt{Q_\\alpha}} + b"
             annotation="Log of half-life is proportional to 1/√Q. Higher Q → shorter half-life, exponentially. Constants a, b depend on Z. This directly follows from the Gamow calculation."
             label="Geiger-Nuttall Law"
           />
@@ -530,7 +530,7 @@ export default function Radioactivity() {
           </p>
 
           <EquationBlock
-            latex="Q_{\beta^-} = [M(Z,A) - M(Z+1,A)]c^2"
+            latex="Q_{\\beta^-} = [M(Z,A) - M(Z+1,A)]c^2"
             annotation="Q for β⁻ decay uses atomic masses M (including all electrons). The mass difference converts directly to kinetic energy shared between the electron and antineutrino. Q_β⁺ requires an additional −2m_e c² = −1.022 MeV for positron mass creation."
             label="β⁻ Q-value"
           />
@@ -544,7 +544,7 @@ export default function Radioactivity() {
             function F):
           </p>
           <EquationBlock
-            latex="\frac{dN}{dE} \propto F(Z,E) \cdot p^2 \cdot (Q_\beta - E)^2"
+            latex="\\frac{dN}{dE} \\propto F(Z,E) \\cdot p^2 \\cdot (Q_\\beta - E)^2"
             annotation="Beta spectrum shape: F(Z,E) = Fermi function (Coulomb correction), p = electron momentum, (Q−E)² = phase space factor for the neutrino. The Kurie plot linearises this: plotting √[N/(F·p²)] vs E gives a straight line; its x-intercept = Q_β. Used to measure Q precisely."
             label="Beta Spectrum (Fermi Theory)"
           />
@@ -670,7 +670,7 @@ export default function Radioactivity() {
           </p>
 
           <EquationBlock
-            latex="E_\gamma = E_i - E_f - \frac{E_\gamma^2}{2Mc^2}"
+            latex="E_\\gamma = E_i - E_f - \\frac{E_\\gamma^2}{2Mc^2}"
             annotation="Gamma energy equals initial minus final nuclear level energy, minus a tiny recoil correction. For a 1 MeV gamma from mass-100 nucleus, the recoil is ~5 eV — negligible for detector spectroscopy but crucial for Mössbauer spectroscopy, which exploits recoil-free emission in crystals."
             label="Gamma Transition Energy (with recoil)"
           />
@@ -746,7 +746,7 @@ export default function Radioactivity() {
             nuclear effects:
           </p>
           <EquationBlock
-            latex="T_W(E1) \approx 1.0 \times 10^{14}\,A^{2/3}\,E_\gamma^3 \quad \text{s}^{-1}"
+            latex="T_W(E1) \\approx 1.0 \\times 10^{14}\\,A^{2/3}\\,E_\\gamma^3 \\quad \\text{s}^{-1}"
             annotation="Weisskopf estimate for E1 (electric dipole) transition rate, where E_γ is in MeV and A is the mass number. Example: 1 MeV E1 in A=100 nucleus → T_W ≈ 2×10¹⁴ s⁻¹, T½ ≈ 3×10⁻¹⁵ s. Enhanced E2 transitions in strongly deformed nuclei (rotational states) can exceed Weisskopf units by 100-fold."
             label="Weisskopf E1 Estimate"
           />
@@ -764,7 +764,7 @@ export default function Radioactivity() {
             with kinetic energy T_IC = E_γ − E_binding:
           </p>
           <EquationBlock
-            latex="\alpha_{IC} = \frac{N_e}{N_\gamma}"
+            latex="\\alpha_{IC} = \\frac{N_e}{N_\\gamma}"
             annotation="αIC is the ratio of conversion electrons to gamma photons. αIC is high for: high multipole order L, low transition energy, high Z nucleus, E0 transitions. Total αT = αK + αL + αM + ... For Tc-99m M4 transition: αK ≈ 0.114, αT ≈ 0.123."
             label="Internal Conversion Coefficient"
           />
@@ -814,7 +814,7 @@ export default function Radioactivity() {
           </p>
 
           <EquationBlock
-            latex="A_2(t) = A_1^{(0)} \frac{\lambda_2}{\lambda_2 - \lambda_1}\left(e^{-\lambda_1 t} - e^{-\lambda_2 t}\right)"
+            latex="A_2(t) = A_1^{(0)} \\frac{\\lambda_2}{\\lambda_2 - \\lambda_1}\\left(e^{-\\lambda_1 t} - e^{-\\lambda_2 t}\\right)"
             annotation="Activity of daughter A₂(t) for pure parent at t=0. λ₁, λ₂ are decay constants of parent and daughter. Valid for the simplest two-member chain."
             label="Bateman Equation (2-member chain)"
           />
@@ -914,13 +914,13 @@ export default function Radioactivity() {
           </p>
 
           <EquationBlock
-            latex="A = \lambda N = \frac{\ln 2}{T_{1/2}} \cdot N"
+            latex="A = \\lambda N = \\frac{\\ln 2}{T_{1/2}} \\cdot N"
             annotation="Activity A (in Bq) equals decay constant λ times the number of atoms N. Equivalently, ln(2)/T½ × N."
             label="Activity"
           />
 
           <EquationBlock
-            latex="a_{sp} = \frac{N_A \cdot \ln 2}{T_{1/2} \cdot M_r} \quad [\text{Bq/g}]"
+            latex="a_{sp} = \\frac{N_A \\cdot \\ln 2}{T_{1/2} \\cdot M_r} \\quad [\\text{Bq/g}]"
             annotation="Specific activity (activity per gram) depends only on T½ and molar mass Mr. Short-lived isotopes have enormous specific activities."
             label="Specific Activity"
           />
@@ -952,7 +952,7 @@ export default function Radioactivity() {
             absorbed dose rate is:
           </p>
           <EquationBlock
-            latex="\dot{H} = \Gamma \cdot \frac{A}{r^2}"
+            latex="\\dot{H} = \\Gamma \\cdot \\frac{A}{r^2}"
             annotation="Dose rate Ḣ (Sv/h) equals gamma dose rate constant Γ times activity A (Bq) divided by distance squared r² (m²). Note: this is in-air, no scatter or attenuation."
             label="Point Source Dose Rate"
           />
@@ -1034,7 +1034,7 @@ export default function Radioactivity() {
             contributions:
           </p>
           <EquationBlock
-            latex="B(Z,A) = a_V A - a_S A^{2/3} - a_C \frac{Z(Z-1)}{A^{1/3}} - a_A \frac{(A-2Z)^2}{A} + \delta(A,Z)"
+            latex="B(Z,A) = a_V A - a_S A^{2/3} - a_C \\frac{Z(Z-1)}{A^{1/3}} - a_A \\frac{(A-2Z)^2}{A} + \\delta(A,Z)"
             annotation="SEMF coefficients: aᵥ=15.8, aₛ=18.3, aC=0.714, aA=23.2 MeV. Volume term: all nucleons attract neighbors. Surface: fewer bonds at surface. Coulomb: proton-proton repulsion. Asymmetry: penalty for N≠Z from Pauli exclusion. Pairing δ: +aₚ/√A for even-even, 0 for odd-A, −aₚ/√A for odd-odd."
             label="Semi-Empirical Mass Formula (Bethe-Weizsäcker)"
           />
@@ -1043,7 +1043,7 @@ export default function Radioactivity() {
             Stability Line from SEMF
           </h3>
           <EquationBlock
-            latex="Z_{stable}(A) \approx \frac{A}{2 + 0.015 A^{2/3}}"
+            latex="Z_{stable}(A) \\approx \\frac{A}{2 + 0.015 A^{2/3}}"
             annotation="Most stable isobar for given A. For A=56: Z≈26 (iron, most tightly bound). For A=238: Z≈92 (uranium). The formula slightly overestimates Z for very heavy nuclei due to shell effects."
             label="Valley of Stability (SEMF)"
           />
@@ -1410,7 +1410,7 @@ export default function Radioactivity() {
           </p>
 
           <EquationBlock
-            latex="t = \frac{1}{\lambda} \ln\!\left(1 + \frac{D - D_0}{P}\right)"
+            latex="t = \\frac{1}{\\lambda} \\ln\\!\\left(1 + \\frac{D - D_0}{P}\\right)"
             annotation="Age equation: λ = decay constant of parent, D = measured daughter, D₀ = initial daughter at t=0 (must be known or solved via isochron), P = present-day parent count. For radiocarbon: D₀ set by known atmospheric ¹⁴C/¹²C ratio at time of organism's death."
             label="Radiometric Age Equation"
           />
@@ -1507,7 +1507,7 @@ export default function Radioactivity() {
             Bq/g carbon). After death, exchange stops and ¹⁴C decays:
           </p>
           <EquationBlock
-            latex="t = -\frac{T_{1/2}}{\ln 2} \ln\!\left(\frac{A(t)}{A_0}\right) = -8267\,\text{yr} \times \ln\!\left(\frac{A(t)}{A_0}\right)"
+            latex="t = -\\frac{T_{1/2}}{\\ln 2} \\ln\\!\\left(\\frac{A(t)}{A_0}\\right) = -8267\\,\\text{yr} \\times \\ln\\!\\left(\\frac{A(t)}{A_0}\\right)"
             annotation="A(t) = measured specific activity (Bq/g carbon), A₀ = 0.226 Bq/g (modern reference). The 8,267 yr factor = T½/ln2 = 5730/0.693. Calibration against the IntCal23 tree-ring curve converts raw radiocarbon age to calendar age (the two differ by up to 3,000+ years)."
             label="Radiocarbon Age Equation"
           />
@@ -1576,7 +1576,7 @@ export default function Radioactivity() {
           </p>
 
           <EquationBlock
-            latex="P(n;\,\mu) = \frac{\mu^n e^{-\mu}}{n!}, \quad \sigma = \sqrt{\mu}"
+            latex="P(n;\\,\\mu) = \\frac{\\mu^n e^{-\\mu}}{n!}, \\quad \\sigma = \\sqrt{\\mu}"
             annotation="Probability of exactly n counts when the mean is μ = A·Δt. The standard deviation equals √μ. The fractional uncertainty in a measurement of n counts is always ±√n / n = 1/√n. To halve the relative uncertainty, quadruple the counting time."
             label="Poisson Distribution"
           />
@@ -1652,7 +1652,7 @@ export default function Radioactivity() {
             essential:
           </p>
           <EquationBlock
-            latex="n_{true} = \frac{n_{obs}}{1 - n_{obs}\,\tau_d}"
+            latex="n_{true} = \\frac{n_{obs}}{1 - n_{obs}\\,\\tau_d}"
             annotation="True count rate from observed rate n_obs and dead time τ_d (seconds). Example: n_obs = 10,000 cps, τ_d = 100 μs → n_true = 10,000 / (1 − 10,000 × 10⁻⁴) = 11,111 cps (11.1% correction). Above 20% correction, the model breaks down and a paralyzable (extended) dead-time model is required."
             label="Dead Time Correction (Non-paralyzable Model)"
           />
@@ -1661,12 +1661,12 @@ export default function Radioactivity() {
             Background Subtraction and MDA
           </h3>
           <EquationBlock
-            latex="A_{net} = \frac{n_s}{t_s} - \frac{n_b}{t_b}, \quad \sigma_{net} = \sqrt{\frac{n_s}{t_s^2} + \frac{n_b}{t_b^2}}"
+            latex="A_{net} = \\frac{n_s}{t_s} - \\frac{n_b}{t_b}, \\quad \\sigma_{net} = \\sqrt{\\frac{n_s}{t_s^2} + \\frac{n_b}{t_b^2}}"
             annotation="Net activity: gross sample counts n_s in time t_s minus background counts n_b in time t_b. Poisson uncertainties add in quadrature. Optimal time split: t_s/t_b = √(count-rate_s / count-rate_b)."
             label="Net Activity and Statistical Uncertainty"
           />
           <EquationBlock
-            latex="\text{MDA} = \frac{4.65\sqrt{R_b/t_b} + 3/t_s}{\varepsilon\,\gamma\,t_s}"
+            latex="\\text{MDA} = \\frac{4.65\\sqrt{R_b/t_b} + 3/t_s}{\\varepsilon\\,\\gamma\\,t_s}"
             annotation="Currie (1968) Minimum Detectable Activity. R_b = background count rate, t_b = background counting time, t_s = sample counting time, ε = detection efficiency, γ = gamma emission probability per decay. This is the activity just detectable at 95% confidence. Critical for environmental monitoring and safeguards."
             label="Currie Minimum Detectable Activity (MDA)"
           />
@@ -1702,7 +1702,7 @@ export default function Radioactivity() {
             primarily through Coulomb collisions with orbital electrons:
           </p>
           <EquationBlock
-            latex="-\frac{dE}{dx} = \frac{4\pi e^4 z^2}{m_e v^2} \cdot \frac{NZ}{A} \cdot \ln\!\left(\frac{2m_e v^2}{I}\right)"
+            latex="-\\frac{dE}{dx} = \\frac{4\\pi e^4 z^2}{m_e v^2} \\cdot \\frac{NZ}{A} \\cdot \\ln\\!\\left(\\frac{2m_e v^2}{I}\\right)"
             annotation="Bethe-Bloch formula (simplified): z = projectile charge, v = velocity, N = Avogadro's number, Z/A = target atomic number/mass ratio, I = mean excitation energy (~10Z eV). At low v, −dE/dx ∝ 1/v², giving the Bragg peak: maximum energy deposition at end of range — the basis of proton and carbon-ion radiotherapy."
             label="Bethe-Bloch Stopping Power"
           />
@@ -1711,7 +1711,7 @@ export default function Radioactivity() {
             Gamma-Ray Exponential Attenuation
           </h3>
           <EquationBlock
-            latex="I(x) = I_0\,e^{-\mu x}, \quad \text{HVL} = \frac{\ln 2}{\mu}, \quad \text{TVL} = \frac{\ln 10}{\mu}"
+            latex="I(x) = I_0\\,e^{-\\mu x}, \\quad \\text{HVL} = \\frac{\\ln 2}{\\mu}, \\quad \\text{TVL} = \\frac{\\ln 10}{\\mu}"
             annotation="μ = total linear attenuation coefficient (cm⁻¹): sum of photoelectric (τ), Compton (σ), and pair production (κ) cross-sections. HVL = half-value layer (50% reduction). TVL = tenth-value layer (90% reduction) = 3.32 × HVL. Example: 1 MeV gamma in lead: μ = 0.720 cm⁻¹, HVL = 0.96 cm, TVL = 3.2 cm."
             label="Gamma Attenuation Law"
           />

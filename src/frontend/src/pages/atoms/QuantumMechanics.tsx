@@ -920,7 +920,7 @@ export default function QuantumMechanics() {
           label="Time-Dependent Schrodinger Equation"
         />
         <EquationBlock
-          latex="\\hat{H}\\psi_n(\\mathbf{r}) = E_n\\,\\psi_n(\\mathbf{r}) \\qquad \\Psi(\\mathbf{r},t) = \\psi_n(\\mathbf{r})\,e^{-iE_n t/\\hbar}"
+          latex="\\hat{H}\\psi_n(\\mathbf{r}) = E_n\\,\\psi_n(\\mathbf{r}) \\qquad \\Psi(\\mathbf{r},t) = \\psi_n(\\mathbf{r})\\,e^{-iE_n t/\\hbar}"
           annotation="Time-independent (stationary state) Schrodinger equation. For conservative potentials V(r), separating variables gives energy eigenstates psi_n with definite energies E_n. The full time-dependent wavefunction oscillates at frequency E_n/hbar."
           label="Time-Independent Schrodinger Equation"
         />
@@ -954,12 +954,12 @@ export default function QuantumMechanics() {
           <CitationMarker refId={13} />
         </p>
         <EquationBlock
-          latex="P(\\mathbf{r},t)\,dV = |\\Psi(\\mathbf{r},t)|^2\,dV \\qquad \\int_{\\text{all space}}|\\Psi|^2\,dV = 1"
+          latex="P(\\mathbf{r},t)\\,dV = |\\Psi(\\mathbf{r},t)|^2\\,dV \\qquad \\int_{\\text{all space}}|\\Psi|^2\\,dV = 1"
           annotation="Born rule: the probability of finding the particle in volume dV equals |Psi|^2 * dV. The normalization condition (integral = 1) ensures total probability is 100%. Born received the Nobel Prize in Physics in 1954 for this contribution."
           label="Born Rule and Normalization"
         />
         <EquationBlock
-          latex="\\langle A \\rangle = \\int \\Psi^* \\hat{A}\\, \\Psi\,dV"
+          latex="\\langle A \\rangle = \\int \\Psi^* \\hat{A}\\, \\Psi\\,dV"
           annotation="Expectation value: the average measured value of observable A (e.g., position, momentum, energy) is the integral of Psi-star times the operator A-hat times Psi over all space. Individual measurements are random; the expectation value is their statistical mean."
           label="Quantum Mechanical Expectation Value"
         />
@@ -989,7 +989,7 @@ export default function QuantumMechanics() {
           <CitationMarker refId={14} />
         </p>
         <EquationBlock
-          latex="\\sigma_x\,\\sigma_p \\geq \\frac{\\hbar}{2} \\qquad \\sigma_E\,\\sigma_t \\geq \\frac{\\hbar}{2}"
+          latex="\\sigma_x\\,\\sigma_p \\geq \\frac{\\hbar}{2} \\qquad \\sigma_E\\,\\sigma_t \\geq \\frac{\\hbar}{2}"
           annotation="Heisenberg uncertainty relations: the product of standard deviations of position and momentum, or energy and time, must be at least hbar/2 = 5.27e-35 J*s. These constrain ALL quantum states, not just measurement devices."
           label="Heisenberg Uncertainty Principle"
         />

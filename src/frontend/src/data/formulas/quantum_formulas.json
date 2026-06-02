@@ -1,0 +1,206 @@
+{
+  "formulas": [
+    {
+      "id": "schrodinger-td",
+      "latex": "i\\hbar \\frac{\\partial}{\\partial t} \\Psi(\\mathbf{r}, t) = \\hat{H} \\Psi(\\mathbf{r}, t)",
+      "description": "Time-dependent Schrödinger equation describing the evolution of a quantum state over time.",
+      "variables": [
+        { "symbol": "i", "meaning": "Imaginary unit" },
+        {
+          "symbol": "\\hbar",
+          "meaning": "Reduced Planck constant (1.054571817 × 10⁻³⁴ J·s)"
+        },
+        { "symbol": "\\Psi", "meaning": "Wave function" },
+        { "symbol": "\\hat{H}", "meaning": "Hamiltonian operator" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "schrodinger-ti",
+      "latex": "\\hat{H} \\psi(\\mathbf{r}) = E \\psi(\\mathbf{r})",
+      "description": "Time-independent Schrödinger equation for stationary states with definite energy.",
+      "variables": [
+        { "symbol": "\\hat{H}", "meaning": "Hamiltonian operator" },
+        { "symbol": "\\psi", "meaning": "Spatial wave function" },
+        { "symbol": "E", "meaning": "Energy eigenvalue" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "born-rule",
+      "latex": "P(\\mathbf{r}) = |\\Psi(\\mathbf{r}, t)|^2",
+      "description": "Born rule giving the probability density of finding a particle at position r.",
+      "variables": [
+        { "symbol": "P", "meaning": "Probability density" },
+        { "symbol": "\\Psi", "meaning": "Wave function" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "heisenberg-uncertainty-xp",
+      "latex": "\\Delta x \\Delta p \\geq \\frac{\\hbar}{2}",
+      "description": "Heisenberg uncertainty principle for position and momentum.",
+      "variables": [
+        { "symbol": "\\Delta x", "meaning": "Position uncertainty" },
+        { "symbol": "\\Delta p", "meaning": "Momentum uncertainty" },
+        { "symbol": "\\hbar", "meaning": "Reduced Planck constant" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "heisenberg-uncertainty-et",
+      "latex": "\\Delta E \\Delta t \\geq \\frac{\\hbar}{2}",
+      "description": "Energy-time uncertainty principle relating energy uncertainty to lifetime.",
+      "variables": [
+        { "symbol": "\\Delta E", "meaning": "Energy uncertainty" },
+        { "symbol": "\\Delta t", "meaning": "Time uncertainty" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "de-broglie",
+      "latex": "\\lambda = \\frac{h}{p} = \\frac{h}{mv}",
+      "description": "de Broglie wavelength relating particle momentum to its wave-like properties.",
+      "variables": [
+        { "symbol": "\\lambda", "meaning": "Wavelength" },
+        {
+          "symbol": "h",
+          "meaning": "Planck constant (6.62607015 × 10⁻³⁴ J·s)"
+        },
+        { "symbol": "p", "meaning": "Momentum" },
+        { "symbol": "m", "meaning": "Mass" },
+        { "symbol": "v", "meaning": "Velocity" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "bohr-energy",
+      "latex": "E_n = -\\frac{13.6}{n^2} \\text{ eV}",
+      "description": "Bohr model energy levels for hydrogen-like atoms.",
+      "variables": [
+        { "symbol": "E_n", "meaning": "Energy of nth level" },
+        { "symbol": "n", "meaning": "Principal quantum number" }
+      ],
+      "category": "atomic-structure"
+    },
+    {
+      "id": "rydberg-formula",
+      "latex": "\\frac{1}{\\lambda} = R_H \\left( \\frac{1}{n_1^2} - \\frac{1}{n_2^2} \\right)",
+      "description": "Rydberg formula for spectral line wavelengths in hydrogen.",
+      "variables": [
+        { "symbol": "\\lambda", "meaning": "Wavelength" },
+        {
+          "symbol": "R_H",
+          "meaning": "Rydberg constant (1.0973731568160 × 10⁷ m⁻¹)"
+        },
+        { "symbol": "n_1", "meaning": "Lower energy level" },
+        { "symbol": "n_2", "meaning": "Upper energy level" }
+      ],
+      "category": "spectral-series"
+    },
+    {
+      "id": "wavefunction-normalization",
+      "latex": "\\int_{-\\infty}^{\\infty} |\\psi(\\mathbf{r})|^2 \\, d^3r = 1",
+      "description": "Normalization condition ensuring total probability equals 1.",
+      "variables": [{ "symbol": "\\psi", "meaning": "Wave function" }],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "hydrogen-radial",
+      "latex": "R_{n,l}(r) = \\sqrt{\\left(\\frac{2}{na_0}\\right)^3 \\frac{(n-l-1)!}{2n[(n+l)!]}} \\left(\\frac{2r}{na_0}\\right)^l L_{n-l-1}^{2l+1}\\left(\\frac{2r}{na_0}\\right) e^{-r/na_0}",
+      "description": "Radial wave function for hydrogen atom involving associated Laguerre polynomials.",
+      "variables": [
+        { "symbol": "n", "meaning": "Principal quantum number" },
+        { "symbol": "l", "meaning": "Azimuthal quantum number" },
+        { "symbol": "a_0", "meaning": "Bohr radius (5.29177210903 × 10⁻¹¹ m)" },
+        { "symbol": "L", "meaning": "Associated Laguerre polynomial" }
+      ],
+      "category": "atomic-structure"
+    },
+    {
+      "id": "angular-momentum",
+      "latex": "L = \\sqrt{l(l+1)} \\hbar",
+      "description": "Magnitude of orbital angular momentum in quantum mechanics.",
+      "variables": [
+        { "symbol": "L", "meaning": "Angular momentum" },
+        { "symbol": "l", "meaning": "Azimuthal quantum number" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "spin-quantum",
+      "latex": "S = \\sqrt{s(s+1)} \\hbar, \\quad s = \\frac{1}{2}",
+      "description": "Spin angular momentum magnitude for spin-½ particles like electrons.",
+      "variables": [
+        { "symbol": "S", "meaning": "Spin angular momentum" },
+        { "symbol": "s", "meaning": "Spin quantum number" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "magnetic-quantum",
+      "latex": "L_z = m_l \\hbar, \\quad m_l = -l, -l+1, \\dots, l-1, l",
+      "description": "Quantized z-component of orbital angular momentum.",
+      "variables": [
+        { "symbol": "m_l", "meaning": "Magnetic quantum number" },
+        { "symbol": "l", "meaning": "Azimuthal quantum number" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "pauli-exclusion",
+      "latex": "\\psi(\\mathbf{r}_1, \\mathbf{r}_2) = -\\psi(\\mathbf{r}_2, \\mathbf{r}_1)",
+      "description": "Pauli exclusion principle: fermion wave functions are antisymmetric under particle exchange.",
+      "variables": [
+        { "symbol": "\\psi", "meaning": "Many-electron wave function" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "aufbau-orbital",
+      "latex": "E_{n,l} = -13.6 \\frac{(Z - \\sigma)^2}{n^2} \\text{ eV}",
+      "description": "Approximate orbital energy in multi-electron atoms using effective nuclear charge.",
+      "variables": [
+        { "symbol": "Z", "meaning": "Atomic number" },
+        { "symbol": "\\sigma", "meaning": "Shielding constant" },
+        { "symbol": "n", "meaning": "Principal quantum number" }
+      ],
+      "category": "atomic-structure"
+    },
+    {
+      "id": "selection-rules",
+      "latex": "\\Delta l = \\pm 1, \\quad \\Delta m_l = 0, \\pm 1",
+      "description": "Electric dipole selection rules for allowed atomic transitions.",
+      "variables": [
+        {
+          "symbol": "\\Delta l",
+          "meaning": "Change in azimuthal quantum number"
+        },
+        {
+          "symbol": "\\Delta m_l",
+          "meaning": "Change in magnetic quantum number"
+        }
+      ],
+      "category": "spectral-series"
+    },
+    {
+      "id": "probability-density",
+      "latex": "|\\psi(\\mathbf{r})|^2 = \\psi^*(\\mathbf{r}) \\psi(\\mathbf{r})",
+      "description": "Probability density at a point in space from the wave function.",
+      "variables": [
+        { "symbol": "\\psi^*", "meaning": "Complex conjugate of wave function" }
+      ],
+      "category": "quantum-mechanics"
+    },
+    {
+      "id": "expectation-value",
+      "latex": "\\langle \\hat{A} \\rangle = \\int \\psi^* \\hat{A} \\psi \\, d\\tau",
+      "description": "Expectation value of an observable corresponding to operator Â.",
+      "variables": [
+        { "symbol": "\\hat{A}", "meaning": "Operator" },
+        { "symbol": "d\\tau", "meaning": "Volume element" }
+      ],
+      "category": "quantum-mechanics"
+    }
+  ]
+}

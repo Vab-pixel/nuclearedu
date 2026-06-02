@@ -264,22 +264,22 @@ function SingleParticleTab() {
           label="Dispersion Relation & de Broglie Wavelength"
         />
         <EquationBlock
-          latex="P^\mu = \left(\frac{E}{c},\, \vec{p}\right) \qquad P^\mu P_\mu = (m_0 c)^2"
+          latex="P^\\mu = \\left(\\frac{E}{c},\\, \\vec{p}\\right) \\qquad P^\\mu P_\\mu = (m_0 c)^2"
           annotation="Four-momentum P^μ in natural units. The Lorentz-invariant norm equals the rest mass squared. In natural units (c = 1): P^μ = (E, p⃗), invariant mass m² = E² − |p|²."
           label="Four-Momentum & Lorentz Invariant"
         />
         <EquationBlock
-          latex="s = (p_1 + p_2)^2 = m_1^2 + m_2^2 + 2(E_1 E_2 - \vec{p}_1\cdot\vec{p}_2)"
+          latex="s = (p_1 + p_2)^2 = m_1^2 + m_2^2 + 2(E_1 E_2 - \\vec{p}_1\\cdot\\vec{p}_2)"
           annotation="Mandelstam variable s: square of total four-momentum in the CM frame. √s = centre-of-mass energy. For a fixed-target experiment: s = m₁²c⁴ + m₂²c⁴ + 2m₂c²E₁."
           label="Mandelstam Variable s (CM Energy Squared)"
         />
         <EquationBlock
-          latex="t = (p_1 - p_3)^2, \quad u = (p_1 - p_4)^2 \qquad s + t + u = \sum_i m_i^2"
+          latex="t = (p_1 - p_3)^2, \\quad u = (p_1 - p_4)^2 \\qquad s + t + u = \\sum_i m_i^2"
           annotation="Mandelstam variables t (momentum transfer) and u (crossed channel). The constraint s + t + u = Σm_i² holds for 2→2 scattering. t is directly related to scattering angle."
           label="Mandelstam Variables t and u"
         />
         <EquationBlock
-          latex="E_{\mathrm{th}} = \frac{\left(\sum_i m_i^{\text{(f)}}\right)^2 - \left(m_1^2 + m_2^2\right)}{2\,m_2}\,c^2"
+          latex="E_{\\mathrm{th}} = \\frac{\\left(\\sum_i m_i^{\\text{(f)}}\\right)^2 - \\left(m_1^2 + m_2^2\\right)}{2\\,m_2}\\,c^2"
           annotation="Threshold kinetic energy for a reaction in a fixed-target frame. Σm_i(f) is the sum of final-state masses. E_th is the minimum lab-frame kinetic energy to produce the reaction."
           label="Threshold Energy (Fixed-Target)"
         />

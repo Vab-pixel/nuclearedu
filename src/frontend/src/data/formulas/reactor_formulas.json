@@ -1,0 +1,186 @@
+{
+  "formulas": [
+    {
+      "id": "six-factor",
+      "latex": "k_{\\text{eff}} = \\eta \\epsilon p f P_{NL} P_{NL}^*",
+      "description": "Six-factor formula for effective multiplication factor in thermal reactors.",
+      "variables": [
+        {
+          "symbol": "\\eta",
+          "meaning": "Average neutrons produced per absorption in fuel"
+        },
+        { "symbol": "\\epsilon", "meaning": "Fast fission factor" },
+        { "symbol": "p", "meaning": "Resonance escape probability" },
+        { "symbol": "f", "meaning": "Thermal utilization factor" },
+        { "symbol": "P_{NL}", "meaning": "Fast non-leakage probability" },
+        { "symbol": "P_{NL}^*", "meaning": "Thermal non-leakage probability" }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "four-factor",
+      "latex": "k_{\\infty} = \\eta \\epsilon p f",
+      "description": "Four-factor formula for infinite-medium multiplication factor.",
+      "variables": [
+        { "symbol": "k_{\\infty}", "meaning": "Infinite multiplication factor" }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "diffusion-equation",
+      "latex": "D \\nabla^2 \\phi(\\mathbf{r}) - \\Sigma_a \\phi(\\mathbf{r}) + S(\\mathbf{r}) = \\frac{1}{v} \\frac{\\partial \\phi}{\\partial t}",
+      "description": "Neutron diffusion equation for reactor physics.",
+      "variables": [
+        { "symbol": "D", "meaning": "Diffusion coefficient" },
+        { "symbol": "\\phi", "meaning": "Neutron flux" },
+        {
+          "symbol": "\\Sigma_a",
+          "meaning": "Macroscopic absorption cross section"
+        },
+        { "symbol": "S", "meaning": "Neutron source" },
+        { "symbol": "v", "meaning": "Neutron speed" }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "neutron-flux",
+      "latex": "\\phi(\\mathbf{r}) = v n(\\mathbf{r})",
+      "description": "Neutron flux as product of neutron speed and number density.",
+      "variables": [
+        { "symbol": "n", "meaning": "Neutron number density" },
+        { "symbol": "v", "meaning": "Neutron speed" }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "reactivity",
+      "latex": "\\rho = \\frac{k_{\\text{eff}} - 1}{k_{\\text{eff}}}",
+      "description": "Reactivity measuring departure from criticality.",
+      "variables": [
+        { "symbol": "\\rho", "meaning": "Reactivity" },
+        {
+          "symbol": "k_{\\text{eff}}",
+          "meaning": "Effective multiplication factor"
+        }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "prompt-neutron-lifetime",
+      "latex": "\\ell_p = \\frac{1}{v \\Sigma_a}",
+      "description": "Average time between neutron birth and absorption (prompt neutron lifetime).",
+      "variables": [
+        { "symbol": "\\ell_p", "meaning": "Prompt neutron lifetime" }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "delayed-neutron-fraction",
+      "latex": "\\beta = \\sum_{i=1}^{6} \\beta_i",
+      "description": "Total delayed neutron fraction: sum of fractions from six precursor groups.",
+      "variables": [
+        {
+          "symbol": "\\beta_i",
+          "meaning": "Delayed neutron fraction of ith group"
+        }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "reactor-period",
+      "latex": "T = \\frac{\\ell_p + \\sum_{i=1}^{6} \\frac{\\beta_i}{\\lambda_i}}{\\rho - \\beta}",
+      "description": "Reactor period: time for power to change by factor e.",
+      "variables": [
+        { "symbol": "T", "meaning": "Reactor period" },
+        {
+          "symbol": "\\lambda_i",
+          "meaning": "Decay constant of ith precursor group"
+        }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "fermi-age",
+      "latex": "\\tau = \\int_{E}^{E_0} \\frac{D(E)}{\\xi \\Sigma_s(E) E} \\, dE",
+      "description": "Fermi age: average squared distance a fast neutron travels while slowing down.",
+      "variables": [
+        { "symbol": "\\tau", "meaning": "Fermi age" },
+        { "symbol": "\\xi", "meaning": "Average logarithmic energy decrement" },
+        {
+          "symbol": "\\Sigma_s",
+          "meaning": "Macroscopic scattering cross section"
+        }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "migration-length",
+      "latex": "M^2 = L^2 + \\tau",
+      "description": "Migration area: sum of thermal diffusion area and Fermi age.",
+      "variables": [
+        { "symbol": "L^2", "meaning": "Thermal diffusion area" },
+        { "symbol": "M^2", "meaning": "Migration area" }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "buckling",
+      "latex": "B^2 = \\left( \\frac{\\pi}{\\tilde{a}} \\right)^2 + \\left( \\frac{\\pi}{\\tilde{b}} \\right)^2 + \\left( \\frac{\\pi}{\\tilde{c}} \\right)^2",
+      "description": "Geometric buckling for a rectangular parallelepiped reactor.",
+      "variables": [
+        { "symbol": "\\tilde{a}", "meaning": "Extrapolated dimension" }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "criticality-condition",
+      "latex": "k_{\\text{eff}} = \\frac{k_{\\infty}}{1 + B^2 M^2} = 1",
+      "description": "Criticality condition for a finite reactor.",
+      "variables": [],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "power-distribution",
+      "latex": "P(\\mathbf{r}) = E_f \\Sigma_f \\phi(\\mathbf{r})",
+      "description": "Power distribution proportional to fission rate and neutron flux.",
+      "variables": [
+        { "symbol": "E_f", "meaning": "Energy per fission (~200 MeV)" },
+        {
+          "symbol": "\\Sigma_f",
+          "meaning": "Macroscopic fission cross section"
+        }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "thermal-utilization",
+      "latex": "f = \\frac{\\Sigma_{a,F} \\phi_F}{\\Sigma_{a,F} \\phi_F + \\Sigma_{a,M} \\phi_M + \\Sigma_{a,C} \\phi_C}",
+      "description": "Thermal utilization factor: fraction of thermal neutrons absorbed in fuel.",
+      "variables": [
+        {
+          "symbol": "\\Sigma_{a,F}",
+          "meaning": "Fuel absorption cross section"
+        },
+        {
+          "symbol": "\\Sigma_{a,M}",
+          "meaning": "Moderator absorption cross section"
+        }
+      ],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "resonance-escape",
+      "latex": "p = \\exp\\left( -\\frac{1}{\\xi} \\int \\frac{\\Sigma_a(E)}{\\Sigma_s(E) + \\Sigma_a(E)} \\frac{dE}{E} \\right)",
+      "description": "Resonance escape probability: fraction of fission neutrons that slow down past resonance energies without being captured.",
+      "variables": [],
+      "category": "reactor-physics"
+    },
+    {
+      "id": "fast-fission-factor",
+      "latex": "\\epsilon = \\frac{\\nu \\Sigma_f^F \\phi_F + \\nu \\Sigma_f^M \\phi_M}{\\nu \\Sigma_f^F \\phi_F}",
+      "description": "Fast fission factor: ratio of total fission neutrons to thermal fission neutrons.",
+      "variables": [{ "symbol": "\\nu", "meaning": "Neutrons per fission" }],
+      "category": "reactor-physics"
+    }
+  ]
+}

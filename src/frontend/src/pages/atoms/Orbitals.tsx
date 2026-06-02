@@ -718,7 +718,7 @@ export default function Orbitals() {
           />
           <EquationBlock
             label="Expectation Value ⟨r⟩ for 1s"
-            latex="\\langle r \\rangle_{1s} = \\int_0^\\infty r \\cdot r^2 |R_{10}|^2 \\, dr = \\frac{3}{2}a_0 = 0.794\\,\\text{\u00c5}"
+            latex="\\langle r \\rangle_{1s} = \\int_0^\\infty r \\cdot r^2 |R_{10}|^2 \\, dr = \\frac{3}{2}a_0 = 0.794\\,\\text{\\AA}"
             annotation="The average distance from the nucleus in the ground state is ⟨r⟩ = 3a₀/2, which is larger than the Bohr radius a₀ (the most probable radius). This difference is due to the asymmetric r² P(r) distribution."
           />
         </div>

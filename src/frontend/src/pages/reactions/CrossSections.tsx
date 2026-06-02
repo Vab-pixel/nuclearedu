@@ -130,10 +130,10 @@ export default function CrossSections() {
             What Is a Nuclear Cross-Section?
           </h2>
           <p className="text-muted-foreground leading-relaxed mb-4">
-            A nuclear cross-section <InlineEquation tex="\sigma" /> is an{" "}
+            A nuclear cross-section <InlineEquation tex="\\sigma" /> is an{" "}
             <em>effective area</em> that quantifies the probability of a
             specific nuclear interaction. It is not literally a geometric area —
-            quantum effects mean <InlineEquation tex="\sigma" /> can be orders
+            quantum effects mean <InlineEquation tex="\\sigma" /> can be orders
             of magnitude larger or smaller than the actual nuclear size.
           </p>
 
@@ -144,10 +144,10 @@ export default function CrossSections() {
             <p className="text-muted-foreground text-sm leading-relaxed">
               Cross-sections are measured in{" "}
               <strong className="text-foreground">barns (b)</strong>:{" "}
-              <InlineEquation tex="1\,\text{b} = 10^{-24}\,\text{cm}^2 = 10^{-28}\,\text{m}^2" />
+              <InlineEquation tex="1\\,\\text{b} = 10^{-24}\\,\\text{cm}^2 = 10^{-28}\\,\\text{m}^2" />
               . The unit was coined during the Manhattan Project. The actual
               nuclear geometric area is{" "}
-              <InlineEquation tex="\sim 10^{-30}\,\text{m}^2" />
+              <InlineEquation tex="\\sim 10^{-30}\\,\\text{m}^2" />
               (nuclear radius 1–8 fm), yet thermal neutron fission
               cross-sections for <NuclearNotation symbol="U" A={235} Z={92} />{" "}
               reach 584 barns — roughly{" "}
@@ -215,19 +215,19 @@ export default function CrossSections() {
           </div>
 
           <EquationBlock
-            latex="\sigma = \frac{R}{n\,\Phi}"
+            latex="\\sigma = \\frac{R}{n\\,\\Phi}"
             annotation="Definition: cross-section \u03c3 [cm\u00b2] equals the reaction rate density R [reactions/cm\u00b3/s] divided by target atom density n [cm\u207b\u00b3] and neutron flux \u03a6 = nv [n/cm\u00b2/s]. 1 barn = 10\u207b\u00b2\u2078 m\u00b2. Source: IAEA Nuclear Energy Series."
             label="Cross-Section Definition \u03c3 = R / n\u03a6"
           />
 
           <EquationBlock
-            latex="R = N \, \sigma \, \Phi"
+            latex="R = N \\, \\sigma \\, \\Phi"
             annotation="Reaction rate R [reactions/cm\u00b3/s]: N = atom density [atoms/cm\u00b3], \u03c3 = microscopic cross-section [cm\u00b2], \u03a6 = neutron flux [n/cm\u00b2/s]. Macroscopic cross-section \u03a3 = N\u03c3 [cm\u207b\u00b9]."
             label="Reaction Rate R = N\u03c3\u03a6"
           />
 
           <EquationBlock
-            latex="\lambda_{\text{mfp}} = \frac{1}{N\sigma} = \frac{1}{\Sigma}"
+            latex="\\lambda_{\\text{mfp}} = \\frac{1}{N\\sigma} = \\frac{1}{\\Sigma}"
             annotation="Mean free path \u03bb_mfp [cm]: average distance a neutron travels between interactions. \u03a3 = N\u03c3 is the macroscopic cross-section [cm\u207b\u00b9]. Source: Lamarsh & Baratta, Introduction to Nuclear Engineering."
             label="Mean Free Path"
           />
@@ -257,7 +257,7 @@ export default function CrossSections() {
           </p>
 
           <EquationBlock
-            latex="\sigma_a(E) = \sigma_0 \sqrt{\frac{E_0}{E}} = \sigma_0 \frac{v_0}{v}"
+            latex="\\sigma_a(E) = \\sigma_0 \\sqrt{\\frac{E_0}{E}} = \\sigma_0 \\frac{v_0}{v}"
             annotation="The 1/v law: absorption cross-section at energy E equals the reference value σ₀ multiplied by the square root of the reference energy E₀ divided by E. Subscript 0 denotes the standard reference condition: v₀ = 2200 m/s (room temperature, kT ≈ 0.0253 eV)."
             label="1/v Absorption Law"
           />
@@ -411,7 +411,7 @@ export default function CrossSections() {
           </div>
 
           <EquationBlock
-            latex="\sigma(E) = \pi\bar{\lambda}^2 \, g \, \frac{\Gamma_n \, \Gamma_x}{(E - E_r)^2 + (\Gamma/2)^2}"
+            latex="\\sigma(E) = \\pi\\bar{\\lambda}^2 \\, g \\, \\frac{\\Gamma_n \\, \\Gamma_x}{(E - E_r)^2 + (\\Gamma/2)^2}"
             annotation="Single-level Breit-Wigner formula. E_r = resonance energy; Γ = total width = Γ_n + Γ_γ + Γ_f + ...; Γ_n = neutron partial width; Γ_x = partial width for channel x (capture, fission, etc.); g = (2J+1)/[2(2I+1)] is the statistical spin factor; λ̄ = ℏ/p = reduced de Broglie wavelength of the neutron."
             label="Single-Level Breit-Wigner Formula"
           />
@@ -844,7 +844,7 @@ export default function CrossSections() {
           </p>
 
           <EquationBlock
-            latex="\Sigma = n\,\sigma \quad [\text{cm}^{-1}]"
+            latex="\\Sigma = n\\,\\sigma \\quad [\\text{cm}^{-1}]"
             annotation="Macroscopic cross-section Σ [cm⁻¹]: the product of atom number density n [atoms/cm³] and microscopic cross-section σ [cm²]. Σ represents the probability per unit path length of interaction. The mean free path λ = 1/Σ."
             label="Macroscopic Cross-Section"
           />
@@ -917,7 +917,7 @@ export default function CrossSections() {
           </p>
 
           <EquationBlock
-            latex="k_\infty = \eta \cdot f \cdot p \cdot \varepsilon"
+            latex="k_\\infty = \\eta \\cdot f \\cdot p \\cdot \\varepsilon"
             annotation="k_∞ = neutron reproduction factor (avg. fission neutrons per thermal absorption in fuel) × thermal utilization (fraction of thermal absorption in fuel) × resonance escape probability (fraction escaping resonance capture while slowing down) × fast fission factor (extra neutrons from fast fission of U-238)."
             label="Four-Factor Formula"
           />

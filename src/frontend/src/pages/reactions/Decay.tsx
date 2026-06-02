@@ -86,7 +86,7 @@ export default function DecayPage() {
             Alpha Decay
           </h2>
           <EquationBlock
-            latex="^A_Z X \rightarrow ^{A-4}_{Z-2}Y + ^4_2\\text{He} + Q"
+            latex="^A_Z X \\rightarrow ^{A-4}_{Z-2}Y + ^4_2\\text{He} + Q"
             annotation="Parent nucleus X decays to daughter Y by emitting an alpha particle (helium-4 nucleus), releasing Q MeV of energy."
             label="Alpha Decay"
           />
@@ -100,7 +100,7 @@ export default function DecayPage() {
             Beta-Minus Decay
           </h2>
           <EquationBlock
-            latex="n \rightarrow p + e^- + \\bar{\\nu}_e"
+            latex="n \\rightarrow p + e^- + \\bar{\\nu}_e"
             annotation="A neutron (n) transforms into a proton (p) by emitting an electron (e⁻) and an electron antineutrino (ν̄ₑ). The nucleus gains one proton and loses one neutron."
             label="Beta-Minus Decay"
           />
@@ -740,7 +740,7 @@ export default function DecayPage() {
             present:
           </p>
           <EquationBlock
-            latex="\frac{dN}{dt} = -\lambda N"
+            latex="\\frac{dN}{dt} = -\\lambda N"
             annotation="The rate of decay is proportional to the number of undecayed nuclei N. The minus sign indicates N is decreasing. λ has units of s⁻¹ (or yr⁻¹, d⁻¹, etc.)."
             label="Differential Decay Law"
           />
@@ -748,7 +748,7 @@ export default function DecayPage() {
             Separating variables and integrating from t=0 to t, with N(0) = N₀:
           </p>
           <EquationBlock
-            latex="N(t) = N_0\, e^{-\lambda t}"
+            latex="N(t) = N_0\\, e^{-\\lambda t}"
             annotation="The fundamental exponential decay law. N₀ is the initial number of nuclei; λ is the decay constant. The activity A(t) = λN(t) = A₀ e^{−λt} has the same form."
             label="Radioactive Decay Law"
           />
@@ -761,7 +761,7 @@ export default function DecayPage() {
             time for N to fall to N₀/2. Setting N(T½) = N₀/2 and solving:
           </p>
           <EquationBlock
-            latex="T_{1/2} = \frac{\ln 2}{\lambda} = \frac{0.6931}{\lambda}"
+            latex="T_{1/2} = \\frac{\\ln 2}{\\lambda} = \\frac{0.6931}{\\lambda}"
             annotation="Half-life T½ relates inversely to the decay constant λ. A large λ means fast decay and a short half-life. ln 2 ≈ 0.6931."
             label="Half-Life"
           />
@@ -770,7 +770,7 @@ export default function DecayPage() {
             the statistical average time a nucleus survives before decaying:
           </p>
           <EquationBlock
-            latex="\tau = \frac{1}{\lambda} = \frac{T_{1/2}}{\ln 2} = 1.4427 \times T_{1/2}"
+            latex="\\tau = \\frac{1}{\\lambda} = \\frac{T_{1/2}}{\\ln 2} = 1.4427 \\times T_{1/2}"
             annotation="The mean lifetime τ = 1/λ is longer than T½ by a factor of 1/ln(2) ≈ 1.4427. At t = τ, the fraction remaining is N/N₀ = e⁻¹ ≈ 36.79%."
             label="Mean Lifetime"
           />
@@ -843,7 +843,7 @@ export default function DecayPage() {
             sources: 370 MBq = 10 mCi.
           </p>
           <EquationBlock
-            latex="A(t) = \lambda N(t) = A_0\, e^{-\lambda t}, \quad A_0 = \lambda N_0"
+            latex="A(t) = \\lambda N(t) = A_0\\, e^{-\\lambda t}, \\quad A_0 = \\lambda N_0"
             annotation="Activity A = λN. Since N decays exponentially, so does A. The specific activity (Bq/g) = λ N_A / M, where N_A is Avogadro's number and M is molar mass."
             label="Activity"
           />
@@ -1160,7 +1160,7 @@ export default function DecayPage() {
             Generated on-site from Mo-99/Tc-99m generators (Mo-99 T½ = 65.9 h).
           </p>
           <EquationBlock
-            latex="^{99m}_{43}\text{Tc} \xrightarrow{\text{IT},\,T_{1/2}=6.01\,\text{h}} ^{99}_{43}\text{Tc} + \gamma\,(140.5\,\text{keV})"
+            latex="^{99m}_{43}\\text{Tc} \\xrightarrow{\\text{IT},\\,T_{1/2}=6.01\\,\\text{h}} ^{99}_{43}\\text{Tc} + \\gamma\\,(140.5\\,\\text{keV})"
             annotation="Tc-99m isomeric transition: the metastable excited state decays to the ground state via 140.5 keV gamma emission or internal conversion. About 80 million Tc-99m scans are performed annually worldwide."
             label="Tc-99m Isomeric Transition"
           />
@@ -1184,12 +1184,12 @@ export default function DecayPage() {
             Formalism
           </h3>
           <EquationBlock
-            latex="\lambda_{\text{total}} = \lambda_1 + \lambda_2 + \cdots + \lambda_n"
+            latex="\\lambda_{\\text{total}} = \\lambda_1 + \\lambda_2 + \\cdots + \\lambda_n"
             annotation="When n decay modes compete, the total decay constant is the sum of all partial decay constants. Each λᵢ is independent; the nucleus can 'choose' any available channel on each decay event."
             label="Total Decay Constant"
           />
           <EquationBlock
-            latex="b_i = \frac{\lambda_i}{\lambda_{\text{total}}}, \quad T_{1/2,i} = \frac{T_{1/2}}{b_i} = \frac{\ln 2}{\lambda_i}"
+            latex="b_i = \\frac{\\lambda_i}{\\lambda_{\\text{total}}}, \\quad T_{1/2,i} = \\frac{T_{1/2}}{b_i} = \\frac{\\ln 2}{\\lambda_i}"
             annotation="Branching ratio bᵢ is the fractional probability of decay via mode i. Partial half-life T½,i is always longer than the observed T½ because the partial rate is slower. Sum of all bᵢ = 1."
             label="Branching Ratio and Partial Half-Life"
           />
@@ -1408,17 +1408,17 @@ export default function DecayPage() {
             are:
           </p>
           <EquationBlock
-            latex="\frac{dN_A}{dt} = -\lambda_A N_A"
+            latex="\\frac{dN_A}{dt} = -\\lambda_A N_A"
             annotation="Parent A decays with decay constant λ_A. No production — only loss."
             label="Parent Population"
           />
           <EquationBlock
-            latex="\frac{dN_B}{dt} = +\lambda_A N_A - \lambda_B N_B"
+            latex="\\frac{dN_B}{dt} = +\\lambda_A N_A - \\lambda_B N_B"
             annotation="Daughter B is produced by parent decay (λ_A N_A) and lost by its own decay (λ_B N_B). The solution is a sum of two exponentials."
             label="Daughter Population"
           />
           <EquationBlock
-            latex="\frac{dN_C}{dt} = +\lambda_B N_B"
+            latex="\\frac{dN_C}{dt} = +\\lambda_B N_B"
             annotation="Stable end product C accumulates only; it does not decay. N_C(t) = N_A(0) − N_A(t) − N_B(t) by conservation of nucleons."
             label="Stable Product Accumulation"
           />
@@ -1432,7 +1432,7 @@ export default function DecayPage() {
             is:
           </p>
           <EquationBlock
-            latex="N_i(t) = N_1(0) \prod_{j=1}^{i-1}\lambda_j \;\sum_{j=1}^{i} \frac{e^{-\lambda_j t}}{\displaystyle\prod_{\substack{k=1\\k\neq j}}^{i}(\lambda_k - \lambda_j)}"
+            latex="N_i(t) = N_1(0) \\prod_{j=1}^{i-1}\\lambda_j \\;\\sum_{j=1}^{i} \\frac{e^{-\\lambda_j t}}{\\displaystyle\\prod_{\\substack{k=1\\k\\neq j}}^{i}(\\lambda_k - \\lambda_j)}"
             annotation="The Bateman formula gives the exact population of each chain member as a sum of exponentials. For i=2 (first daughter): N_2(t) = N_1(0) × λ₁/(λ₂−λ₁) × (e^{−λ₁t} − e^{−λ₂t})."
             label="General Bateman Solution"
           />
@@ -1446,7 +1446,7 @@ export default function DecayPage() {
             of each daughter equals the parent activity:
           </p>
           <EquationBlock
-            latex="\lambda_1 N_1 = \lambda_2 N_2 = \cdots = \lambda_n N_n \quad (A_1 = A_2 = \cdots = A_n)"
+            latex="\\lambda_1 N_1 = \\lambda_2 N_2 = \\cdots = \\lambda_n N_n \\quad (A_1 = A_2 = \\cdots = A_n)"
             annotation="At secular equilibrium, every daughter has the same activity as the parent. The total activity of uranium ore in secular equilibrium is ~14× the U-238 activity alone (14 radioactive daughters)."
             label="Secular Equilibrium"
           />
@@ -1467,7 +1467,7 @@ export default function DecayPage() {
             ratio is constant but greater than 1:
           </p>
           <EquationBlock
-            latex="\frac{A_2}{A_1} = \frac{\lambda_2}{\lambda_2 - \lambda_1} > 1"
+            latex="\\frac{A_2}{A_1} = \\frac{\\lambda_2}{\\lambda_2 - \\lambda_1} > 1"
             annotation="At transient equilibrium the daughter activity exceeds the parent activity by the factor λ₂/(λ₂−λ₁). For Mo-99/Tc-99m: ratio = (0.1153 h⁻¹)/(0.1153−0.01051 h⁻¹) ≈ 1.10 (daughter 10% above parent)."
             label="Transient Equilibrium Ratio"
           />
@@ -1587,7 +1587,7 @@ export default function DecayPage() {
             favorable:
           </p>
           <EquationBlock
-            latex="x = \frac{Z^2/A}{(Z^2/A)_{\text{crit}}} \approx \frac{Z^2}{50.88 A\left(1 - 1.7826\left(\frac{N-Z}{A}\right)^2\right)}"
+            latex="x = \\frac{Z^2/A}{(Z^2/A)_{\\text{crit}}} \\approx \\frac{Z^2}{50.88 A\\left(1 - 1.7826\\left(\\frac{N-Z}{A}\\right)^2\\right)}"
             annotation="Fissility x: when x approaches 1, the Coulomb energy overcomes surface tension and the nucleus is unstable to fission. For U-235: Z²/A ≈ 36; for the critical value: Z²/A ≈ 50. Superheavy elements reach x ≈ 0.8–0.9."
             label="Liquid-Drop Fissility Parameter"
           />
@@ -1644,7 +1644,7 @@ export default function DecayPage() {
             Ra-223 → Pb-209 + ¹⁴C decay.
           </p>
           <EquationBlock
-            latex="^{223}_{88}\text{Ra} \rightarrow ^{209}_{82}\text{Pb} + ^{14}_{6}\text{C}, \quad b = 8.5 \times 10^{-10}"
+            latex="^{223}_{88}\\text{Ra} \\rightarrow ^{209}_{82}\\text{Pb} + ^{14}_{6}\\text{C}, \\quad b = 8.5 \\times 10^{-10}"
             annotation="First experimentally observed cluster decay. The tiny branching ratio (~10⁻¹⁰) makes cluster decay extraordinarily rare. The daughter Pb-209 has a doubly magic character (Z=82 is magic), which drives the preference for this fragment pair."
             label="Ra-223 Cluster Decay (1984)"
           />
@@ -1664,12 +1664,12 @@ export default function DecayPage() {
             simultaneous β decays:
           </p>
           <EquationBlock
-            latex="(Z,A) \rightarrow (Z+2, A) + 2e^- + 2\bar{\nu}_e \quad (2\nu\beta\beta)"
+            latex="(Z,A) \\rightarrow (Z+2, A) + 2e^- + 2\\bar{\\nu}_e \\quad (2\\nu\\beta\\beta)"
             annotation="Two-neutrino double beta decay (2νββ): two neutrons decay simultaneously, emitting two electrons and two antineutrinos. Observed in ~13 nuclei. T½ ~ 10¹⁸–10²⁴ yr. The two-neutrino continuous spectrum is the signature."
             label="Two-Neutrino Double Beta Decay"
           />
           <EquationBlock
-            latex="(Z,A) \rightarrow (Z+2, A) + 2e^- \quad (0\nu\beta\beta) \text{ [NOT YET OBSERVED]}"
+            latex="(Z,A) \\rightarrow (Z+2, A) + 2e^- \\quad (0\\nu\\beta\\beta) \\text{ [NOT YET OBSERVED]}"
             annotation="Neutrinoless double beta decay (0νββ): if the antineutrino emitted at one vertex is reabsorbed as a neutrino at the other, this is only possible if ν = ν̄ (Majorana particle). Discovery would establish lepton number violation and provide the absolute neutrino mass."
             label="Neutrinoless Double Beta Decay (Hypothetical)"
           />

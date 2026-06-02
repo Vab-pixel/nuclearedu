@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import { useAppStore } from "./store/useAppStore";
+import "katex/dist/katex.min.css";
 
 // Apply persisted dark mode from store before first paint, then keep in sync
 function applyDarkMode(dark: boolean) {

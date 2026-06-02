@@ -664,7 +664,7 @@ export default function AtomStructure() {
                   <strong className="text-foreground">mass defect</strong> Δm:
                 </p>
                 <EquationBlock
-                  latex="\Delta m = Z \cdot m_p + N \cdot m_n - M(Z,A)"
+                  latex="\\Delta m = Z \\cdot m_p + N \\cdot m_n - M(Z,A)"
                   annotation="Mass defect: the total mass of free protons and neutrons minus the actual nuclear mass. This mass is converted to binding energy holding the nucleus together."
                   label="Mass Defect"
                 />
@@ -704,7 +704,7 @@ export default function AtomStructure() {
             scales with mass number A as:
           </p>
           <EquationBlock
-            latex="r \approx r_0 \cdot A^{1/3} \quad (r_0 \approx 1.2 \text{ fm})"
+            latex="r \\approx r_0 \\cdot A^{1/3} \\quad (r_0 \\approx 1.2 \\text{ fm})"
             annotation="The nuclear radius r is approximately r₀ times the cube root of A, where r₀ ≈ 1.2 femtometers (10⁻¹⁵ m). An atom is about 100,000× larger than its nucleus."
             label="Nuclear Radius"
           />
@@ -832,7 +832,7 @@ export default function AtomStructure() {
                 between protons:
               </p>
               <EquationBlock
-                latex="U_C = \frac{3}{5} \cdot \frac{Z(Z-1)e^2}{4\pi\epsilon_0 R}"
+                latex="U_C = \\frac{3}{5} \\cdot \\frac{Z(Z-1)e^2}{4\\pi\\epsilon_0 R}"
                 annotation="Coulomb self-energy of a uniformly charged sphere of radius R containing Z protons. This grows roughly as Z², which is why very heavy nuclei become unstable."
                 label="Nuclear Coulomb Energy"
               />
@@ -950,7 +950,7 @@ export default function AtomStructure() {
           </p>
 
           <EquationBlock
-            latex="r = r_0 \cdot A^{1/3} \qquad r_0 = 1.2 \text{ fm} = 1.2 \times 10^{-15} \text{ m}"
+            latex="r = r_0 \\cdot A^{1/3} \\qquad r_0 = 1.2 \\text{ fm} = 1.2 \\times 10^{-15} \\text{ m}"
             annotation="The charge radius of a nucleus scales as the cube root of the mass number A. r₀ ≈ 1.2 fm from electron scattering fits. For uranium-238: r = 1.2 × (238)^{1/3} = 7.44 fm."
             label="Nuclear Charge Radius (Hofstadter)"
           />
@@ -963,7 +963,7 @@ export default function AtomStructure() {
             :
           </p>
           <EquationBlock
-            latex="\rho(r) = \frac{\rho_0}{1 + \exp\!\left(\frac{r - R}{a}\right)}"
+            latex="\\rho(r) = \\frac{\\rho_0}{1 + \\exp\\!\\left(\\frac{r - R}{a}\\right)}"
             annotation="The nuclear charge density ρ(r) as a function of radius r, where R ≈ r₀A^{1/3} is the half-density radius and a ≈ 0.54 fm is the surface diffuseness parameter. ρ₀ ≈ 0.16 fm⁻³ is the saturation density."
             label="Woods-Saxon Nuclear Density Profile"
           />
@@ -1378,7 +1378,7 @@ export default function AtomStructure() {
           </p>
 
           <EquationBlock
-            latex="B(Z,A) = a_V A \;-\; a_S A^{2/3} \;-\; a_C \frac{Z^2}{A^{1/3}} \;-\; a_A \frac{(A-2Z)^2}{A} \;+\; \delta"
+            latex="B(Z,A) = a_V A \\;-\\; a_S A^{2/3} \\;-\\; a_C \\frac{Z^2}{A^{1/3}} \\;-\\; a_A \\frac{(A-2Z)^2}{A} \\;+\\; \\delta"
             annotation="Total nuclear binding energy B(Z,A) in MeV. The five terms are: volume (aV=15.75), surface (aS=17.8), Coulomb (aC=0.711), asymmetry (aA=23.7), and pairing (δ=±12/√A MeV for even-even/odd-odd; 0 for odd-A)."
             label="Bethe-Weizsäcker SEMF"
           />

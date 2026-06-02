@@ -510,7 +510,7 @@ export default function Isotopes() {
             Nuclide Notation
           </h2>
           <EquationBlock
-            latex="^A_Z\text{X}"
+            latex="^A_Z\\text{X}"
             annotation="Standard nuclide notation: X is the element symbol, A is the mass number (protons + neutrons), Z is the atomic number (protons). Example: ²³⁸₉₂U is Uranium-238. In text, the hyphen notation U-238 is equally standard."
             label="Nuclide Notation"
           />
@@ -736,7 +736,7 @@ export default function Isotopes() {
               </p>
 
               <EquationBlock
-                latex="A_r(\text{X}) = \sum_i \theta_i \cdot m_i"
+                latex="A_r(\\text{X}) = \\sum_i \\theta_i \\cdot m_i"
                 annotation="Aᵣ is the standard atomic weight; θᵢ is the fractional abundance of isotope i; mᵢ is its atomic mass in unified atomic mass units (u). 1 u = 1/12 of the mass of ¹²C = 931.494 MeV/c²."
                 label="Standard Atomic Weight"
               />
@@ -1118,7 +1118,7 @@ export default function Isotopes() {
               </p>
 
               <EquationBlock
-                latex="M(Z, A) \approx M_0(A) + \alpha Z + \beta Z^2"
+                latex="M(Z, A) \\approx M_0(A) + \\alpha Z + \\beta Z^2"
                 annotation="For fixed A, atomic mass M(Z,A) follows a parabola in Z. M₀(A), α, and β are functions of SEMF coefficients and A. Minimum mass (maximum stability) occurs at dM/dZ = 0."
                 label="Isobaric Mass Parabola"
               />
@@ -1136,7 +1136,7 @@ export default function Isotopes() {
                   {">"}Z for heavy nuclei):
                 </p>
                 <EquationBlock
-                  latex="Z_{\text{stable}}(A) \approx \frac{A}{2 + 0.015 A^{2/3}}"
+                  latex="Z_{\\text{stable}}(A) \\approx \\frac{A}{2 + 0.015 A^{2/3}}"
                   annotation="Approximate most stable proton number Z for a given A. The factor 0.015 A^(2/3) accounts for the Coulomb term increasing with A, driving the stability line progressively below Z=N for heavy nuclei. For ¹²C: Z ≈ 6.0 (correct). For ²⁰⁸Pb: Z ≈ 82 (correct)."
                   label="Optimal Z Formula (SEMF)"
                 />

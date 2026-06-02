@@ -323,7 +323,7 @@ export default function RadiationDetection() {
             directly related to the ion-pair production rate:
           </p>
           <EquationBlock
-            latex="I = \dot{n} \cdot e = \frac{\dot{E}}{W} \cdot e"
+            latex="I = \\dot{n} \\cdot e = \\frac{\\dot{E}}{W} \\cdot e"
             annotation="Ionization chamber current. ṅ = ion-pair production rate (pairs/s); e = elementary charge (1.602 × 10⁻¹⁹ C); Ė = energy deposition rate (eV/s); W = mean energy per ion pair (W ≈ 34 eV in air, 26 eV in Ar, 22 eV in tissue equivalent gas). A 1 MeV gamma depositing all energy in air produces ~29,400 ion pairs."
             label="Ionization Chamber Current"
           />
@@ -690,7 +690,7 @@ export default function RadiationDetection() {
               </h4>
               <p className="text-sm text-muted-foreground mb-3">
                 Energy resolution{" "}
-                <InlineEquation tex="R\,(\%) = \frac{\text{FWHM}}{E_{\text{peak}}} \times 100" />
+                <InlineEquation tex="R\\,(\%) = \\frac{\\text{FWHM}}{E_{\\text{peak}}} \\times 100" />
                 . For NaI(Tl) at 662 keV, R ≈ 7%. The dominant contributions:
               </p>
               <EquationBlock
@@ -1269,7 +1269,7 @@ export default function RadiationDetection() {
                     A calibrated multi-nuclide source (e.g., NIST-traceable
                     Eu-152 point source) is counted in the exact geometry used
                     for samples. Full-energy peak efficiency{" "}
-                    <InlineEquation tex="\varepsilon(E) = \frac{N_{\text{net}}}{A \cdot I_\gamma \cdot t}" />{" "}
+                    <InlineEquation tex="\\varepsilon(E) = \\frac{N_{\\text{net}}}{A \\cdot I_\\gamma \\cdot t}" />{" "}
                     where A is source activity (Bq), × I_γ × time). Efficiency
                     is fit as a smooth function of energy (polynomial in log–log
                     space). Absolute activity of unknowns:

@@ -221,7 +221,7 @@ export default function Research() {
           <p className="text-muted-foreground leading-relaxed mb-3">
             Bragg's law governs all diffraction:
             <EquationBlock
-              latex="n\lambda = 2d\sin\theta"
+              latex="n\\lambda = 2d\\sin\\theta"
               annotation="Bragg's law: n = diffraction order (integer); λ = neutron de Broglie wavelength (Å); d = interplanar spacing (Å); θ = Bragg angle. For thermal neutrons (λ ≈ 1–3 Å), d-spacings of 0.5–5 Å are accessible — exactly the atomic bond-length scale."
               label="Bragg's Diffraction Law"
             />
@@ -519,7 +519,7 @@ export default function Research() {
             neutrinos are produced, and C-12 is regenerated:
           </p>
           <EquationBlock
-            latex="{}^{12}\text{C}(p,\gamma){}^{13}\text{N}(\beta^+){}^{13}\text{C}(p,\gamma){}^{14}\text{N}(p,\gamma){}^{15}\text{O}(\beta^+){}^{15}\text{N}(p,\alpha){}^{12}\text{C}"
+            latex="{}^{12}\\text{C}(p,\\gamma){}^{13}\\text{N}(\\beta^+){}^{13}\\text{C}(p,\\gamma){}^{14}\\text{N}(p,\\gamma){}^{15}\\text{O}(\\beta^+){}^{15}\\text{N}(p,\\alpha){}^{12}\\text{C}"
             annotation="CNO cycle: carbon-12 is the catalyst. Four protons are consumed; one helium-4 (alpha) and two electron neutrinos are produced; C-12 is regenerated. Net energy release: ~26.7 MeV. The bottleneck is ¹⁴N(p,γ)¹⁵O, which has a cross-section of ~10⁻¹² barns at stellar energies."
             label="CNO Cycle — Catalytic Hydrogen Burning"
           />
@@ -582,7 +582,7 @@ export default function Research() {
             must survive without fissioning:
           </p>
           <EquationBlock
-            latex="\text{Projectile} + \text{Target} \rightarrow [\text{CN}]^* \rightarrow \text{SHE} + x n"
+            latex="\\text{Projectile} + \\text{Target} \\rightarrow [\\text{CN}]^* \\rightarrow \\text{SHE} + x n"
             annotation="Superheavy element synthesis via compound nucleus (CN) reaction. After fusion, the excited compound nucleus must survive without fissioning: it deexcites by emitting x prompt neutrons (typically 1–4 for 'cold fusion', 4–5 for 'hot fusion'). Cross-sections range from ~1 nb (Z=112) to ~0.1 pb (Z=118 at Dubna)."
             label="Superheavy Element Synthesis Reaction"
           />

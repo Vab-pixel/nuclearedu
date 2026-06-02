@@ -1,0 +1,165 @@
+{
+  "formulas": [
+    {
+      "id": "bethe-weizsacker",
+      "latex": "B(A,Z) = a_v A - a_s A^{2/3} - a_c \\frac{Z(Z-1)}{A^{1/3}} - a_a \\frac{(A-2Z)^2}{A} + \\delta(A,Z)",
+      "description": "Semi-empirical mass formula (Bethe-Weizsäcker) giving nuclear binding energy as a sum of five terms.",
+      "variables": [
+        { "symbol": "B", "meaning": "Binding energy (MeV)" },
+        { "symbol": "A", "meaning": "Mass number" },
+        { "symbol": "Z", "meaning": "Atomic number" },
+        { "symbol": "a_v", "meaning": "Volume term coefficient (~15.75 MeV)" },
+        { "symbol": "a_s", "meaning": "Surface term coefficient (~17.8 MeV)" },
+        { "symbol": "a_c", "meaning": "Coulomb term coefficient (~0.711 MeV)" },
+        {
+          "symbol": "a_a",
+          "meaning": "Asymmetry term coefficient (~23.7 MeV)"
+        },
+        { "symbol": "\\delta", "meaning": "Pairing term" }
+      ],
+      "category": "nuclear-structure"
+    },
+    {
+      "id": "volume-term",
+      "latex": "B_v = a_v A",
+      "description": "Volume term: each nucleon contributes equally to binding in the nuclear interior.",
+      "variables": [{ "symbol": "a_v", "meaning": "~15.75 MeV" }],
+      "category": "nuclear-structure"
+    },
+    {
+      "id": "surface-term",
+      "latex": "B_s = -a_s A^{2/3}",
+      "description": "Surface term: nucleons at the surface have fewer neighbors, reducing binding.",
+      "variables": [{ "symbol": "a_s", "meaning": "~17.8 MeV" }],
+      "category": "nuclear-structure"
+    },
+    {
+      "id": "coulomb-term",
+      "latex": "B_c = -a_c \\frac{Z(Z-1)}{A^{1/3}}",
+      "description": "Coulomb term: electrostatic repulsion between protons reduces binding.",
+      "variables": [{ "symbol": "a_c", "meaning": "~0.711 MeV" }],
+      "category": "nuclear-structure"
+    },
+    {
+      "id": "asymmetry-term",
+      "latex": "B_a = -a_a \\frac{(A-2Z)^2}{A}",
+      "description": "Asymmetry term: penalty for unequal numbers of protons and neutrons due to Pauli principle.",
+      "variables": [{ "symbol": "a_a", "meaning": "~23.7 MeV" }],
+      "category": "nuclear-structure"
+    },
+    {
+      "id": "pairing-term",
+      "latex": "\\delta(A,Z) = \\begin{cases} +a_p A^{-1/2} & \\text{even-even} \\ 0 & \\text{odd-A} \\ -a_p A^{-1/2} & \\text{odd-odd} \\end{cases}",
+      "description": "Pairing term: even-even nuclei are more stable than odd-A or odd-odd nuclei.",
+      "variables": [{ "symbol": "a_p", "meaning": "~34 MeV" }],
+      "category": "nuclear-structure"
+    },
+    {
+      "id": "radioactive-decay",
+      "latex": "N(t) = N_0 e^{-\\lambda t}",
+      "description": "Exponential radioactive decay law giving number of remaining nuclei over time.",
+      "variables": [
+        { "symbol": "N(t)", "meaning": "Number of nuclei at time t" },
+        { "symbol": "N_0", "meaning": "Initial number of nuclei" },
+        { "symbol": "\\lambda", "meaning": "Decay constant" },
+        { "symbol": "t", "meaning": "Time" }
+      ],
+      "category": "radioactivity"
+    },
+    {
+      "id": "decay-constant",
+      "latex": "\\lambda = \\frac{\\ln 2}{T_{1/2}} = \\frac{0.693}{T_{1/2}}",
+      "description": "Decay constant related to half-life.",
+      "variables": [{ "symbol": "T_{1/2}", "meaning": "Half-life" }],
+      "category": "radioactivity"
+    },
+    {
+      "id": "activity",
+      "latex": "A = \\lambda N",
+      "description": "Activity (decay rate) of a radioactive sample.",
+      "variables": [
+        { "symbol": "A", "meaning": "Activity (Bq or Ci)" },
+        { "symbol": "N", "meaning": "Number of radioactive nuclei" }
+      ],
+      "category": "radioactivity"
+    },
+    {
+      "id": "bateman",
+      "latex": "N_n(t) = N_1(0) \\sum_{i=1}^{n} \\left( \\frac{\\lambda_i}{\\lambda_n - \\lambda_i} \\prod_{j=1,j\\neq i}^{n} \\frac{\\lambda_j}{\\lambda_j - \\lambda_i} \\right) e^{-\\lambda_i t}",
+      "description": "Bateman equation for the amount of nth nuclide in a decay chain.",
+      "variables": [
+        { "symbol": "N_n", "meaning": "Amount of nth nuclide" },
+        { "symbol": "\\lambda_i", "meaning": "Decay constant of ith nuclide" }
+      ],
+      "category": "radioactivity"
+    },
+    {
+      "id": "q-value",
+      "latex": "Q = (m_i - m_f) c^2 = \\Delta m \\cdot 931.494 \\text{ MeV/u}",
+      "description": "Q-value for a nuclear reaction: energy released from mass difference.",
+      "variables": [
+        { "symbol": "m_i", "meaning": "Total initial mass" },
+        { "symbol": "m_f", "meaning": "Total final mass" },
+        { "symbol": "c", "meaning": "Speed of light" }
+      ],
+      "category": "nuclear-reactions"
+    },
+    {
+      "id": "nuclear-radius",
+      "latex": "r = r_0 A^{1/3}, \\quad r_0 \\approx 1.2 \\text{ fm}",
+      "description": "Empirical nuclear radius proportional to the cube root of mass number.",
+      "variables": [
+        { "symbol": "r_0", "meaning": "~1.2 fm" },
+        { "symbol": "A", "meaning": "Mass number" }
+      ],
+      "category": "nuclear-structure"
+    },
+    {
+      "id": "binding-energy-per-nucleon",
+      "latex": "\\frac{B}{A} = \\frac{1}{A} \\left[ a_v A - a_s A^{2/3} - a_c \\frac{Z(Z-1)}{A^{1/3}} - a_a \\frac{(A-2Z)^2}{A} + \\delta(A,Z) \\right]",
+      "description": "Binding energy per nucleon, peaking around iron-56 (~8.8 MeV/nucleon).",
+      "variables": [],
+      "category": "nuclear-structure"
+    },
+    {
+      "id": "neutron-proton-ratio",
+      "latex": "\\frac{N}{Z} \\approx 1 \\text{ (light nuclei)}, \\quad \\frac{N}{Z} \\approx 1.5 \\text{ (heavy nuclei)}",
+      "description": "Stable neutron-to-proton ratio increases with mass number due to Coulomb repulsion.",
+      "variables": [
+        { "symbol": "N", "meaning": "Neutron number" },
+        { "symbol": "Z", "meaning": "Proton number" }
+      ],
+      "category": "nuclear-structure"
+    },
+    {
+      "id": "alpha-decay-q",
+      "latex": "Q_\\alpha = [m(^{A}_{Z}X) - m(^{A-4}_{Z-2}Y) - m(^{4}_{2}He)] c^2",
+      "description": "Q-value for alpha decay: positive Q means the decay is energetically allowed.",
+      "variables": [
+        { "symbol": "X", "meaning": "Parent nucleus" },
+        { "symbol": "Y", "meaning": "Daughter nucleus" }
+      ],
+      "category": "radioactivity"
+    },
+    {
+      "id": "beta-decay-q",
+      "latex": "Q_\\beta = [m(^{A}_{Z}X) - m(^{A}_{Z+1}Y)] c^2 \\quad (\\beta^-)",
+      "description": "Q-value for beta-minus decay.",
+      "variables": [
+        { "symbol": "X", "meaning": "Parent nucleus" },
+        { "symbol": "Y", "meaning": "Daughter nucleus" }
+      ],
+      "category": "radioactivity"
+    },
+    {
+      "id": "gamma-decay-energy",
+      "latex": "E_\\gamma = E_i - E_f = \\hbar \\omega",
+      "description": "Gamma ray energy equals the difference between nuclear energy levels.",
+      "variables": [
+        { "symbol": "E_i", "meaning": "Initial energy level" },
+        { "symbol": "E_f", "meaning": "Final energy level" }
+      ],
+      "category": "radioactivity"
+    }
+  ]
+}

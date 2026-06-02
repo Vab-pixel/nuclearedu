@@ -878,7 +878,7 @@ export default function ValleyOfStability() {
               neutron-rich wall (left side) decay by β⁻ emission to gain a
               proton. Very heavy nuclei (Z&gt;83) preferentially shed an alpha
               <EquationBlock
-                latex="\frac{\\text{BE}}{A} = a_V - a_S A^{-1/3} - a_C \frac{Z(Z-1)}{A^{4/3}} - a_A \frac{(N-Z)^2}{A^2} \pm a_P A^{-3/2}"
+                latex="\\frac{\\text{BE}}{A} = a_V - a_S A^{-1/3} - a_C \\frac{Z(Z-1)}{A^{4/3}} - a_A \\frac{(N-Z)^2}{A^2} \\pm a_P A^{-3/2}"
                 annotation="Bethe\u2013Weizs\u00e4cker semi-empirical mass formula (SEMF). Terms: volume (a_V\u224815.8\u00a0MeV), surface (a_S\u224818.3\u00a0MeV), Coulomb (a_C\u22480.714\u00a0MeV), asymmetry (a_A\u224823.2\u00a0MeV), pairing (a_P\u224812\u00a0MeV). Pairing term is +, \u2212, or 0 for even-even, odd-odd, or odd-A nuclei."
                 label="Bethe\u2013Weizs\u00e4cker SEMF"
               />

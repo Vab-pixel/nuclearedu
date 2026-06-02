@@ -155,7 +155,8 @@ export default function EnergyMass() {
             In 1905, Albert Einstein showed that mass and energy are equivalent,
             related by the speed of light squared. In nuclear reactions, small
             changes in mass produce enormous energy because{" "}
-            <InlineEquation tex="c^2 \approx 9 \times 10^{16}\,\text{J/kg}" />.
+            <InlineEquation tex="c^2 \\approx 9 \\times 10^{16}\\,\\text{J/kg}" />
+            .
           </p>
           <EquationBlock
             latex="E_0 = m_0 c^2"
@@ -163,7 +164,7 @@ export default function EnergyMass() {
             label="Einstein's Mass-Energy Equivalence (1905)"
           />
           <EquationBlock
-            latex="E = \gamma m_0 c^2, \quad \gamma = \frac{1}{\sqrt{1 - v^2/c^2}}"
+            latex="E = \\gamma m_0 c^2, \\quad \\gamma = \\frac{1}{\\sqrt{1 - v^2/c^2}}"
             annotation="Total relativistic energy. At rest (v=0), γ=1 and E=m₀c². As v→c, γ→∞. Kinetic energy K = (γ−1)m₀c², which reduces to ½m₀v² for v ≪ c."
             label="Total Relativistic Energy (Lorentz factor)"
           />
@@ -174,7 +175,7 @@ export default function EnergyMass() {
           />
           <div className="rounded-lg bg-muted/20 border border-border p-4">
             <EquationBlock
-              latex="1\,u = 1.66053906660 \times 10^{-27}\,\text{kg} = 931.49410242\,\text{MeV}/c^2"
+              latex="1\\,u = 1.66053906660 \\times 10^{-27}\\,\\text{kg} = 931.49410242\\,\\text{MeV}/c^2"
               annotation="The atomic mass unit u: 1/12 the mass of ¹²C. Every mass defect in u × 931.494 MeV/u gives the energy equivalent in MeV — used constantly in nuclear physics."
               label="Atomic Mass Unit (NIST CODATA 2018)"
             />
@@ -189,21 +190,21 @@ export default function EnergyMass() {
           <p className="text-muted-foreground leading-relaxed mb-4">
             A nucleus is lighter than the sum of its separate protons and
             neutrons. This <em>mass defect</em>{" "}
-            <InlineEquation tex="\Delta m" /> represents the binding energy —
+            <InlineEquation tex="\\Delta m" /> represents the binding energy —
             the energy released when nucleons bind together.
           </p>
           <EquationBlock
-            latex="B(Z,A) = \bigl[Z\,m_p + N\,m_n - M_{\rm nucleus}(Z,A)\bigr]\,c^2"
+            latex="B(Z,A) = \\bigl[Z\\,m_p + N\\,m_n - M_{\\rm nucleus}(Z,A)\\bigr]\\,c^2"
             annotation="Binding energy from nuclear masses. Z protons of mass mₚ = 938.272 MeV/c², N = A−Z neutrons of mass mₙ = 939.565 MeV/c², minus the actual nuclear mass."
             label="Binding Energy (nuclear masses)"
           />
           <EquationBlock
-            latex="B(Z,A) = \bigl[Z\,m_H + N\,m_n - M_{\rm atom}(Z,A)\bigr] \times 931.494\,\text{MeV/u}"
+            latex="B(Z,A) = \\bigl[Z\\,m_H + N\\,m_n - M_{\\rm atom}(Z,A)\\bigr] \\times 931.494\\,\\text{MeV/u}"
             annotation="Practical formula using atomic masses (electron masses cancel). mH = 1.00782503207 u (hydrogen atom), mₙ = 1.00866491588 u, M_atom from AME2020."
             label="Binding Energy (atomic masses, practical)"
           />
           <EquationBlock
-            latex="\frac{B}{A}\bigg|_{{}^{56}\text{Fe}} = \frac{492.26\,\text{MeV}}{56} = 8.790\,\text{MeV/nucleon}"
+            latex="\\frac{B}{A}\\bigg|_{{}^{56}\\text{Fe}} = \\frac{492.26\\,\\text{MeV}}{56} = 8.790\\,\\text{MeV/nucleon}"
             annotation="Iron-56 has the highest binding energy per nucleon (by conventional atomic-mass definition). It is the endpoint of energy-releasing stellar fusion — no further net energy can be released by fusing beyond iron."
             label="Peak Binding Energy Per Nucleon — Fe-56"
           />
@@ -219,22 +220,22 @@ export default function EnergyMass() {
             released (positive Q) or required (negative Q — endothermic):
           </p>
           <EquationBlock
-            latex="Q = \bigl(\sum m_{\rm reactants} - \sum m_{\rm products}\bigr)\,c^2 = \Delta m \times 931.494\,\text{MeV/u}"
+            latex="Q = \\bigl(\\sum m_{\\rm reactants} - \\sum m_{\\rm products}\\bigr)\\,c^2 = \\Delta m \\times 931.494\\,\\text{MeV/u}"
             annotation="Q = Δm·c². Positive Q: exothermic (energy released as kinetic energy + radiation). Negative Q: endothermic (threshold reaction). Q is frame-independent."
             label="Q-Value of a Nuclear Reaction"
           />
           <EquationBlock
-            latex="Q_{\alpha} = \bigl[M(Z,A) - M(Z-2,\,A-4) - M(^4\text{He})\bigr] \times 931.494\,\text{MeV/u}"
+            latex="Q_{\\alpha} = \\bigl[M(Z,A) - M(Z-2,\\,A-4) - M(^4\\text{He})\\bigr] \\times 931.494\\,\\text{MeV/u}"
             annotation="Alpha decay Q-value. For U-238: Q_α = (238.050789 − 234.043601 − 4.002602) × 931.494 = 4.270 MeV. Alpha kinetic energy: T_α = Q × (A−4)/A = 4.198 MeV."
             label="Alpha Decay Q-value"
           />
           <EquationBlock
-            latex="Q_{\beta^-} = \bigl[M(Z,A) - M(Z+1,A)\bigr]\,c^2"
+            latex="Q_{\\beta^-} = \\bigl[M(Z,A) - M(Z+1,A)\\bigr]\\,c^2"
             annotation="Beta-minus Q-value (using atomic masses — electron masses cancel). Q_β⁺ = [M(Z,A) − M(Z−1,A) − 2mₑ]c² — requires extra 2mₑc² = 1.022 MeV for positron creation."
             label="Beta Decay Q-value"
           />
           <EquationBlock
-            latex="Q_{\rm D\text{-}T} = \bigl[M(^2\text{H}) + M(^3\text{H}) - M(^4\text{He}) - m_n\bigr] \times 931.494 = 17.59\,\text{MeV}"
+            latex="Q_{\\rm D\\text{-}T} = \\bigl[M(^2\\text{H}) + M(^3\\text{H}) - M(^4\\text{He}) - m_n\\bigr] \\times 931.494 = 17.59\\,\\text{MeV}"
             annotation="D-T fusion: 14.07 MeV carried by the neutron (4/5 by momentum conservation), 3.52 MeV to the alpha. This is the highest Q-value of any binary fusion reaction with low Coulomb barrier."
             label="D-T Fusion Q-value"
           />
@@ -319,10 +320,10 @@ export default function EnergyMass() {
           <h3 className="font-semibold text-foreground mb-2">Mass Excess</h3>
           <p className="text-muted-foreground text-sm mb-2">
             Rather than tabulating full atomic masses, nuclear physicists use
-            the <em>mass excess</em> <InlineEquation tex="\Delta" />:
+            the <em>mass excess</em> <InlineEquation tex="\\Delta" />:
           </p>
           <EquationBlock
-            latex="\Delta(Z,A) = \bigl[M(Z,A) - A\bigr] \times 931.494\,\text{MeV}"
+            latex="\\Delta(Z,A) = \\bigl[M(Z,A) - A\\bigr] \\times 931.494\\,\\text{MeV}"
             annotation="Mass excess in MeV: departure of atomic mass from integer A. Examples: Δ(²H) = +13.136 MeV; Δ(⁵⁶Fe) = −60.605 MeV (most negative stable nuclide); Δ(²³⁸U) = +47.309 MeV."
             label="Mass Excess Definition"
           />
@@ -331,17 +332,17 @@ export default function EnergyMass() {
             Neutron and Proton Separation Energies
           </h3>
           <EquationBlock
-            latex="S_n(Z,A) = \bigl[M(Z,A{-}1) + m_n - M(Z,A)\bigr]\,c^2"
+            latex="S_n(Z,A) = \\bigl[M(Z,A{-}1) + m_n - M(Z,A)\\bigr]\\,c^2"
             annotation="Neutron separation energy: minimum energy to remove one neutron. S_n drops sharply above magic neutron numbers — direct evidence of shell closures. Example: S_n(¹⁷O) = 4.143 MeV; S_n(¹⁷O → magic N=8) = 4.143 MeV."
             label="Neutron Separation Energy S_n"
           />
           <EquationBlock
-            latex="S_p(Z,A) = \bigl[M(Z{-}1,A{-}1) + m_H - M(Z,A)\bigr]\,c^2"
+            latex="S_p(Z,A) = \\bigl[M(Z{-}1,A{-}1) + m_H - M(Z,A)\\bigr]\\,c^2"
             annotation="Proton separation energy (using hydrogen atom mass mH to track electrons). S_p anomalously high above magic proton numbers. Example: S_p(¹⁷F) = 0.601 MeV (proton-rich, near drip line)."
             label="Proton Separation Energy S_p"
           />
           <EquationBlock
-            latex="S_{2n}(Z,A) = \bigl[M(Z,A{-}2) + 2m_n - M(Z,A)\bigr]\,c^2"
+            latex="S_{2n}(Z,A) = \\bigl[M(Z,A{-}2) + 2m_n - M(Z,A)\\bigr]\\,c^2"
             annotation="Two-neutron separation energy: averages over odd-even staggering to reveal shell effects cleanly. Large drops in S_2n signal N = magic number shell closures."
             label="Two-Neutron Separation Energy S_{2n}"
           />
@@ -350,12 +351,12 @@ export default function EnergyMass() {
             Bethe-Weizsäcker SEMF (Liquid Drop Model)
           </h3>
           <EquationBlock
-            latex="B(Z,A) = a_V A - a_S A^{2/3} - a_C \frac{Z(Z-1)}{A^{1/3}} - a_A \frac{(A-2Z)^2}{A} + \delta(Z,A)"
+            latex="B(Z,A) = a_V A - a_S A^{2/3} - a_C \\frac{Z(Z-1)}{A^{1/3}} - a_A \\frac{(A-2Z)^2}{A} + \\delta(Z,A)"
             annotation="Semi-Empirical Mass Formula. Five terms: Volume (aV = 15.75 MeV) — nuclear saturation; Surface (aS = 17.80 MeV) — surface tension; Coulomb (aC = 0.711 MeV) — proton repulsion; Asymmetry (aA = 23.70 MeV) — Pauli exclusion; Pairing (δ) — spin coupling."
             label="Bethe-Weizsäcker SEMF"
           />
           <EquationBlock
-            latex="\delta(Z,A) = \begin{cases} +a_P A^{-1/2} & \text{even-even} \\ 0 & \text{odd-}A \\ -a_P A^{-1/2} & \text{odd-odd} \end{cases} \qquad a_P = 11.18\,\text{MeV}"
+            latex="\\delta(Z,A) = \\begin{cases} +a_P A^{-1/2} & \\text{even-even} \\ 0 & \\text{odd-}A \\ -a_P A^{-1/2} & \\text{odd-odd} \\end{cases} \\qquad a_P = 11.18\\,\\text{MeV}"
             annotation="Pairing term: even-even nuclei gain extra binding (both Z and N even → paired nucleons). Odd-A: one unpaired nucleon, δ=0. Odd-odd (Z and N both odd): least stable; only 4 stable odd-odd nuclei exist (²H, ⁶Li, ¹⁰B, ¹⁴N)."
             label="SEMF Pairing Term δ"
           />

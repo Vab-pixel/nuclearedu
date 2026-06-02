@@ -1268,7 +1268,7 @@ export default function SpectralSeries() {
           />
           <EquationBlock
             label="Rydberg Constant in cm⁻¹"
-            latex="R_\\infty = \\frac{m_e e^4}{8\\varepsilon_0^2 h^3 c} = 1.097\\,373 \\times 10^7\\,\\text{m}^{-1} = 109{,}737.3\\,\\text{cm}^{-1}"
+            latex="R_\\infty = \\frac{m_e e^4}{8\\varepsilon_0^2 h^3 c} = 1.097\\,373 \\times 10^7\\,\\text{m}^{-1} = 109\\,737.3\\,\\text{cm}^{-1}"
             annotation="The Rydberg constant R∞ (in units of m⁻¹ or cm⁻¹) is the most precisely measured fundamental constant. The wavenumber of any hydrogen transition is ν̃ = R∞(1/n₁² − 1/n₂²) cm⁻¹."
           />
           <CitationMarker refId={8} />

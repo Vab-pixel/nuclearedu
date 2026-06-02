@@ -672,27 +672,27 @@ export default function CriticalityCalculator() {
           </p>
         </div>
         <EquationBlock
-          latex="k_\infty = \eta\,\varepsilon\,p\,f"
+          latex="k_\\infty = \\eta\\,\\varepsilon\\,p\\,f"
           annotation="Four-factor formula. η = neutrons produced per neutron absorbed in fuel (reproduction factor). ε = fast fission factor (typically 1.02–1.08). p = resonance escape probability (0.75–0.9 in thermal reactors). f = thermal utilization factor (fraction of thermal neutrons absorbed in fuel)."
           label="Four-Factor Formula (Infinite Medium)"
         />
         <EquationBlock
-          latex="k_{\mathrm{eff}} = k_\infty \cdot P_{\mathrm{NL}} = \frac{k_\infty}{1 + M^2 B^2}"
+          latex="k_{\\mathrm{eff}} = k_\\infty \\cdot P_{\\mathrm{NL}} = \\frac{k_\\infty}{1 + M^2 B^2}"
           annotation="Six-factor formula for a finite reactor. P_NL is the non-leakage probability. M² is the migration area (cm²) and B² is the geometric buckling (cm⁻²). Criticality requires k_eff = 1."
           label="Six-Factor Formula (Finite Reactor)"
         />
         <EquationBlock
-          latex="B^2 = \left(\frac{\pi}{R + d}\right)^2 \quad (\text{sphere}), \qquad B^2 = \frac{k_\infty - 1}{M^2}"
+          latex="B^2 = \\left(\\frac{\\pi}{R + d}\\right)^2 \\quad (\\text{sphere}), \\qquad B^2 = \\frac{k_\\infty - 1}{M^2}"
           annotation="Geometric buckling B² for a bare sphere of radius R (d ≈ 0.7104 λ_tr is the extrapolation distance). Critical condition: geometric buckling equals material buckling (k∞ − 1)/M²."
           label="Geometric Buckling & Critical Condition"
         />
         <EquationBlock
-          latex="M^2 = L^2 + \tau \qquad L^2 = \frac{D}{\Sigma_a}, \quad \tau = \frac{1}{3\Sigma_s}\ln\frac{E_0}{E_\mathrm{th}}"
+          latex="M^2 = L^2 + \\tau \\qquad L^2 = \\frac{D}{\\Sigma_a}, \\quad \\tau = \\frac{1}{3\\Sigma_s}\\ln\\frac{E_0}{E_\\mathrm{th}}"
           annotation="Migration area M² = diffusion area L² + Fermi age τ. L² is the thermal diffusion area (D = diffusion coefficient, Σ_a = absorption cross-section). τ is the Fermi age (slowing-down area) for moderation from fission energy to thermal."
           label="Migration Area"
         />
         <EquationBlock
-          latex="R_c = \frac{\pi}{B_c} - d \approx \frac{\pi \cdot L}{\sqrt{k_\infty - 1}}"
+          latex="R_c = \\frac{\\pi}{B_c} - d \\approx \\frac{\\pi \\cdot L}{\\sqrt{k_\\infty - 1}}"
           annotation="Critical radius for a bare sphere. L is the diffusion length (2–3 cm for common fissile materials). The reflector savings (δR) from a water reflector reduces R_c by ~5–10 cm."
           label="Critical Radius (Bare Sphere)"
         />

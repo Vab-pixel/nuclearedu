@@ -8,6 +8,7 @@ interface EquationBlockProps {
   annotation?: string;
   label?: string;
   display?: boolean;
+  copyable?: boolean;
 }
 
 export function EquationBlock({
@@ -15,6 +16,7 @@ export function EquationBlock({
   annotation,
   label,
   display,
+  copyable = true,
 }: EquationBlockProps) {
   const mathRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
@@ -26,6 +28,11 @@ export function EquationBlock({
         displayMode: display !== false,
         throwOnError: false,
         trust: false,
+        macros: {
+          "\\hbar": "\\hbar",
+          "\\ket": "|#1\\rangle",
+          "\\bra": "\\langle#1|",
+        },
       });
     } catch {
       if (mathRef.current) {
@@ -50,32 +57,35 @@ export function EquationBlock({
           className="overflow-x-auto text-foreground"
           aria-hidden="true"
         />
-        <button
-          type="button"
-          onClick={() => {
-            navigator.clipboard.writeText(latex).then(() => {
-              setCopied(true);
-              setTimeout(() => setCopied(false), 1500);
-            });
-          }}
-          className="absolute top-0 right-0 p-1.5 rounded-md bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-          aria-label="Copy equation"
-          title="Copy equation"
-          data-ocid="equation.copy_button"
-        >
-          {copied ? (
-            <Check className="w-3.5 h-3.5" />
-          ) : (
-            <Copy className="w-3.5 h-3.5" />
-          )}
-        </button>
-        {copied && (
-          <span className="absolute top-8 right-0 text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded shadow-sm">
-            Copied!
-          </span>
+        {copyable && (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(latex).then(() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                });
+              }}
+              className="absolute top-0 right-0 p-1.5 rounded-md bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              aria-label="Copy equation"
+              title="Copy equation"
+              data-ocid="equation.copy_button"
+            >
+              {copied ? (
+                <Check className="w-3.5 h-3.5" />
+              ) : (
+                <Copy className="w-3.5 h-3.5" />
+              )}
+            </button>
+            {copied && (
+              <span className="absolute top-8 right-0 text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded shadow-sm">
+                Copied!
+              </span>
+            )}
+          </>
         )}
       </div>
-      {annotation && <p className="sr-only">{annotation}</p>}
       {annotation && (
         <p className="mt-3 text-sm italic text-muted-foreground">
           {annotation}

@@ -1304,7 +1304,7 @@ export default function FusionPage() {
           </p>
 
           <EquationBlock
-            latex="P_{\text{fusion}} = \frac{1}{4}\,n^2 \langle\sigma v\rangle\, Q_{\text{DT}} \quad (Q_{\text{DT}} = 17.6\,\text{MeV})"
+            latex="P_{\\text{fusion}} = \\frac{1}{4}\\,n^2 \\langle\\sigma v\\rangle\\, Q_{\\text{DT}} \\quad (Q_{\\text{DT}} = 17.6\\,\\text{MeV})"
             annotation="Fusion power density scales with the square of plasma density n, and the thermally-averaged reaction rate coefficient ⟨σv⟩ which peaks at ~65 keV for D-T. Q_DT = 17.6 MeV is the total energy released per D-T reaction. In ITER's plasma: n ≈ 10²⁰ m⁻³, T_ion ≈ 8–10 keV, target ⟨σv⟩ ≈ 3×10⁻²² m³/s — yielding ~500 MW in the 840 m³ plasma volume."
             label="D-T Fusion Power Density (ITER design basis)"
           />
@@ -1545,7 +1545,7 @@ export default function FusionPage() {
           </div>
 
           <EquationBlock
-            latex="\rho R \geq 0.3\,\text{g/cm}^2 \quad \text{(ICF ignition condition)}"
+            latex="\\rho R \\geq 0.3\\,\\text{g/cm}^2 \\quad \\text{(ICF ignition condition)}"
             annotation="The Lawson criterion for ICF: the product of compressed fuel density ρ (g/cm³) and the hot-spot radius R (cm) must exceed approximately 0.3 g/cm² for alpha-particle self-heating to dominate and initiate burn wave propagation. At NIF's December 2022 shot: ρR ≈ 1.4 g/cm² was achieved — well above the ignition threshold. This is the ICF equivalent of the n·T·τ_E triple product for magnetic confinement."
             label="ICF Lawson Criterion: ρR Product for Ignition"
           />
@@ -2035,7 +2035,7 @@ export default function FusionPage() {
             own tritium from lithium using the fusion neutrons:
           </p>
           <EquationBlock
-            latex="{}^6_3\text{Li} + n \rightarrow {}^4_2\text{He} + {}^3_1\text{T} + 4.78\,\text{MeV}"
+            latex="{}^6_3\\text{Li} + n \\rightarrow {}^4_2\\text{He} + {}^3_1\\text{T} + 4.78\\,\\text{MeV}"
             annotation="Li-6 + thermal neutron → He-4 + tritium + 4.78 MeV. This exothermic reaction is the primary breeding path. Natural lithium is 7.59% Li-6; breeding blankets use enriched Li-6 (up to 90%) in ceramic form (Li₄SiO₄, Li₂TiO₃) or liquid lithium-lead eutectic (LiPb: 17% Li, 83% Pb). The tritium breeding ratio (TBR) must exceed ~1.05 to account for losses and provide startup inventory for new reactors — each reactor must breed approximately its own fuel supply plus surplus for the next reactor."
             label="Tritium Breeding from Li-6 (Primary D-T Fuel Cycle Reaction)"
           />
@@ -2227,13 +2227,13 @@ export default function FusionPage() {
           </p>
 
           <EquationBlock
-            latex="V_C = \frac{Z_1 Z_2 e^2}{4\pi\varepsilon_0 r} \approx \frac{1.44\,Z_1 Z_2}{r\,[\text{fm}]} \; \text{MeV}"
+            latex="V_C = \\frac{Z_1 Z_2 e^2}{4\\pi\\varepsilon_0 r} \\approx \\frac{1.44\\,Z_1 Z_2}{r\\,[\\text{fm}]} \\; \\text{MeV}"
             annotation="Coulomb potential between two nuclei of charges Z₁ and Z₂ separated by distance r. For D-T fusion at nuclear contact (r ≈ 5 fm, Z₁=Z₂=1): V_C ≈ 1.44/5 ≈ 0.29 MeV = 290 keV. Yet fusion occurs at plasma temperatures of ~65 keV — far below the classical barrier! This is made possible by quantum tunneling (Gamow factor)."
             label="Coulomb Barrier Energy"
           />
 
           <EquationBlock
-            latex="G = \exp\!\left(-2\pi\eta\right), \quad \eta = \frac{Z_1 Z_2 e^2}{4\pi\varepsilon_0 \hbar v} = \frac{Z_1 Z_2}{137} \sqrt{\frac{\mu c^2}{2E}}"
+            latex="G = \\exp\\!\\left(-2\\pi\\eta\\right), \\quad \\eta = \\frac{Z_1 Z_2 e^2}{4\\pi\\varepsilon_0 \\hbar v} = \\frac{Z_1 Z_2}{137} \\sqrt{\\frac{\\mu c^2}{2E}}"
             annotation="The Gamow factor G is the quantum tunneling probability through the Coulomb barrier. η is the Sommerfeld parameter (v = relative velocity, μ = reduced mass). For D-T at E = 65 keV (optimal thermal fusion temperature): η ≈ 0.66, G ≈ 0.015. Only 1.5% of collisions at this energy produce fusion — but there are ~10²⁰ collisions per second in ITER's plasma volume, giving ~5×10²⁰ fusions/s and 500 MW."
             label="Gamow Tunneling Factor (fusion reaction probability)"
           />
@@ -2291,7 +2291,7 @@ export default function FusionPage() {
             Thermally Averaged Reaction Rate
           </h3>
           <EquationBlock
-            latex="\langle\sigma v\rangle = \int_0^\infty \sigma(v)\,v\,f(v)\,dv \quad [\text{m}^3/\text{s}]"
+            latex="\\langle\\sigma v\\rangle = \\int_0^\\infty \\sigma(v)\\,v\\,f(v)\\,dv \\quad [\\text{m}^3/\\text{s}]"
             annotation="The thermally-averaged reaction rate coefficient ⟨σv⟩ integrates the fusion cross-section σ over the Maxwell-Boltzmann velocity distribution f(v) of the plasma ions. For D-T: ⟨σv⟩ peaks at ~65 keV with a value of ~3.7×10⁻²² m³/s. At ITER's operating temperature of 8–10 keV: ⟨σv⟩ ≈ 1–3×10⁻²² m³/s — still high enough for Q≥10 at ITER density. The fusion power density P = (n_D n_T / 4) × ⟨σv⟩ × Q_DT where Q_DT = 17.6 MeV."
             label="Thermally-Averaged Fusion Reaction Rate Coefficient"
           />

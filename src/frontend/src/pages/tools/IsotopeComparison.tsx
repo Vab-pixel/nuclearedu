@@ -591,17 +591,17 @@ export default function IsotopeComparison() {
           AME2020 (Wang et al. 2021), NNDC/BNL, ICRP.
         </p>
         <EquationBlock
-          latex="\frac{B}{A} = \frac{Z\,m_p + N\,m_n - M(Z,N)}{A}\,c^2"
+          latex="\\frac{B}{A} = \\frac{Z\\,m_p + N\\,m_n - M(Z,N)}{A}\\,c^2"
           annotation="Binding energy per nucleon B/A: mass of Z free protons plus N free neutrons minus the nuclear mass M(Z,N), divided by mass number A. Maximum near A ≈ 56 (iron-peak nuclei, ~8.8 MeV/nucleon). Values from AME2020 atomic mass evaluation."
           label="Binding Energy per Nucleon"
         />
         <EquationBlock
-          latex="t_{1/2} = \frac{\ln 2}{\lambda} \qquad N(t) = N_0\,e^{-\lambda t} \qquad A(t) = \lambda N(t)"
+          latex="t_{1/2} = \\frac{\\ln 2}{\\lambda} \\qquad N(t) = N_0\\,e^{-\\lambda t} \\qquad A(t) = \\lambda N(t)"
           annotation="Half-life t½ relates to decay constant λ. N(t) is the number of remaining nuclei at time t. Activity A(t) = λN(t) in disintegrations per second (Bq). Source: IAEA Nuclear Data Services."
           label="Radioactive Decay & Half-Life"
         />
         <EquationBlock
-          latex="Q = \left[M_{\mathrm{parent}} - \sum_i M_{\mathrm{daughters},i}\right]c^2 \quad (\mathrm{atomic\;masses})"
+          latex="Q = \\left[M_{\\mathrm{parent}} - \\sum_i M_{\\mathrm{daughters},i}\\right]c^2 \\quad (\\mathrm{atomic\\;masses})"
           annotation="Q-value of a nuclear reaction or decay: mass excess of reactants minus products in energy units. Q > 0: exothermic (energy released). Q < 0: endothermic (threshold reaction). Masses from AME2020; 1 u = 931.494 MeV/c²."
           label="Q-Value (Decay Energy)"
         />

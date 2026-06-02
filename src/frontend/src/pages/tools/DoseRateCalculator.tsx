@@ -637,17 +637,17 @@ export default function DoseRateCalculator() {
           Physics Model
         </h2>
         <EquationBlock
-          latex="\dot{H} = \frac{\Gamma \cdot A}{r^2} \cdot e^{-\mu x}"
+          latex="\\dot{H} = \\frac{\\Gamma \\cdot A}{r^2} \\cdot e^{-\\mu x}"
           annotation="Dose rate Ḣ (µSv/h) from a point source. Γ = specific gamma-ray constant (µSv·m²/h·GBq), A = activity (GBq), r = distance (m), μ = linear attenuation coefficient (cm⁻¹), x = shielding thickness (cm). Source: IAEA Safety Reports Series No. 44."
           label="Point Source Dose Rate with Shielding"
         />
         <EquationBlock
-          latex="I = I_0\,e^{-\mu x} \qquad \mathrm{HVL} = \frac{\ln 2}{\mu}, \quad \mathrm{TVL} = \frac{\ln 10}{\mu} \approx 3.32 \cdot \mathrm{HVL}"
+          latex="I = I_0\\,e^{-\\mu x} \\qquad \\mathrm{HVL} = \\frac{\\ln 2}{\\mu}, \\quad \\mathrm{TVL} = \\frac{\\ln 10}{\\mu} \\approx 3.32 \\cdot \\mathrm{HVL}"
           annotation="Exponential attenuation law. HVL (half-value layer) is the thickness that reduces intensity by 50%. TVL (tenth-value layer) reduces intensity by 90%. μ values from NIST XCOM database."
           label="Photon Attenuation & HVL/TVL"
         />
         <EquationBlock
-          latex="I \propto \frac{1}{r^2} \qquad \Rightarrow \qquad \frac{I_2}{I_1} = \left(\frac{r_1}{r_2}\right)^2"
+          latex="I \\propto \\frac{1}{r^2} \\qquad \\Rightarrow \\qquad \\frac{I_2}{I_1} = \\left(\\frac{r_1}{r_2}\\right)^2"
           annotation="Inverse-square law: intensity (dose rate) decreases with the square of distance from a point source in air. Doubling the distance reduces dose rate by a factor of 4. Valid for point sources in open geometry."
           label="Inverse-Square Law"
         />
